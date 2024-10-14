@@ -15,11 +15,11 @@ namespace Explorer.Stakeholders.Core.Domain
         public User UserPosted {  get; private set; }
         public int UserPostedId {  get; private set; }
 
-        public AppRating(int rating, string comment, DateTime timeCreated, int userPosted)
+        public AppRating(int rating, string comment, DateTime timeCreated, int userPostedId)
         {
             Rating = rating;
             Comment = comment;
-            UserPostedId = userPosted;
+            UserPostedId = userPostedId;
             TimeCreated = timeCreated;
         }
 

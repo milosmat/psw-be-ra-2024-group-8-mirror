@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace Explorer.Stakeholders.Tests.Integration.Administration
 {
+    [Collection("Sequential")]
     public class AppRatingQueryTests : BaseStakeholdersIntegrationTest
     {
         public AppRatingQueryTests(StakeholdersTestFactory factory) : base(factory)

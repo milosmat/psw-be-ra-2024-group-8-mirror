@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Explorer.Stakeholders.Core.Domain
 {
@@ -12,8 +13,9 @@ namespace Explorer.Stakeholders.Core.Domain
         public int Rating { get; private set; }
         public string ?Comment { get; private set; }
         public DateTime TimeCreated {  get; private set; }
-        public User UserPosted {  get; private set; }
         public int UserPostedId {  get; private set; }
+        //public User UserPosted {  get; private set; }
+        
 
         public AppRating(int rating, string comment, DateTime timeCreated, int userPostedId)
         {
@@ -22,7 +24,6 @@ namespace Explorer.Stakeholders.Core.Domain
             UserPostedId = userPostedId;
             TimeCreated = timeCreated;
         }
-
-
+        
     }
 }

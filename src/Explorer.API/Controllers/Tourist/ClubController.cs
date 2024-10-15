@@ -1,0 +1,58 @@
+﻿using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.Tours.API.Dtos;
+using Explorer.Tours.API.Public.Tourist;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Explorer.API.Controllers.Tourist
+{
+    [Authorize(Policy = "touristPolicy")]
+    [Route("api/tourist/clubs")]
+
+    public class ClubController : BaseApiController
+    {
+        private readonly IClubService _clubService;
+
+        public ClubController(IClubService clubService)
+        {
+            _clubService = clubService;
+        }
+
+        [HttpGet]
+        public ActionResult<PagedResult<ClubDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
+        {
+            var result = _clubService.GetPaged(page, pageSize);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("{id:tourist}")]
+        public ActionResult<ClubDto> GetById(int id)
+        {
+            var result = _clubService.Get(id);
+            return CreateResponse(result);
+        }
+
+        [HttpPost]
+        public ActionResult<ClubDto> Create([FromBody] ClubDto clubDto)
+        {
+            var result = _clubService.Create(clubDto);
+            return CreateResponse(result);
+        }
+
+        [HttpPut("{id:tourist}")]
+        public ActionResult<ClubDto> Update([FromBody] ClubDto clubDto)
+        {
+            var result = _clubService.Update(clubDto);
+            return CreateResponse(result);
+        }
+
+        [HttpDelete("{id:tourist}")]
+        public ActionResult Delete(int id)
+        {
+            var result = _clubService.Delete(id);
+            return CreateResponse(result);
+        }
+
+    }
+
+}

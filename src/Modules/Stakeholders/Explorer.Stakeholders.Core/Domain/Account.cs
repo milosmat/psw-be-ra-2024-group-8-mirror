@@ -9,13 +9,13 @@ namespace Explorer.Stakeholders.Core.Domain
 {
     public class Account : Entity
     {
-        public int AccountId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Picture { get; set; }
-        public string Biography {  get; set; }
-        public string Motto {  get; set; }
-        public User User { get; set; }
+        public int AccountId { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
+        public string Picture { get; private set; }
+        public string Biography {  get; private set; }
+        public string Motto {  get; private set; }
+        public User User { get; private set; }
         public Account() { }
         public Account(int accountId, string firstName, string lastName, string picture, string biography, string motto, User user)
         {

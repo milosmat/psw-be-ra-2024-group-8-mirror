@@ -1,10 +1,10 @@
 ﻿using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Tours.API.Dtos;
-using Explorer.Tours.API.Public.Administration;
+using Explorer.Tours.API.Public.Author;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Explorer.API.Controllers.Administrator.Administration
+namespace Explorer.API.Controllers.Author
 {
     [Authorize(Policy = "authorPolicy")]
     [Route("api/author/tour-checkpoints")]
@@ -28,6 +28,13 @@ namespace Explorer.API.Controllers.Administrator.Administration
         public ActionResult<TourCheckpointDto> Create([FromBody] TourCheckpointDto tourCheckpoint)
         {
             var result = _tourCheckpointService.Create(tourCheckpoint);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("{id:int}")]
+        public ActionResult<TourCheckpointDto> GetById(int id)
+        {
+            var result = _tourCheckpointService.Get(id);
             return CreateResponse(result);
         }
 

@@ -7,11 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Explorer.Tours.API.Public.Administration;
+namespace Explorer.Tours.API.Public.Author;
 public interface ITourCheckpointService
 {
     Result<PagedResult<TourCheckpointDto>> GetPaged(int page, int pageSize);
     Result<TourCheckpointDto> Create(TourCheckpointDto checkpoint);
+    Result<TourCheckpointDto> Get(int id);
     Result<TourCheckpointDto> Update(TourCheckpointDto checkpoint);
     Result Delete(int id);
 }

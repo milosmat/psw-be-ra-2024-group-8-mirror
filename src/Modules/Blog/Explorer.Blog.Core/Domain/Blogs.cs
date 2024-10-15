@@ -1,4 +1,5 @@
-﻿using Explorer.BuildingBlocks.Core.Domain;
+﻿using Explorer.Blog.API.Dtos;
+using Explorer.BuildingBlocks.Core.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,11 +29,10 @@ namespace Explorer.Blog.Core.Domain
             Status = status;
         }
     }
-
-    public enum BlogsStatus
-    {
-        Draft,
-        Published,
-        Closed
-    }
+}
+public enum BlogsStatus
+{
+    Draft,
+    Published,
+    Closed
 }

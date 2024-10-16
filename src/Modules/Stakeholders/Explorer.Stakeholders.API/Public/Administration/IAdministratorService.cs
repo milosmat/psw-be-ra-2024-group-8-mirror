@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Explorer.Stakeholders.API.Public
+namespace Explorer.Stakeholders.API.Public.Administration
 {
     public interface IAdministratorService
     {
         Result<PagedResult<AccountInformationDto>> GetPaged(int page, int pageSize);
         Result<AccountInformationDto> Update(AccountInformationDto accountInformation);
     }
-    
+
 }

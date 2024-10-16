@@ -64,6 +64,11 @@ public class ClubController : BaseApiController
 
         clubDto.Id = id;
 
+        if (string.IsNullOrEmpty(clubDto.Name) || string.IsNullOrEmpty(clubDto.Photo) || clubDto.OwnerId <= 0)
+        {
+            return BadRequest("Invalid data");
+        }
+
         var updateResult = _clubService.Update(clubDto);
         return CreateResponse(updateResult);
     }

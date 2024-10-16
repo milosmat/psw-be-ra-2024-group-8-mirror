@@ -87,7 +87,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
             var updatedComment = new CommentDto
             {
-                Id = 1,
+                Id = -2,
                 Text = "Ažurirani komentar",
                 BlogId = 1,
                 UserId = 1
@@ -98,6 +98,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
             // Assert - Response
             result.ShouldNotBeNull();
+            result.Id.ShouldBe(-2);
             result.Text.ShouldBe(updatedComment.Text);
 
             // Assert - Database
@@ -115,6 +116,8 @@ namespace Explorer.Blog.Tests.Integration.Administration
             var updatedComment = new CommentDto
             {
                 Id = -1000, // Nevalidan ID
+                BlogId= 1,
+                UserId = 1,
                 Text = "Nevažeći komentar"
             };
 
@@ -123,7 +126,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
             // Assert
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(400); 
+            result.StatusCode.ShouldBe(404); 
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-﻿using Explorer.Stakeholders.API.Dtos;
+﻿using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.Stakeholders.API.Dtos;
 using FluentResults;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,6 @@ namespace Explorer.Stakeholders.API.Public
     public interface IEditAccountService
     {
         Result<AccountDto> Update(AccountDto account);
+        Result<PagedResult<AccountDto>> GetPaged(int page, int pageSize);
     }
 }

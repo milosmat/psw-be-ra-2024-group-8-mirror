@@ -10,20 +10,20 @@ namespace Explorer.Blog.Core.Domain
 {
     public class Blogs : Entity
     {
-       // public int UserId { get; private set; }
+        public int UserId { get; private set; }
         public string Title { get; private set; }
         public string Description { get; private set; }
         public DateTime CreatedDate { get; private set; }
         public List<string>? Images { get; private set; }
         public BlogsStatus Status { get; private set; }
 
-        public Blogs(string title, string description, DateTime createdDate, List<string>? images, BlogsStatus status)
+        public Blogs(int userId,string title, string description, DateTime createdDate, List<string>? images, BlogsStatus status)
         {
             if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Invalid Title.");
             if (description != null && string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Description cannot be empty.");
             if (createdDate > DateTime.Now) throw new ArgumentException("Created date cannot be in the future.");
           
-           // UserId = userId;
+            UserId = userId;
             Title = title;
             Description = description;
             CreatedDate = createdDate;

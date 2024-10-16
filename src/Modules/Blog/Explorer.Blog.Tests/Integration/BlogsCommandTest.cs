@@ -28,7 +28,8 @@ namespace Explorer.Blog.Tests.Integration
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
             var newEntity = new BlogsDto
             {
-                Title = "Naslovv",
+                UserId = 1,
+                Title = "Create",
                 Description = "Description",
                 CreatedDate = DateTime.UtcNow,
                 Images = new List<string> { "image.png" },
@@ -82,9 +83,9 @@ namespace Explorer.Blog.Tests.Integration
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
             var updatedEntity = new BlogsDto
             {
-                Id = 1,
-                Title = "Naslov",
-                Description = "Opis bloga."
+                Id = -2,
+                Title = "UpdateTitle2",
+                Description = "UpdateDescription2"
             };
 
             // Act
@@ -92,15 +93,15 @@ namespace Explorer.Blog.Tests.Integration
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(1);
+            result.Id.ShouldBe(-2);
             result.Title.ShouldBe(updatedEntity.Title);
             result.Description.ShouldBe(updatedEntity.Description);
 
             // Assert - Database
-            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Title == "Naslov");
+            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Title == "UpdateTitle2");
             storedEntity.ShouldNotBeNull();
             storedEntity.Description.ShouldBe(updatedEntity.Description);
-            var oldEntity = dbContext.Blogs.FirstOrDefault(i => i.Title == "Title");
+            var oldEntity = dbContext.Blogs.FirstOrDefault(i => i.Title == "Title2");
             oldEntity.ShouldBeNull();
         }
        
@@ -121,7 +122,7 @@ namespace Explorer.Blog.Tests.Integration
 
             // Assert
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(400);
+            result.StatusCode.ShouldBe(404);
         }
 
         [Fact]
@@ -133,14 +134,14 @@ namespace Explorer.Blog.Tests.Integration
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
             // Act
-            var result = (OkResult)controller.Delete(1);
+            var result = (OkResult)controller.Delete(-3);
 
             // Assert - Response
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
             // Assert - Database
-            var storedCourse = dbContext.Blogs.FirstOrDefault(i => i.Id == 1);
+            var storedCourse = dbContext.Blogs.FirstOrDefault(i => i.Id == -3);
             storedCourse.ShouldBeNull();
         }
 

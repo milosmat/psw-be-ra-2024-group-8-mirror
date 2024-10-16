@@ -8,5 +8,6 @@
         public string Weight { get; set; }
         public string[] Tags { get; set; }
         public decimal? Price { get; set; }
+        public List<long> equipmentIds {  get; set; }
     }
 }

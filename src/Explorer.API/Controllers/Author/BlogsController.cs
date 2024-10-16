@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Explorer.API.Controllers.Author
 {
     [Authorize(Policy = "authorPolicy")]
-    [Route("api/author/blogs")]
+    [Route("api/author/blog")]
     public class BlogsController : BaseApiController
     {
         private readonly IBlogsService _blogsService;

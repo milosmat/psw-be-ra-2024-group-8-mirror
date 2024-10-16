@@ -20,6 +20,8 @@ public static class BlogStartup
         SetupInfrastructure(services);
         return services;
     }
+
+
     
     private static void SetupCore(IServiceCollection services)
     {

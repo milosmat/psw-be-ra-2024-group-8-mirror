@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Explorer.Tours.Core.Domain
 {
-    internal class Object : Entity
+    public class Object : Entity
     {
-        public String Name { get; init; }
-        public String Description { get; init; }
-        public String Image { get; private set; }
-        public ObjectCategory Category { get; private set; }
+        public string Name { get; init; }
+        public string Description { get; init; }
+        public string Image { get; init; }
+        public ObjectCategory Category { get; init; }
 
 
         public Object(string name, string description, string image, ObjectCategory objectCategory)

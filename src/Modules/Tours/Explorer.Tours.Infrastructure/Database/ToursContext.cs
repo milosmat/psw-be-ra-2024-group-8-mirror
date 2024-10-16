@@ -13,5 +13,9 @@ public class ToursContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("tours");
+
+        modelBuilder.Entity<Equipment>().ToTable("Equipment");
+        modelBuilder.Entity<Tour>().ToTable("Tours");
+        modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoints");
     }
 }

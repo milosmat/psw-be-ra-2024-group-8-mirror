@@ -12,5 +12,67 @@ namespace Explorer.Tours.Core.UseCases.Author
         public TourService(ICrudRepository<Tour> repository, IMapper mapper) : base(repository, mapper) 
         {
         }
+
+        public Result<List<long>> GetEquipmentIds(int tourId)
+        {
+            try
+            {
+                var tourResult = CrudRepository.Get(tourId);
+                return Result.Ok(tourResult.equipmentIds);
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+        }
+
+        public Result AddEquipmentId(int tourId, long equipmentId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
+
+                if (!tour.equipmentIds.Contains(equipmentId))
+                {
+                    tour.equipmentIds.Add(equipmentId);
+                    CrudRepository.Update(tour); 
+                    return Result.Ok();
+                }
+                return Result.Fail(FailureCode.InvalidArgument).WithError("Equipment ID already exists in the list");
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
+
+        public Result RemoveEquipmentId(int tourId, long equipmentId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
+
+                if (tour.equipmentIds.Contains(equipmentId))
+                {
+                    tour.equipmentIds.Remove(equipmentId);
+                    CrudRepository.Update(tour); 
+                    return Result.Ok();
+                }
+                return Result.Fail(FailureCode.InvalidArgument).WithError("Equipment ID not found in the list");
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
+
     }
 }

@@ -16,13 +16,18 @@ namespace Explorer.Tours.Core.Domain
         public ObjectCategory Category { get; init; }
 
 
-        public Object(string name, string description, string image, ObjectCategory objectCategory)
+        public Object(string name, string description, string image, string objectCategory)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
+            if (string.IsNullOrWhiteSpace(objectCategory) ||
+    !Enum.TryParse(objectCategory, true, out ObjectCategory parsedCategory))
+            {
+                throw new ArgumentException("Invalid Category.");
+            }
             Name = name;
             Description = description;
             Image = image;
-            Category = objectCategory;
+            Category = parsedCategory;
         }
     }
 }

@@ -8,40 +8,32 @@ using System.Threading.Tasks;
 namespace Explorer.Tours.Core.Domain;
 
 public enum DifficultyLevel { EASY = 1, MEDIUM = 2, HARD = 3 };
-public enum TransportMode { WALK = 0, BIKE = 1, CAR = 3, BOAT = 4 };
 public class TourPreferences : Entity
 {
     public DifficultyLevel Difficulty { get; private set; }
-    public Dictionary<TransportMode, int> TransportPreferences { get; private set; } 
+    public int WalkRating { get; private set; }
+    public int BikeRating { get; private set; }
+    public int CarRating { get; private set; }
+    public int BoatRating { get; private set; }
     public List<string> InterestTags { get; private set; }
 
-    public TourPreferences(DifficultyLevel difficulty, Dictionary<TransportMode, int> transportPreferences, List<string> interestTags) 
+    public TourPreferences(DifficultyLevel difficulty, int walkRating, int bikeRating, int carRating, int boatRating, List<string> interestTags) 
     {
-        Validate(difficulty, transportPreferences, interestTags);
-
+        Validate(difficulty,interestTags);
         Difficulty = difficulty;
-        TransportPreferences = transportPreferences;
         InterestTags = interestTags;
+
+        WalkRating = ValidateRating(walkRating);
+        BikeRating = ValidateRating(bikeRating);
+        CarRating = ValidateRating(carRating);
+        BoatRating = ValidateRating(boatRating);        
     }
 
-    private void Validate(DifficultyLevel difficulty, Dictionary<TransportMode, int> transportPreferences, List<string> interestTags)
+    private void Validate(DifficultyLevel difficulty, List<string> interestTags)
     {
         if (difficulty == null)
         {
             throw new ArgumentNullException(nameof(difficulty), "Difficulty cannot be null.");
-        }
-
-        if (transportPreferences == null || transportPreferences.Count == 0)
-        {
-            throw new ArgumentException("Transport preferences cannot be null or empty.", nameof(transportPreferences));
-        }
-
-        foreach (var preference in transportPreferences)
-        {
-            if (preference.Value < 0 || preference.Value > 3)
-            {
-                throw new ArgumentOutOfRangeException(nameof(transportPreferences), "Transport preference rating must be between 0 and 3.");
-            }
         }
 
         if (interestTags == null || interestTags.Count == 0)
@@ -56,6 +48,14 @@ public class TourPreferences : Entity
                 throw new ArgumentException("Interest tags cannot contain null or empty strings.", nameof(interestTags));
             }
         }
+    }
+    private int ValidateRating(int rating)
+    {
+        if (rating < 0 || rating > 3)
+        {
+            throw new ArgumentOutOfRangeException("Rating must be between 0 and 3.", nameof(rating));
+        }
+        return rating;
     }
 }
 

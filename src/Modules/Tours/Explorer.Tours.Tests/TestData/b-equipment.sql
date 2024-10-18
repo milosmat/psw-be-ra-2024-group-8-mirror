@@ -9,11 +9,13 @@ INSERT INTO tours."Equipment"(
 VALUES (-3, 'Obična baterijska lampa', 'Baterijska lampa od 200 do 400 lumena.');
 
 INSERT INTO tours."TourPreferences"(
-	"Id", "Difficulty", "TransportPreferences", "InterestTags")
-VALUES (1, 2, to_jsonb('{"WALK": 2, "BIKE": 3, "CAR": 1}'), to_jsonb('["nature", "adventure", "culture"]'));
+	"Id", "Difficulty", "WalkRating", "BikeRating", "CarRating", "BoatRating", "InterestTags")
+VALUES (-1, 1, 3, 2, 0, 1, '{"nature"}');
+
 INSERT INTO tours."TourPreferences"(
-	"Id", "Difficulty", "TransportPreferences", "InterestTags")
-VALUES (2, 1, to_jsonb('{"WALK": 1, "BIKE": 0, "CAR": 2}'), to_jsonb('["adventure"]'));
+	"Id", "Difficulty", "WalkRating", "BikeRating", "CarRating", "BoatRating", "InterestTags")
+VALUES (-2, 2, 1, 1, 0, 1, '{"city"}');
+
 INSERT INTO tours."TourPreferences"(
-	"Id", "Difficulty", "TransportPreferences", "InterestTags")
-VALUES (3, 2, to_jsonb('{"WALK": 1, "BIKE": 1, "CAR": 1}'), to_jsonb('["culture"]'));
+	"Id", "Difficulty", "WalkRating", "BikeRating", "CarRating", "BoatRating", "InterestTags")
+VALUES (-3, 1, 3, 0, 0, 3, '{"beach"}');

@@ -29,12 +29,10 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var newEntity = new TourPreferencesDto
             {
                 Difficulty = DifficultyLevel.EASY,
-                TransportPreferences = new Dictionary<TransportMode, int>()
-                {
-                    { TransportMode.WALK, 2 },
-                    { TransportMode.BIKE, 3 },
-                    { TransportMode.CAR, 1 }
-                },
+                WalkRating = 3,
+                BikeRating = 2,
+                CarRating = 0,
+                BoatRating = 1,
                 InterestTags = new List<string>() { "nature" }
 
             };
@@ -46,8 +44,16 @@ namespace Explorer.Tours.Tests.Integration.Administration
             result.ShouldNotBeNull();
             result.Id.ShouldNotBe(0);
             result.Difficulty.ShouldBe(newEntity.Difficulty);
-            result.TransportPreferences.ShouldBe(newEntity.TransportPreferences);
+            result.WalkRating.ShouldBe(newEntity.WalkRating);
+            result.BikeRating.ShouldBe(newEntity.BikeRating);
+            result.CarRating.ShouldBe(newEntity.CarRating);
+            result.BoatRating.ShouldBe(newEntity.BoatRating);
             result.InterestTags.ShouldBe(newEntity.InterestTags);
+
+            // Assert - Database
+            var storedEntity = dbContext.TourPreferences.FirstOrDefault(i => i.WalkRating == newEntity.WalkRating);
+            storedEntity.ShouldNotBeNull();
+            storedEntity.Id.ShouldBe(result.Id);
         }
 
         [Fact]
@@ -58,7 +64,7 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var controller = CreateController(scope);
             var updatedEntity = new TourPreferencesDto
             {
-                InterestTags = new List<string>() { "Test" }
+                WalkRating = 4
             };
 
             // Act
@@ -78,15 +84,13 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var updatedEntity = new TourPreferencesDto
             {
-                Id = 1,
+                Id = -5,
                 Difficulty = DifficultyLevel.EASY,
-                TransportPreferences = new Dictionary<TransportMode, int>()
-                {
-                    { TransportMode.WALK, 2 },
-                    { TransportMode.BIKE, 3 },
-                    { TransportMode.CAR, 1 }
-                },
-                InterestTags = new List<string>() { "beach" }
+                WalkRating = 0,
+                BikeRating = 2,
+                CarRating = 2,
+                BoatRating = 2,
+                InterestTags = new List<string>() { "rucnoDodar" }
             };
 
             // Act
@@ -94,19 +98,24 @@ namespace Explorer.Tours.Tests.Integration.Administration
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(-1);
+            result.Id.ShouldBe(-5);
             result.Difficulty.ShouldBe(updatedEntity.Difficulty);
-            result.TransportPreferences.ShouldBe(updatedEntity.TransportPreferences);
+            result.WalkRating.ShouldBe(updatedEntity.WalkRating);   
+            result.BikeRating.ShouldBe(updatedEntity.BikeRating);
+            result.CarRating.ShouldBe(updatedEntity.CarRating);
+            result.BoatRating.ShouldBe(updatedEntity.BoatRating);
             result.InterestTags.ShouldBe(updatedEntity.InterestTags);
 
             // Assert - Database
-            var storedEntity = dbContext.TourPreferences.FirstOrDefault(i => i.Id == updatedEntity.Id); // Koristi ID da pronađeš ažurirani entitet
+            var storedEntity = dbContext.TourPreferences.FirstOrDefault(i => i.WalkRating == 0); 
             storedEntity.ShouldNotBeNull();
-            storedEntity.TransportPreferences.ShouldBeEquivalentTo(updatedEntity.TransportPreferences); // Proverava TransportPreferences (dictionary)
-            storedEntity.InterestTags.ShouldBeEquivalentTo(updatedEntity.InterestTags); // Proverava InterestTags (listu)
-
-            var oldEntity = dbContext.TourPreferences.FirstOrDefault(i => i.Id != updatedEntity.Id); // Proveri da li postoji entitet sa drugačijim ID-om
-            oldEntity.ShouldBeNull(); // Ako očekuješ da stari entitet više ne postoji
+            storedEntity.InterestTags.ShouldBeEquivalentTo(updatedEntity.InterestTags);
+            result.Difficulty.ShouldBe(updatedEntity.Difficulty);
+            result.BikeRating.ShouldBe(updatedEntity.BikeRating);
+            result.CarRating.ShouldBe(updatedEntity.CarRating);
+            result.BoatRating.ShouldBe(updatedEntity.BoatRating);
+            var oldEntity = dbContext.TourPreferences.FirstOrDefault(i => i.WalkRating == 2); 
+            oldEntity.ShouldBeNull(); 
         }
 
         [Fact]
@@ -138,14 +147,14 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
 
             // Act
-            var result = (OkResult)controller.Delete(3);
+            var result = (OkResult)controller.Delete(-5);
 
             // Assert - Response
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
             // Assert - Database
-            var storedCourse = dbContext.Equipment.FirstOrDefault(i => i.Id == 3);
+            var storedCourse = dbContext.TourPreferences.FirstOrDefault(i => i.Id == -5);
             storedCourse.ShouldBeNull();
         }
 

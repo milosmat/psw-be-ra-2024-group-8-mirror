@@ -15,5 +15,11 @@ public class ToursContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("tours");
+        modelBuilder.Entity<Object>()
+    .Property(o => o.Category)
+    .HasConversion(
+        v => v.ToString(),
+        v => (ObjectCategory)Enum.Parse(typeof(ObjectCategory), v)
+    );
     }
 }

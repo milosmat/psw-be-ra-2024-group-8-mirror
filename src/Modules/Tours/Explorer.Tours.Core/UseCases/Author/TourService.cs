@@ -129,6 +129,30 @@ namespace Explorer.Tours.Core.UseCases.Author
                 return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }
         }
+        public Result UpdateCheckpointIds(int tourId, long checkpointId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
 
+                // Ažuriraj listu ID-eva checkpointa
+                if (!tour.TourCheckpointIds.Contains(checkpointId))
+                {
+                    tour.TourCheckpointIds.Add(checkpointId);
+                    CrudRepository.Update(tour);
+                    return Result.Ok();
+                }
+
+                return Result.Fail(FailureCode.InvalidArgument).WithError("Checkpoint ID already exists in the list");
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
     }
 }

@@ -104,5 +104,12 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        [HttpPut("{id:int}/checkpoint-ids/{checkpointId:long}")]
+        public ActionResult UpdateCheckpointIds(int id, long checkpointId)
+        {
+            var result = _tourService.UpdateCheckpointIds(id, checkpointId);
+            return CreateResponse(result);
+        }
+
     }
 }

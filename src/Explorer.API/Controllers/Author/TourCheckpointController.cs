@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Explorer.API.Controllers.Author
 {
     [Authorize(Policy = "authorPolicy")]
-    [Route("api/author/tour-checkpoints")]
+    [Route("api/author/tours/tour-checkpoints")]
     public class TourCheckpointController : BaseApiController
     {
         private readonly ITourCheckpointService _tourCheckpointService;

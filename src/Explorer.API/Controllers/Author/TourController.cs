@@ -3,6 +3,7 @@ using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Explorer.Tours.API.Public.Administration;
 
 namespace Explorer.API.Controllers.Author
 {
@@ -11,16 +12,25 @@ namespace Explorer.API.Controllers.Author
     public class TourController : BaseApiController
     {
        private readonly ITourService _tourService;
+       private readonly IEquipmentService _equipmentService;
 
-        public TourController(ITourService tourService)
+        public TourController(ITourService tourService, IEquipmentService equipmentService)
         {
             _tourService = tourService;
+            _equipmentService = equipmentService;
         }
 
         [HttpGet]
         public ActionResult<PagedResult<TourDTO>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
         {
             var result = _tourService.GetPaged(page, pageSize);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("equipment/{id:int}")]
+        public ActionResult<EquipmentDto> GetEquipment(int id)
+        {
+            var result = _equipmentService.Get(id);
             return CreateResponse(result);
         }
 

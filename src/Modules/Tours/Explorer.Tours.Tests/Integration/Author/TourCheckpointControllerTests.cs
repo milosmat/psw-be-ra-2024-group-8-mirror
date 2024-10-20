@@ -29,7 +29,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var newCheckpoint = new TourCheckpointDto
             {
-                Id = 0,
+                Id = 0, // This ID will be ignored and auto-generated in the database
                 Latitude = 45.2671,
                 Longitude = 19.8335,
                 Name = "Novi Sad",
@@ -42,14 +42,16 @@ namespace Explorer.Tours.Tests.Integration.Author
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldNotBe(0);
+            result.Id.ShouldNotBe(0);  // ID should be auto-generated and not 0
             result.Name.ShouldBe(newCheckpoint.Name);
 
             // Assert - Database
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Name == newCheckpoint.Name);
-            storedCheckpoint.ShouldNotBeNull();
-            storedCheckpoint.Id.ShouldBe(result.Id);
+            // Use the ID from the result instead of newCheckpoint.Id
+            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == result.Id);
+            storedCheckpoint.ShouldNotBeNull();  // Ensure the checkpoint is found
+            storedCheckpoint.Name.ShouldBe(result.Name);  // Ensure the data matches
         }
+
 
         [Fact]
         public void Create_fails_invalid_data()

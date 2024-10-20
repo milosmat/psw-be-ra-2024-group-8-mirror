@@ -73,5 +73,26 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        [HttpGet("{id:int}/checkpoint-ids")]
+        public ActionResult<List<long>> GetCheckpointIds(int id)
+        {
+            var result = _tourService.GetCheckpointIds(id);
+            return CreateResponse(result);
+        }
+
+        [HttpPost("{id:int}/checkpoint-ids/{checkpointId:long}")]
+        public ActionResult AddCheckpointId(int id, long checkpointId)
+        {
+            var result = _tourService.AddCheckpointId(id, checkpointId);
+            return CreateResponse(result);
+        }
+
+        [HttpDelete("{id:int}/checkpoint-ids/{checkpointId:long}")]
+        public ActionResult RemoveCheckpointId(int id, long checkpointId)
+        {
+            var result = _tourService.RemoveCheckpointId(id, checkpointId);
+            return CreateResponse(result);
+        }
+
     }
 }

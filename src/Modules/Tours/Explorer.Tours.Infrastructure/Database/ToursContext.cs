@@ -15,11 +15,18 @@ public class ToursContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("tours");
+ feat/autor-objekat
         modelBuilder.Entity<Object>()
     .Property(o => o.Category)
     .HasConversion(
         v => v.ToString(),
         v => (ObjectCategory)Enum.Parse(typeof(ObjectCategory), v)
     );
+
+
+        modelBuilder.Entity<Equipment>().ToTable("Equipment");
+        modelBuilder.Entity<Tour>().ToTable("Tours");
+        modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoints");
+
     }
 }

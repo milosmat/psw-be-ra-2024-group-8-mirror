@@ -14,6 +14,8 @@ public class Tour : Entity
     public String[] Tags { get; init; }
     public TourStatus Status { get; init; }
     public Decimal? Price { get; init; }
+    public List<long> equipmentIds { get; init; }
+    public List<long> TourCheckpointIds { get; init; }
 
     public Tour(string name, string description, string weight, string[] tags)
     {
@@ -24,6 +26,8 @@ public class Tour : Entity
         Tags = tags;
         Status = TourStatus.DRAFT;
         Price = new Decimal(0);
+        equipmentIds = new List<long>();
+        TourCheckpointIds = new List<long>();
     }
 }
 

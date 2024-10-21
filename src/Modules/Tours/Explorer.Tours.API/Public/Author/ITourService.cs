@@ -16,5 +16,14 @@ namespace Explorer.Tours.API.Public.Author
         Result<TourDTO> Create(TourDTO tourDto);
         Result<TourDTO> Update(TourDTO tourDto);
         Result Delete(int id);
+
+        Result<List<long>> GetEquipmentIds(int tourId);
+        Result AddEquipmentId(int tourId, long equipmentId);
+        Result RemoveEquipmentId(int tourId, long equipmentId);
+
+        Result<List<long>> GetCheckpointIds(int tourId);
+        Result AddCheckpointId(int tourId, long checkpointId);
+        Result RemoveCheckpointId(int tourId, long checkpointId);
+        Result UpdateCheckpointIds(int id, long checkpointIds);
     }
 }

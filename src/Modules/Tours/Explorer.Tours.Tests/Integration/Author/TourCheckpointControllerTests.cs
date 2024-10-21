@@ -29,11 +29,11 @@ namespace Explorer.Tours.Tests.Integration.Author
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var newCheckpoint = new TourCheckpointDto
             {
-                Id = 0,
+                Id = 0, // This ID will be ignored and auto-generated in the database
                 Latitude = 45.2671,
                 Longitude = 19.8335,
-                Name = "Novi Sad",
-                Description = "Glavni grad Vojvodine.",
+                CheckpointName = "Novi Sad",
+                CheckpointDescription = "Glavni grad Vojvodine.",
                 Image = "url_to_image"
             };
 
@@ -42,14 +42,16 @@ namespace Explorer.Tours.Tests.Integration.Author
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldNotBe(0);
-            result.Name.ShouldBe(newCheckpoint.Name);
+            result.Id.ShouldNotBe(0);  // ID should be auto-generated and not 0
+            result.CheckpointName.ShouldBe(newCheckpoint.CheckpointName);
 
             // Assert - Database
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Name == newCheckpoint.Name);
-            storedCheckpoint.ShouldNotBeNull();
-            storedCheckpoint.Id.ShouldBe(result.Id);
+            // Use the ID from the result instead of newCheckpoint.Id
+            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == result.Id);
+            storedCheckpoint.ShouldNotBeNull();  // Ensure the checkpoint is found
+            storedCheckpoint.CheckpointName.ShouldBe(result.CheckpointName);  // Ensure the data matches
         }
+
 
         [Fact]
         public void Create_fails_invalid_data()
@@ -59,7 +61,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var controller = CreateController(scope);
             var invalidCheckpoint = new TourCheckpointDto
             {
-                Description = "Opis bez imena"
+                CheckpointDescription = "Opis bez imena"
             };
 
             // Act
@@ -82,8 +84,8 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Id = 1,
                 Latitude = 45.2671,
                 Longitude = 19.8335,
-                Name = "Izmenjeni Novi Sad",
-                Description = "Izmenjen opis glavnog grada Vojvodine.",
+                CheckpointName = "Izmenjeni Novi Sad",
+                CheckpointDescription = "Izmenjen opis glavnog grada Vojvodine.",
                 Image = "url_to_updated_image"
             };
 
@@ -93,12 +95,12 @@ namespace Explorer.Tours.Tests.Integration.Author
             // Assert
             result.ShouldNotBeNull();
             result.Id.ShouldBe(updatedCheckpoint.Id);
-            result.Name.ShouldBe(updatedCheckpoint.Name);
-            result.Description.ShouldBe(updatedCheckpoint.Description);
+            result.CheckpointName.ShouldBe(updatedCheckpoint.CheckpointName);
+            result.CheckpointDescription.ShouldBe(updatedCheckpoint.CheckpointDescription);
 
             var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == updatedCheckpoint.Id);
             storedCheckpoint.ShouldNotBeNull();
-            storedCheckpoint.Description.ShouldBe(updatedCheckpoint.Description);
+            storedCheckpoint.CheckpointDescription.ShouldBe(updatedCheckpoint.CheckpointDescription);
         }
 
         [Fact]
@@ -112,8 +114,8 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Id = -1000,
                 Latitude = 45.2671,
                 Longitude = 19.8335,
-                Name = "Novi Sad",
-                Description = "Glavni grad Vojvodine.",
+                CheckpointName = "Novi Sad",
+                CheckpointDescription = "Glavni grad Vojvodine.",
                 Image = "url_to_image"
             };
 

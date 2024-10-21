@@ -12,7 +12,18 @@ namespace Explorer.Tours.Core.UseCases.Author
         public TourService(ICrudRepository<Tour> repository, IMapper mapper) : base(repository, mapper) 
         {
         }
-
+        public Result<List<long>> GetCheckpointIds(int tourId)
+        {
+            try
+            {
+                var tourResult = CrudRepository.Get(tourId);
+                return Result.Ok(tourResult.TourCheckpointIds);
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+        }
         public Result<List<long>> GetEquipmentIds(int tourId)
         {
             try
@@ -26,6 +37,29 @@ namespace Explorer.Tours.Core.UseCases.Author
             }
         }
 
+        public Result AddCheckpointId(int tourId, long checkpointId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
+
+                if (!tour.TourCheckpointIds.Contains(checkpointId))
+                {
+                    tour.TourCheckpointIds.Add(checkpointId);
+                    CrudRepository.Update(tour);
+                    return Result.Ok();
+                }
+                return Result.Fail(FailureCode.InvalidArgument).WithError("Checkpoint ID already exists in the list");
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
         public Result AddEquipmentId(int tourId, long equipmentId)
         {
             try
@@ -49,7 +83,29 @@ namespace Explorer.Tours.Core.UseCases.Author
                 return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }
         }
+        public Result RemoveCheckpointId(int tourId, long checkpointId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
 
+                if (tour.TourCheckpointIds.Contains(checkpointId))
+                {
+                    tour.TourCheckpointIds.Remove(checkpointId);
+                    CrudRepository.Update(tour);
+                    return Result.Ok();
+                }
+                return Result.Fail(FailureCode.InvalidArgument).WithError("Equipment ID not found in the list");
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
         public Result RemoveEquipmentId(int tourId, long equipmentId)
         {
             try
@@ -73,6 +129,30 @@ namespace Explorer.Tours.Core.UseCases.Author
                 return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }
         }
+        public Result UpdateCheckpointIds(int tourId, long checkpointId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
 
+                // Ažuriraj listu ID-eva checkpointa
+                if (!tour.TourCheckpointIds.Contains(checkpointId))
+                {
+                    tour.TourCheckpointIds.Add(checkpointId);
+                    CrudRepository.Update(tour);
+                    return Result.Ok();
+                }
+
+                return Result.Fail(FailureCode.InvalidArgument).WithError("Checkpoint ID already exists in the list");
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
     }
 }

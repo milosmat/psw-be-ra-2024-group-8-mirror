@@ -84,13 +84,13 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var updatedEntity = new TourPreferencesDto
             {
-                Id = -5,
+                Id = -1,
                 Difficulty = DifficultyLevel.EASY,
                 WalkRating = 0,
                 BikeRating = 2,
                 CarRating = 2,
                 BoatRating = 2,
-                InterestTags = new List<string>() { "rucnoDodar" }
+                InterestTags = new List<string>() { "rucnoDodat" }
             };
 
             // Act
@@ -98,7 +98,7 @@ namespace Explorer.Tours.Tests.Integration.Administration
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(-5);
+            result.Id.ShouldBe(-1);
             result.Difficulty.ShouldBe(updatedEntity.Difficulty);
             result.WalkRating.ShouldBe(updatedEntity.WalkRating);   
             result.BikeRating.ShouldBe(updatedEntity.BikeRating);
@@ -147,14 +147,14 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
 
             // Act
-            var result = (OkResult)controller.Delete(-5);
+            var result = (OkResult)controller.Delete(-1);
 
             // Assert - Response
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
             // Assert - Database
-            var storedCourse = dbContext.TourPreferences.FirstOrDefault(i => i.Id == -5);
+            var storedCourse = dbContext.TourPreferences.FirstOrDefault(i => i.Id == -1);
             storedCourse.ShouldBeNull();
         }
 

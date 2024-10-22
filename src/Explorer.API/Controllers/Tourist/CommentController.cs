@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Explorer.API.Controllers.Tourist
 {
-    [Authorize(Policy = "touristPolicy")]
+    [Authorize]
     [Route("api/tourist/comment")]
     public class CommentController : BaseApiController
     {
@@ -24,6 +24,7 @@ namespace Explorer.API.Controllers.Tourist
             return CreateResponse(result);
         }
 
+        [Authorize(Policy = "touristPolicy")]
         [HttpPost]
         public ActionResult<CommentDto> Create([FromBody] CommentDto comment)
         {
@@ -31,6 +32,7 @@ namespace Explorer.API.Controllers.Tourist
             return CreateResponse(result);
         }
 
+        [Authorize(Policy = "touristPolicy")]
         [HttpPut("{id:int}")]
         public ActionResult<CommentDto> Update([FromBody] CommentDto comment)
         {
@@ -38,6 +40,7 @@ namespace Explorer.API.Controllers.Tourist
             return CreateResponse(result);
         }
 
+        [Authorize(Policy = "touristPolicy")]
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {

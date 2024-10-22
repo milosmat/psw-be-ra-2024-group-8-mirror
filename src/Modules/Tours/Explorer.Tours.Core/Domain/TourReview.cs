@@ -1,0 +1,32 @@
+﻿using Explorer.BuildingBlocks.Core.Domain;
+using Explorer.Stakeholders.Core.Domain;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Explorer.Tours.Core.Domain
+{
+    public class TourReview : Entity
+    {
+        public int Rating { get; init; }
+        public string Comment { get; init; }
+        public Person Person { get; init; }
+        public DateTime TourDate { get; init; }
+        public DateTime ReviewDate { get; init; }
+        public string[] Images { get; init; }
+
+        public TourReview(int rating, string comment, DateTime tourDate, DateTime reviewDate, string[] images)
+        {
+            if (rating < 1 || rating > 5) throw new ArgumentException("Rating must be between 1 and 5.");
+            if (tourDate > reviewDate) throw new ArgumentException("Tour date cannot be later than the review date.");
+
+            Rating = rating;
+            Comment = comment;
+            TourDate = tourDate;
+            ReviewDate = reviewDate;
+            Images = images ?? Array.Empty<string>();
+        }
+    }
+}

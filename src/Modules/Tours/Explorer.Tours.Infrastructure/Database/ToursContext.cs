@@ -15,7 +15,6 @@ public class ToursContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("tours");
- feat/autor-objekat
         modelBuilder.Entity<Object>()
     .Property(o => o.Category)
     .HasConversion(

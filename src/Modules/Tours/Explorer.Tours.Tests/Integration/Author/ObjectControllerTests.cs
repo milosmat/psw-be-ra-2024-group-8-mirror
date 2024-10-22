@@ -45,7 +45,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.Name.ShouldBe(newObject.Name);
 
             // Assert - Database
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Name == newObject.Name);
+            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.CheckpointName == newObject.Name);
             storedCheckpoint.ShouldNotBeNull();
             storedCheckpoint.Id.ShouldBe(result.Id);
         }

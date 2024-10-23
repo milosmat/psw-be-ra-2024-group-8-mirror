@@ -28,18 +28,22 @@ namespace Explorer.Tours.Core.UseCases.Tourist
         {
             try
             {
+                if (touristEquipmentDto == null)
+                {
+                    return Result.Fail(FailureCode.InvalidArgument).WithError("TouristEquipmentDTO cannot be null.");
+                }
                 var touristEquipment = _mapper.Map<TouristEquipment>(touristEquipmentDto);
-
-                // Kreiraj TouristEquipment u bazi
                 var createdTouristEquipment = _touristEquipmentRepository.Create(touristEquipment);
-
-                // Mapiraj nazad u DTO i vrati rezultat
+                if (createdTouristEquipment == null)
+                {
+                    return Result.Fail(FailureCode.InvalidArgument).WithError("Creation failed.");
+                }
                 var createdTouristEquipmentDto = _mapper.Map<TouristEquipmentDTO>(createdTouristEquipment);
                 return Result.Ok(createdTouristEquipmentDto);
             }
             catch (Exception e)
             {
-                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }
         }
 

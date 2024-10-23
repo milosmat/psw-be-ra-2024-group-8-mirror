@@ -47,7 +47,7 @@ namespace Explorer.Tours.Tests.Integration.Author
 
             // Assert - Database
             // Use the ID from the result instead of newCheckpoint.Id
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == result.Id);
+            var storedCheckpoint = dbContext.TourCheckpoint.FirstOrDefault(i => i.Id == result.Id);
             storedCheckpoint.ShouldNotBeNull();  // Ensure the checkpoint is found
             storedCheckpoint.CheckpointName.ShouldBe(result.CheckpointName);  // Ensure the data matches
         }
@@ -98,7 +98,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.CheckpointName.ShouldBe(updatedCheckpoint.CheckpointName);
             result.CheckpointDescription.ShouldBe(updatedCheckpoint.CheckpointDescription);
 
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == updatedCheckpoint.Id);
+            var storedCheckpoint = dbContext.TourCheckpoint.FirstOrDefault(i => i.Id == updatedCheckpoint.Id);
             storedCheckpoint.ShouldNotBeNull();
             storedCheckpoint.CheckpointDescription.ShouldBe(updatedCheckpoint.CheckpointDescription);
         }
@@ -138,7 +138,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == 1);
+            var storedCheckpoint = dbContext.TourCheckpoint.FirstOrDefault(i => i.Id == 1);
             storedCheckpoint.ShouldBeNull();
         }
 

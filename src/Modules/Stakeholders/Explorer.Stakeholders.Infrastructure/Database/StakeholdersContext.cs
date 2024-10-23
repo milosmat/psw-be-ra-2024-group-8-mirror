@@ -9,6 +9,8 @@ public class StakeholdersContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Person> People { get; set; }
+    public DbSet<Club> Clubs { get; set; }
+
 
     public DbSet<AppRating> AppRatings { get; set; }
 
@@ -23,6 +25,8 @@ public class StakeholdersContext : DbContext
         //modelBuilder.HasDefaultSchema("appRatings");
 
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
+        modelBuilder.Entity<Club>().ToTable("Clubs");
+
 
         ConfigureStakeholder(modelBuilder);
 

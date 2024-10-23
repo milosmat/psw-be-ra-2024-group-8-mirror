@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Explorer.API.Controllers.Tourist;
 using Explorer.Tours.API.Public.Tourist;
+using Explorer.Tours.API.Public.Administration;
 
 namespace Explorer.Tours.Tests.Integration.Author
 {
@@ -156,7 +157,7 @@ namespace Explorer.Tours.Tests.Integration.Author
 
         private static TouristEquipmentController CreateController(IServiceScope scope)
         {
-            return new TouristEquipmentController(scope.ServiceProvider.GetRequiredService<ITouristEquipmentService>())
+            return new TouristEquipmentController(scope.ServiceProvider.GetRequiredService<ITouristEquipmentService>(), scope.ServiceProvider.GetRequiredService<IEquipmentService>())
             {
                 ControllerContext = BuildContext("-1")
             };

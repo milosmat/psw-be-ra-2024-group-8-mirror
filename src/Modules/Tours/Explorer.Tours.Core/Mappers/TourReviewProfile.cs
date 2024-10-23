@@ -11,7 +11,7 @@ namespace Explorer.Tours.Core.Mappers
 {
     public class TourReviewProfile : Profile
     {
-
+        // gf
         public TourReviewProfile() {
             CreateMap<TourReviewDto, TourReview>().ReverseMap();
         }

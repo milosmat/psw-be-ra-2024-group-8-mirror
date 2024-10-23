@@ -17,6 +17,8 @@ namespace Explorer.Tours.Core.Domain
         public DateTime ReviewDate { get; init; }
         public string[] Images { get; init; }
 
+        public TourReview() { }
+
         public TourReview(int rating, string comment,Person person, DateTime tourDate, DateTime reviewDate, string[] images)
         {
             if (rating < 1 || rating > 5) throw new ArgumentException("Rating must be between 1 and 5.");

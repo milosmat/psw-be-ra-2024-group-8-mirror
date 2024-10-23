@@ -13,6 +13,7 @@ namespace Explorer.Tours.API.Public.Administration
     {
         Result<PagedResult<TourReviewDto>> GetPaged(int page, int pageSize);
         Result<TourReviewDto> Create(TourReviewDto touristEquipment);
+        Result<TourReviewDto> Update(TourReviewDto tourReview);
         Result<TourReviewDto> Get(int id);
         Result Delete(int id);
     }

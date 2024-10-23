@@ -13,5 +13,7 @@ public class StakeholderProfile : Profile
 
         CreateMap<User, AccountInformationDto>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()));
+
+        CreateMap<ProblemDto, Problem>().ReverseMap();
     }
 }

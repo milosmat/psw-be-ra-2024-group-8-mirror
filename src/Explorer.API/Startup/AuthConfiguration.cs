@@ -15,7 +15,7 @@ public static class AuthConfiguration
 
     private static void ConfigureAuthentication(IServiceCollection services)
     {
-        var key = Environment.GetEnvironmentVariable("JWT_KEY") ?? "explorer_secret_key";
+        var key = Environment.GetEnvironmentVariable("JWT_KEY") ?? "your_new_very_long_and_secure_key_here_12345678901234";
         var issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "explorer";
         var audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "explorer-front.com";
 

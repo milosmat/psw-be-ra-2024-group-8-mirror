@@ -13,6 +13,8 @@ public class ToursContext : DbContext
     public DbSet<TourCheckpoint> TourCheckpoints { get; set; }
 
     public DbSet<TouristEquipment> TouristEquipments { get; set; }
+    
+    public DbSet<TourReview> TourReviews { get; set; }
 
     public DbSet<Object> Objects { get; set; }
 

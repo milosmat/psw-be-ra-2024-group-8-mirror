@@ -8,10 +8,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\Explorer.BuildingBlocks.Core\Explorer.BuildingBlocks.Core.csproj" />
+    <ProjectReference Include="..\..\Stakeholders\Explorer.Stakeholders.Core\Explorer.Stakeholders.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Internal\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
   </ItemGroup>
 
 </Project>

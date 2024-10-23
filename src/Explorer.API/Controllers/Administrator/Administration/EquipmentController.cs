@@ -44,5 +44,12 @@ namespace Explorer.API.Controllers.Administrator.Administration
             var result = _equipmentService.Delete(id);
             return CreateResponse(result);
         }
+
+        [HttpGet("{id:int}")]
+        public ActionResult<EquipmentDto> GetById(int id)
+        {
+            var result = _equipmentService.Get(id);
+            return CreateResponse(result);
+        }
     }
 }

@@ -10,6 +10,8 @@ using Explorer.Stakeholders.Infrastructure.Database;
 using Explorer.Stakeholders.Infrastructure.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection.Metadata;
+using System.Xml.Linq;
 
 namespace Explorer.Stakeholders.Infrastructure;
 
@@ -27,7 +29,11 @@ public static class StakeholdersStartup
     {
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITokenGenerator, JwtGenerator>();
+
+        services.AddScoped<IAppRatingService, AppRatingService>();
+
         services.AddScoped<IProblemService, ProblemService>();
+
     }
 
     private static void SetupInfrastructure(IServiceCollection services)
@@ -36,8 +42,12 @@ public static class StakeholdersStartup
         services.AddScoped(typeof(ICrudRepository<Problem>), typeof(CrudDatabaseRepository<Problem, StakeholdersContext>));
         services.AddScoped<IUserRepository, UserDatabaseRepository>();
 
+        services.AddScoped(typeof(ICrudRepository<AppRating>), typeof(CrudDatabaseRepository<AppRating, StakeholdersContext>));
+
         services.AddDbContext<StakeholdersContext>(opt =>
             opt.UseNpgsql(DbConnectionStringBuilder.Build("stakeholders"),
                 x => x.MigrationsHistoryTable("__EFMigrationsHistory", "stakeholders")));
     }
+    
+
 }

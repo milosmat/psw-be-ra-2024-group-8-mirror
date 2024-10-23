@@ -1,5 +1,6 @@
 ﻿using Explorer.Tours.Core.Domain;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Object = Explorer.Tours.Core.Domain.Object;
 
 namespace Explorer.Tours.Infrastructure.Database;
@@ -7,6 +8,7 @@ namespace Explorer.Tours.Infrastructure.Database;
 public class ToursContext : DbContext
 {
     public DbSet<Equipment> Equipment { get; set; }
+    public DbSet<TourPreferences> TourPreferences { get; set; }  
     public DbSet<Tour> Tours { get; set; }
     public DbSet<TourCheckpoint> TourCheckpoint { get; set; }
     public DbSet<Object> Objects { get; set; }

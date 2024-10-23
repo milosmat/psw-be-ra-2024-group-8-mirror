@@ -6,6 +6,7 @@ using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
+using Explorer.Tours.API.Public.Administration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -149,7 +150,7 @@ namespace Explorer.Tours.Tests.Integration.Author
 
         private static TourController CreateController(IServiceScope scope)
         {
-            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>())
+            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>(), scope.ServiceProvider.GetRequiredService<IEquipmentService>())
             {
                 ControllerContext = BuildContext("-1") 
             };

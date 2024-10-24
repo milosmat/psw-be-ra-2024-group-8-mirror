@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Explorer.API.Controllers.Tourist
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/tourist/comment")]
     public class CommentController : BaseApiController
     {

@@ -33,7 +33,9 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Name = "new object",
                 Description = "shiny new",
                 Image = "url_to_image",
-                Category = "Toilet"
+                Category = "Toilet",
+                Latitude = 42,
+                Longitude = 19
             };
 
             // Act
@@ -82,7 +84,9 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Name = "UPDATED object",
                 Description = "shiny UPDATED",
                 Image = "url_to_image",
-                Category = "Other"
+                Category = "Other",
+                Latitude = 42,
+                Longitude = 19
             };
 
             var result = ((ObjectResult)controller.Update(updatedObject).Result)?.Value as TourDTO;

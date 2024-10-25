@@ -14,10 +14,10 @@
 
   <ItemGroup>
     <Folder Include="Database\Repositories\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Data.SqlClient"
-						  Version="5.2.2" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
 
 	</ItemGroup>
 </Project>

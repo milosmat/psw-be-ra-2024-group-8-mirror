@@ -33,7 +33,9 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Name = "new object",
                 Description = "shiny new",
                 Image = "url_to_image",
-                Category = "Toilet"
+                Category = "Toilet",
+                Latitude = 42,
+                Longitude = 19
             };
 
             // Act
@@ -45,7 +47,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.Name.ShouldBe(newObject.Name);
 
             // Assert - Database
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.CheckpointName == newObject.Name);
+            var storedCheckpoint = dbContext.Tours.FirstOrDefault(i => i.Name == newObject.Name);
             storedCheckpoint.ShouldNotBeNull();
             storedCheckpoint.Id.ShouldBe(result.Id);
         }
@@ -82,7 +84,9 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Name = "UPDATED object",
                 Description = "shiny UPDATED",
                 Image = "url_to_image",
-                Category = "Other"
+                Category = "Other",
+                Latitude = 42,
+                Longitude = 19
             };
 
             var result = ((ObjectResult)controller.Update(updatedObject).Result)?.Value as TourDTO;

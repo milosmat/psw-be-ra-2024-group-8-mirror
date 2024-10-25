@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Security.Cryptography;  // Za generisanje nasumičnog ključa
 
 namespace Explorer.Stakeholders.Infrastructure.Authentication;
 

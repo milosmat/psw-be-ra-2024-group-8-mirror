@@ -24,8 +24,8 @@ public class ToursContext : DbContext
     {
         modelBuilder.HasDefaultSchema("tours");
         modelBuilder.Entity<Object>()
-    .Property(o => o.Category)
-    .HasConversion(
+        .Property(o => o.Category)
+        .HasConversion(
         v => v.ToString(),
         v => (ObjectCategory)Enum.Parse(typeof(ObjectCategory), v)
     );
@@ -33,7 +33,7 @@ public class ToursContext : DbContext
 
         modelBuilder.Entity<Equipment>().ToTable("Equipment");
         modelBuilder.Entity<Tour>().ToTable("Tours");
-        modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoints");
+        modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
 
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
 

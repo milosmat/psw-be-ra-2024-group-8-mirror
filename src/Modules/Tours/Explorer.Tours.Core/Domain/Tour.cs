@@ -1,4 +1,5 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
+using Explorer.Tours.Core.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,14 @@ public class Tour : Entity
     public String[] Tags { get; init; }
     public TourStatus Status { get; init; }
     public Decimal? Price { get; init; }
-    public List<long> equipmentIds { get; init; }
-    public List<long> TourCheckpointIds { get; init; }
+    public long LengthInKm { get; init; }
+    public DateTime PublishedDate { get; init; }
+    public DateTime ArchivedDate {  get; init; }
+    public List<TravelTime> TravelTimes { get; init; }
+    public List<Equipment> Equipments { get; init; }
+    public List<TourCheckpoint> TourCheckpoints { get; init; }
 
-    public Tour(string name, string description, string weight, string[] tags)
+    public Tour(string name, string description, string weight, string[] tags, long lengthInKm, DateTime publishedDate, DateTime archivedDate)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
         Name = name;
@@ -26,13 +31,17 @@ public class Tour : Entity
         Tags = tags;
         Status = TourStatus.DRAFT;
         Price = new Decimal(0);
-        equipmentIds = new List<long>();
-        TourCheckpointIds = new List<long>();
+        LengthInKm = lengthInKm;
+        PublishedDate = publishedDate;
+        ArchivedDate = archivedDate;
+        TravelTimes = new List<TravelTime>();
+        Equipments = new List<Equipment>();
+        TourCheckpoints = new List<TourCheckpoint>();
     }
 }
 
 public enum TourStatus
 {
-    DRAFT, PUBLISHED,
+    DRAFT, PUBLISHED, ARCHIVED
 }
 

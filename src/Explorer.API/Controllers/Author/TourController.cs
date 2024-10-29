@@ -4,6 +4,9 @@ using Explorer.Tours.API.Public.Author;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Explorer.Tours.API.Public.Administration;
+using Explorer.Tours.Core.Domain;
+using FluentResults;
+using Explorer.Stakeholders.Core.Domain;
 
 namespace Explorer.API.Controllers.Author
 {
@@ -13,11 +16,14 @@ namespace Explorer.API.Controllers.Author
     {
        private readonly ITourService _tourService;
        private readonly IEquipmentService _equipmentService;
+        private readonly ITourCheckpointService _tourCheckpointService;
+        
 
-        public TourController(ITourService tourService, IEquipmentService equipmentService)
+        public TourController(ITourService tourService, IEquipmentService equipmentService, ITourCheckpointService checkpointService)
         {
             _tourService = tourService;
             _equipmentService = equipmentService;
+            _tourCheckpointService = checkpointService;
         }
 
         [HttpGet]

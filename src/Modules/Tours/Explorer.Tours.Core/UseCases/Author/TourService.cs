@@ -9,15 +9,26 @@ namespace Explorer.Tours.Core.UseCases.Author
 {
     public class TourService : CrudService<TourDTO, Tour>, ITourService
     {
-        public TourService(ICrudRepository<Tour> repository, IMapper mapper) : base(repository, mapper) 
+        private readonly ICrudRepository<TourCheckpoint> _tourCheckpointRepository;
+        private readonly ICrudRepository<Equipment> _equipmentRepository;
+        public TourService(ICrudRepository<Tour> repository, IMapper mapper, 
+            ICrudRepository<TourCheckpoint> tourCheckpointRepository,
+            ICrudRepository<Equipment> equipmentRepository) : base(repository, mapper) 
         {
+            _tourCheckpointRepository = tourCheckpointRepository;
+            _equipmentRepository = equipmentRepository;
         }
         public Result<List<long>> GetCheckpointIds(int tourId)
         {
             try
             {
                 var tourResult = CrudRepository.Get(tourId);
-                return Result.Ok(tourResult.TourCheckpointIds);
+                List<long> result = new List<long>();
+                foreach (var item in tourResult.TourCheckpoints)
+                {
+                    result.Add(item.Id);
+                }
+                return Result.Ok(result);
             }
             catch (KeyNotFoundException e)
             {
@@ -29,7 +40,12 @@ namespace Explorer.Tours.Core.UseCases.Author
             try
             {
                 var tourResult = CrudRepository.Get(tourId);
-                return Result.Ok(tourResult.equipmentIds);
+                List<long> result = new List<long>();
+                foreach (var item in tourResult.Equipments)
+                {
+                    result.Add(item.Id);
+                }
+                return Result.Ok(result);
             }
             catch (KeyNotFoundException e)
             {
@@ -42,10 +58,11 @@ namespace Explorer.Tours.Core.UseCases.Author
             try
             {
                 var tour = CrudRepository.Get(tourId);
+                var tourCheckpoint = _tourCheckpointRepository.Get(checkpointId);
 
-                if (!tour.TourCheckpointIds.Contains(checkpointId))
+                if (!tour.TourCheckpoints.Contains(tourCheckpoint))
                 {
-                    tour.TourCheckpointIds.Add(checkpointId);
+                    tour.TourCheckpoints.Add(tourCheckpoint);
                     CrudRepository.Update(tour);
                     return Result.Ok();
                 }
@@ -65,10 +82,11 @@ namespace Explorer.Tours.Core.UseCases.Author
             try
             {
                 var tour = CrudRepository.Get(tourId);
+                var equipment = _equipmentRepository.Get(equipmentId);
 
-                if (!tour.equipmentIds.Contains(equipmentId))
+                if (!tour.Equipments.Contains(equipment))
                 {
-                    tour.equipmentIds.Add(equipmentId);
+                    tour.Equipments.Add(equipment);
                     CrudRepository.Update(tour); 
                     return Result.Ok();
                 }
@@ -88,10 +106,10 @@ namespace Explorer.Tours.Core.UseCases.Author
             try
             {
                 var tour = CrudRepository.Get(tourId);
-
-                if (tour.TourCheckpointIds.Contains(checkpointId))
+                var tourCheckpoint = _tourCheckpointRepository.Get(checkpointId);
+                if (tour.TourCheckpoints.Contains(tourCheckpoint))
                 {
-                    tour.TourCheckpointIds.Remove(checkpointId);
+                    tour.TourCheckpoints.Remove(tourCheckpoint);
                     CrudRepository.Update(tour);
                     return Result.Ok();
                 }
@@ -111,10 +129,10 @@ namespace Explorer.Tours.Core.UseCases.Author
             try
             {
                 var tour = CrudRepository.Get(tourId);
-
-                if (tour.equipmentIds.Contains(equipmentId))
+                var equipment = _equipmentRepository.Get(equipmentId);
+                if (tour.Equipments.Contains(equipment))
                 {
-                    tour.equipmentIds.Remove(equipmentId);
+                    tour.Equipments.Remove(equipment);
                     CrudRepository.Update(tour); 
                     return Result.Ok();
                 }
@@ -134,11 +152,11 @@ namespace Explorer.Tours.Core.UseCases.Author
             try
             {
                 var tour = CrudRepository.Get(tourId);
-
-                // Ažuriraj listu ID-eva checkpointa
-                if (!tour.TourCheckpointIds.Contains(checkpointId))
+                var tourCheckpoint = _tourCheckpointRepository.Get(checkpointId);
+                // Ažuriraj listu checkpointa
+                if (!tour.TourCheckpoints.Contains(tourCheckpoint))
                 {
-                    tour.TourCheckpointIds.Add(checkpointId);
+                    tour.TourCheckpoints.Add(tourCheckpoint);
                     CrudRepository.Update(tour);
                     return Result.Ok();
                 }

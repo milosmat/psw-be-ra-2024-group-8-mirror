@@ -1,4 +1,5 @@
 ﻿using Explorer.Tours.Core.Domain;
+using Explorer.Tours.Core.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Object = Explorer.Tours.Core.Domain.Object;
 
@@ -26,6 +27,6 @@ public class ToursContext : DbContext
         modelBuilder.Entity<Equipment>().ToTable("Equipment");
         modelBuilder.Entity<Tour>().ToTable("Tours");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoints");
-
+        modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
     }
 }

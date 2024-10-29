@@ -35,6 +35,7 @@ public static class StakeholdersStartup
         services.AddScoped<IClubService, ClubService>();
         services.AddScoped<IAppRatingService, AppRatingService>();
         services.AddScoped<IProblemService, ProblemService>();
+        services.AddScoped<IProblemReplyService, ProblemReplyService>();
     }
 
     private static void SetupInfrastructure(IServiceCollection services)
@@ -42,6 +43,7 @@ public static class StakeholdersStartup
         services.AddScoped(typeof(ICrudRepository<User>), typeof(CrudDatabaseRepository<User, StakeholdersContext>));
         services.AddScoped(typeof(ICrudRepository<Person>), typeof(CrudDatabaseRepository<Person, StakeholdersContext>));
         services.AddScoped(typeof(ICrudRepository<Problem>), typeof(CrudDatabaseRepository<Problem, StakeholdersContext>));
+        services.AddScoped(typeof(ICrudRepository<ProblemReply>), typeof(CrudDatabaseRepository<ProblemReply, StakeholdersContext>));
         services.AddScoped<IUserRepository, UserDatabaseRepository>();
 
         services.AddScoped(typeof(ICrudRepository<Account>),typeof(CrudDatabaseRepository<Account,StakeholdersContext>));

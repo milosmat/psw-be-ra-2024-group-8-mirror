@@ -10,11 +10,12 @@ namespace Explorer.Stakeholders.Core.Domain
     public class Problem : Entity
     {
 
-        public Guid UserId { get; init; }
-        public string TourId { get; init; }
+        public int UserId { get; init; }
+        public int TourId { get; init; }
         public string Category { get; init; }
         public string Priority { get; init; }
         public string Description { get; init; }
+        public Boolean IsResolved { get; init; }
         public DateTime ReportedAt { get; init; }
     }
 }

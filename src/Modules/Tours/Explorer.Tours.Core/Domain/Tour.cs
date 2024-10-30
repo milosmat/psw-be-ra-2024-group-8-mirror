@@ -12,7 +12,7 @@ public class Tour : Entity
     public String Description { get; init; }
     public String Weight { get; init; }
     public String[] Tags { get; init; }
-    public TourStatus Status { get; init; }
+    public TourStatus Status { get; private set; }
     public Decimal? Price { get; init; }
     public List<long> equipmentIds { get; init; }
     public List<long> TourCheckpointIds { get; init; }
@@ -29,10 +29,20 @@ public class Tour : Entity
         equipmentIds = new List<long>();
         TourCheckpointIds = new List<long>();
     }
+
+    public void SetArchived()
+    {
+        Status = TourStatus.ARCHIVED;
+    }
+
+    public void setPublished()
+    {
+        Status = TourStatus.PUBLISHED;
+    }
 }
 
 public enum TourStatus
 {
-    DRAFT, PUBLISHED,
+    DRAFT, PUBLISHED, ARCHIVED
 }
 

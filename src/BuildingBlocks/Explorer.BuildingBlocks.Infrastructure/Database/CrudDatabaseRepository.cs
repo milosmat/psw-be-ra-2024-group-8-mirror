@@ -55,6 +55,7 @@ public class CrudDatabaseRepository<TEntity, TDbContext> : ICrudRepository<TEnti
     public void Delete(long id)
     {
         var entity = Get(id);
+        
         _dbSet.Remove(entity);
         DbContext.SaveChanges();
     }

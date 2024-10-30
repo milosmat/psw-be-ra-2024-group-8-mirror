@@ -13,7 +13,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Domain\RepositoryInterfaces\" />
+    <Folder Include="Domain\Entities\" />
   </ItemGroup>
 
   <ItemGroup>

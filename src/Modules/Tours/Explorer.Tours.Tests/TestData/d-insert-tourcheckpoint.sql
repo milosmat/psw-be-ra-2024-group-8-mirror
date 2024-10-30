@@ -1,4 +1,4 @@
-﻿INSERT INTO
+INSERT INTO
   tours.TourCheckpoints (Latitude, Longitude, Name, Description, Image)
 VALUES
   (
@@ -22,3 +22,4 @@ VALUES
     'Glavni grad Srbije.',
     'url_to_image_3'
   );
+

@@ -11,7 +11,8 @@ namespace Explorer.Stakeholders.Infrastructure.Authentication;
 
 public class JwtGenerator : ITokenGenerator
 {
-    private readonly string _key = Environment.GetEnvironmentVariable("JWT_KEY") ?? "explorer_secret_key";   
+    private readonly string _key = Environment.GetEnvironmentVariable("JWT_KEY") ?? "your_new_very_long_and_secure_key_here_12345678901234";
+
     private readonly string _issuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "explorer";
     private readonly string _audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "explorer-front.com";
 
@@ -27,14 +28,14 @@ public class JwtGenerator : ITokenGenerator
             new("personId", personId.ToString()),
             new(ClaimTypes.Role, user.GetPrimaryRoleName())
         };
-            
-        var jwt = CreateToken(claims, 60*24);
+
+        var jwt = CreateToken(claims, 60 * 24);
         authenticationResponse.Id = user.Id;
         authenticationResponse.AccessToken = jwt;
-            
+
         return authenticationResponse;
     }
-        
+
     private string CreateToken(IEnumerable<Claim> claims, double expirationTimeInMinutes)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));

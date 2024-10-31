@@ -3,10 +3,9 @@ using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.Core.Domain;
 using FluentResults;
-using Explorer.Stakeholders.Core.Domain;
+using Explorer.Tours.API.Public.Administration;
 
 namespace Explorer.API.Controllers.Author
 {
@@ -14,36 +13,20 @@ namespace Explorer.API.Controllers.Author
     [Route("api/author/tours")]
     public class TourController : BaseApiController
     {
-       private readonly ITourService _tourService;
-       private readonly IEquipmentService _equipmentService;
-        private readonly ITourCheckpointService _tourCheckpointService;
-        
+        private readonly ITourService _tourService;
 
+        private readonly IEquipmentService _equipmentService;
+        private readonly ITourCheckpointService _tourCheckpointService;
         public TourController(ITourService tourService, IEquipmentService equipmentService, ITourCheckpointService checkpointService)
         {
             _tourService = tourService;
             _equipmentService = equipmentService;
             _tourCheckpointService = checkpointService;
         }
-
         [HttpGet]
         public ActionResult<PagedResult<TourDTO>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
         {
             var result = _tourService.GetPaged(page, pageSize);
-            return CreateResponse(result);
-        }
-
-        [HttpGet("equipment/{id:int}")]
-        public ActionResult<EquipmentDto> GetEquipment(int id)
-        {
-            var result = _equipmentService.Get(id);
-            return CreateResponse(result);
-        }
-
-        [HttpGet("equipment")]
-        public ActionResult<PagedResult<EquipmentDto>> GetAllEquipment([FromQuery] int page, [FromQuery] int pageSize)
-        {
-            var result = _equipmentService.GetPaged(page, pageSize);
             return CreateResponse(result);
         }
 
@@ -75,54 +58,36 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
-        [HttpGet("{id:int}/equipment-ids")]
-        public ActionResult<List<long>> GetEquipmentIds(int id)
+        // Route to add equipment to a tour
+        [HttpPost("{id:int}/equipment")]
+        public ActionResult AddEquipment(int id, [FromBody] EquipmentDto equipmentDto)
         {
-            var result = _tourService.GetEquipmentIds(id);
+            var result = _tourService.AddEquipment(id, equipmentDto);
             return CreateResponse(result);
         }
 
-        [HttpPost("{id:int}/equipment-ids/{equipmentId:long}")]
-        public ActionResult AddEquipmentId(int id, long equipmentId)
+        // Route to remove equipment from a tour
+        [HttpDelete("{id:int}/equipment")]
+        public ActionResult RemoveEquipment(int id, [FromBody] EquipmentDto equipmentDto)
         {
-            var result = _tourService.AddEquipmentId(id, equipmentId);
+            var result = _tourService.RemoveEquipment(id, equipmentDto);
             return CreateResponse(result);
         }
 
-        [HttpDelete("{id:int}/equipment-ids/{equipmentId:long}")]
-        public ActionResult RemoveEquipmentId(int id, long equipmentId)
+        // Route to add a checkpoint to a tour
+        [HttpPost("{id:int}/checkpoints")]
+        public ActionResult AddCheckpoint(int id, [FromBody] TourCheckpointDto checkpointDto)
         {
-            var result = _tourService.RemoveEquipmentId(id, equipmentId);
+            var result = _tourService.AddCheckpoint(id, checkpointDto);
             return CreateResponse(result);
         }
 
-        [HttpGet("{id:int}/checkpoint-ids")]
-        public ActionResult<List<long>> GetCheckpointIds(int id)
+        // Route to remove a checkpoint from a tour
+        [HttpDelete("{id:int}/checkpoints")]
+        public ActionResult RemoveCheckpoint(int id, [FromBody] TourCheckpointDto checkpointDto)
         {
-            var result = _tourService.GetCheckpointIds(id);
+            var result = _tourService.RemoveCheckpoint(id, checkpointDto);
             return CreateResponse(result);
         }
-
-        [HttpPost("{id:int}/checkpoint-ids/{checkpointId:long}")]
-        public ActionResult AddCheckpointId(int id, long checkpointId)
-        {
-            var result = _tourService.AddCheckpointId(id, checkpointId);
-            return CreateResponse(result);
-        }
-
-        [HttpDelete("{id:int}/checkpoint-ids/{checkpointId:long}")]
-        public ActionResult RemoveCheckpointId(int id, long checkpointId)
-        {
-            var result = _tourService.RemoveCheckpointId(id, checkpointId);
-            return CreateResponse(result);
-        }
-
-        [HttpPut("{id:int}/checkpoint-ids/{checkpointId:long}")]
-        public ActionResult UpdateCheckpointIds(int id, long checkpointId)
-        {
-            var result = _tourService.UpdateCheckpointIds(id, checkpointId);
-            return CreateResponse(result);
-        }
-
     }
 }

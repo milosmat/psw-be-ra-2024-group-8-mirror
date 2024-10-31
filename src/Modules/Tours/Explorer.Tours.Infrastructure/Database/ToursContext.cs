@@ -35,7 +35,7 @@ public class ToursContext : DbContext
         modelBuilder.Entity<Equipment>().ToTable("Equipment");
         modelBuilder.Entity<Tour>().ToTable("Tours");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoints");
-        modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
+        //modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
 

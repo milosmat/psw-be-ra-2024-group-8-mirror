@@ -11,166 +11,69 @@ namespace Explorer.Tours.Core.UseCases.Author
     {
         private readonly ICrudRepository<TourCheckpoint> _tourCheckpointRepository;
         private readonly ICrudRepository<Equipment> _equipmentRepository;
-        public TourService(ICrudRepository<Tour> repository, IMapper mapper, 
+        private readonly IMapper _mapper;
+        public TourService(ICrudRepository<Tour> repository, IMapper mapper,
             ICrudRepository<TourCheckpoint> tourCheckpointRepository,
-            ICrudRepository<Equipment> equipmentRepository) : base(repository, mapper) 
+            ICrudRepository<Equipment> equipmentRepository) : base(repository, mapper)
         {
             _tourCheckpointRepository = tourCheckpointRepository;
             _equipmentRepository = equipmentRepository;
         }
-        public Result<List<long>> GetCheckpointIds(int tourId)
+
+        public Result AddEquipment(int tourId, EquipmentDto equipmentDto)
         {
-            try
-            {
-                var tourResult = CrudRepository.Get(tourId);
-                List<long> result = new List<long>();
-                foreach (var item in tourResult.TourCheckpoints)
-                {
-                    result.Add(item.Id);
-                }
-                return Result.Ok(result);
-            }
-            catch (KeyNotFoundException e)
-            {
-                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
-            }
-        }
-        public Result<List<long>> GetEquipmentIds(int tourId)
-        {
-            try
-            {
-                var tourResult = CrudRepository.Get(tourId);
-                List<long> result = new List<long>();
-                foreach (var item in tourResult.Equipments)
-                {
-                    result.Add(item.Id);
-                }
-                return Result.Ok(result);
-            }
-            catch (KeyNotFoundException e)
-            {
-                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
-            }
+            var equipment = _mapper.Map<Equipment>(equipmentDto);
+            var tour = CrudRepository.Get(tourId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+
+            var result = tour.AddEquipment(equipment);
+            if (result.IsSuccess)
+                CrudRepository.Update(tour);
+
+            return result;
         }
 
-        public Result AddCheckpointId(int tourId, long checkpointId)
+        public Result RemoveEquipment(int tourId, EquipmentDto equipmentDto)
         {
-            try
-            {
-                var tour = CrudRepository.Get(tourId);
-                var tourCheckpoint = _tourCheckpointRepository.Get(checkpointId);
+            var equipment = _mapper.Map<Equipment>(equipmentDto);
+            var tour = CrudRepository.Get(tourId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
 
-                if (!tour.TourCheckpoints.Contains(tourCheckpoint))
-                {
-                    tour.TourCheckpoints.Add(tourCheckpoint);
-                    CrudRepository.Update(tour);
-                    return Result.Ok();
-                }
-                return Result.Fail(FailureCode.InvalidArgument).WithError("Checkpoint ID already exists in the list");
-            }
-            catch (KeyNotFoundException e)
-            {
-                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
-            }
-            catch (ArgumentException e)
-            {
-                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
-            }
-        }
-        public Result AddEquipmentId(int tourId, long equipmentId)
-        {
-            try
-            {
-                var tour = CrudRepository.Get(tourId);
-                var equipment = _equipmentRepository.Get(equipmentId);
+            var result = tour.RemoveEquipment(equipment);
+            if (result.IsSuccess)
+                CrudRepository.Update(tour);
 
-                if (!tour.Equipments.Contains(equipment))
-                {
-                    tour.Equipments.Add(equipment);
-                    CrudRepository.Update(tour); 
-                    return Result.Ok();
-                }
-                return Result.Fail(FailureCode.InvalidArgument).WithError("Equipment ID already exists in the list");
-            }
-            catch (KeyNotFoundException e)
-            {
-                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
-            }
-            catch (ArgumentException e)
-            {
-                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
-            }
+            return result;
         }
-        public Result RemoveCheckpointId(int tourId, long checkpointId)
-        {
-            try
-            {
-                var tour = CrudRepository.Get(tourId);
-                var tourCheckpoint = _tourCheckpointRepository.Get(checkpointId);
-                if (tour.TourCheckpoints.Contains(tourCheckpoint))
-                {
-                    tour.TourCheckpoints.Remove(tourCheckpoint);
-                    CrudRepository.Update(tour);
-                    return Result.Ok();
-                }
-                return Result.Fail(FailureCode.InvalidArgument).WithError("Equipment ID not found in the list");
-            }
-            catch (KeyNotFoundException e)
-            {
-                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
-            }
-            catch (ArgumentException e)
-            {
-                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
-            }
-        }
-        public Result RemoveEquipmentId(int tourId, long equipmentId)
-        {
-            try
-            {
-                var tour = CrudRepository.Get(tourId);
-                var equipment = _equipmentRepository.Get(equipmentId);
-                if (tour.Equipments.Contains(equipment))
-                {
-                    tour.Equipments.Remove(equipment);
-                    CrudRepository.Update(tour); 
-                    return Result.Ok();
-                }
-                return Result.Fail(FailureCode.InvalidArgument).WithError("Equipment ID not found in the list");
-            }
-            catch (KeyNotFoundException e)
-            {
-                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
-            }
-            catch (ArgumentException e)
-            {
-                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
-            }
-        }
-        public Result UpdateCheckpointIds(int tourId, long checkpointId)
-        {
-            try
-            {
-                var tour = CrudRepository.Get(tourId);
-                var tourCheckpoint = _tourCheckpointRepository.Get(checkpointId);
-                // Ažuriraj listu checkpointa
-                if (!tour.TourCheckpoints.Contains(tourCheckpoint))
-                {
-                    tour.TourCheckpoints.Add(tourCheckpoint);
-                    CrudRepository.Update(tour);
-                    return Result.Ok();
-                }
 
-                return Result.Fail(FailureCode.InvalidArgument).WithError("Checkpoint ID already exists in the list");
-            }
-            catch (KeyNotFoundException e)
-            {
-                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
-            }
-            catch (ArgumentException e)
-            {
-                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
-            }
+        public Result AddCheckpoint(int tourId, TourCheckpointDto checkpointDto)
+        {
+            var checkpoint = _mapper.Map<TourCheckpoint>(checkpointDto);
+            var tour = CrudRepository.Get(tourId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+
+            var result = tour.AddCheckpoint(checkpoint);
+            if (result.IsSuccess)
+                CrudRepository.Update(tour);
+
+            return result;
+        }
+
+        public Result RemoveCheckpoint(int tourId, TourCheckpointDto checkpointDto)
+        {
+            var checkpoint = _mapper.Map<TourCheckpoint>(checkpointDto);
+            var tour = CrudRepository.Get(tourId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+
+            var result = tour.RemoveCheckpoint(checkpoint);
+            if (result.IsSuccess)
+                CrudRepository.Update(tour);
+
+            return result;
         }
     }
 }

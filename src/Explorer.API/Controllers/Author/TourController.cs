@@ -82,6 +82,21 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        [HttpPost("{id:int}/archive")]
+        public ActionResult ArchiveTour(int id)
+        {
+            var result = _tourService.ArchiveTour(id);
+            return CreateResponse(result);
+        }
+
+        [HttpPost("{id:int}/publish")]
+        public ActionResult PublishTour(int id)
+        {
+            var result = _tourService.PublishTour(id);
+            return CreateResponse(result);
+        }
+
+
         [HttpPost("{id:int}/equipment-ids/{equipmentId:long}")]
         public ActionResult AddEquipmentId(int id, long equipmentId)
         {

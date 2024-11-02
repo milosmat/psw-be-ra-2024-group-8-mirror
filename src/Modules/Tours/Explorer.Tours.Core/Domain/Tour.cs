@@ -13,7 +13,7 @@ public class Tour : Entity
     public String Description { get; init; }
     public String Weight { get; init; }
     public String[] Tags { get; init; }
-    public TourStatus Status { get; init; }
+    public TourStatus Status { get; private set; }
     public Decimal? Price { get; init; }
     public long LengthInKm { get; init; }
     public DateTime PublishedDate { get; init; }
@@ -37,6 +37,16 @@ public class Tour : Entity
         TravelTimes = new List<TravelTime>();
         Equipments = new List<Equipment>();
         TourCheckpoints = new List<TourCheckpoint>();
+    }
+
+    public void SetArchived()
+    {
+        Status = TourStatus.ARCHIVED;
+    }
+
+    public void setPublished()
+    {
+        Status = TourStatus.PUBLISHED;
     }
 }
 

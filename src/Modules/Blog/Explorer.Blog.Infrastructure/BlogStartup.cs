@@ -1,5 +1,6 @@
 using Explorer.Blog.API.Public;
 using Explorer.Blog.Core.Domain;
+using Explorer.Blog.Core.Domain.Blogs;
 using Explorer.Blog.Core.Mappers;
 using Explorer.Blog.Core.UseCases;
 using Explorer.Blog.Infrastructure.Database;
@@ -31,7 +32,7 @@ public static class BlogStartup
 
     private static void SetupInfrastructure(IServiceCollection services)
     {
-        services.AddScoped(typeof(ICrudRepository<Blogs>), typeof(CrudDatabaseRepository<Blogs, BlogContext>));
+        services.AddScoped(typeof(ICrudRepository<Blogg>), typeof(CrudDatabaseRepository<Blogg, BlogContext>));
         services.AddScoped(typeof(ICrudRepository<Comment>), typeof(CrudDatabaseRepository<Comment, BlogContext>));
 
         services.AddDbContext<BlogContext>(opt =>

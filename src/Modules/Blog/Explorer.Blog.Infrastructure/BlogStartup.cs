@@ -1,9 +1,11 @@
 using Explorer.Blog.API.Public;
 using Explorer.Blog.Core.Domain;
 using Explorer.Blog.Core.Domain.Blogs;
+using Explorer.Blog.Core.Domain.RepositoryInterfaces;
 using Explorer.Blog.Core.Mappers;
 using Explorer.Blog.Core.UseCases;
 using Explorer.Blog.Infrastructure.Database;
+using Explorer.Blog.Infrastructure.Database.Repositories;
 using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.BuildingBlocks.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +28,7 @@ public static class BlogStartup
     
     private static void SetupCore(IServiceCollection services)
     {
+        services.AddScoped<IBlogRepository, BlogDatabaseRepository>();
         services.AddScoped<IBlogsService,BlogsService>();
         services.AddScoped<ICommentService, CommentService>();
     }

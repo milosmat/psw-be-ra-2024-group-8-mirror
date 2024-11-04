@@ -11,6 +11,11 @@ namespace Explorer.Blog.API.Public
 {
     public interface IBlogsService
     {
-       
+        //Result Vote(int id, Vote voteDto);
+        PagedResult<Blogg> GetPaged(int page, int pageSize);
+        Blogg Create(Blogg newBlog);
+        void Delete(long id);
+        Blogg Update(Blogg updateBlog);
+        Blogg Get(long id);
     }
 }

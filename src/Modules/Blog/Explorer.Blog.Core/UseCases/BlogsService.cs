@@ -29,14 +29,14 @@ namespace Explorer.Blog.Core.UseCases
             throw new NotImplementedException();
         }
 
-        public PagedResult<Blogg> GetPaged(int page, int pageSize)
+        public PagedResult<BlogsDto> GetPaged(int page, int pageSize)
         {
-            return _blogRepository.GetPaged(page, pageSize);
+            return null;
         }
 
-        public Blogg Create(Blogg newBlog)
+        public BlogsDto Create(BlogsDto newBlog)
         {
-            return _blogRepository.Create(newBlog);
+            return _mapper.Map<BlogsDto>(_blogRepository.Create(_mapper.Map<Blogg>(newBlog)));
         }
 
         public void Delete(long id)
@@ -44,14 +44,14 @@ namespace Explorer.Blog.Core.UseCases
             _blogRepository.Delete(id);
         }
 
-        public Blogg Update(Blogg updateBlog)
+        public BlogsDto Update(BlogsDto updateBlog)
         {
-            return _blogRepository.Update(updateBlog);
+            return _mapper.Map<BlogsDto>(_blogRepository.Update(_mapper.Map<Blogg>(updateBlog)));
         }
 
-        public Blogg Get(long id)
+        public BlogsDto Get(long id)
         {
-            return _blogRepository.Get(id);
+            return _mapper.Map<BlogsDto>(_blogRepository.Get(id));
         }
     }
 }

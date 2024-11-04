@@ -31,9 +31,7 @@ namespace Explorer.API.Controllers.Author
         [HttpPost]
         public ActionResult<BlogsDto> Create([FromBody] BlogsDto blog)
         {
-            Blogg newBlog = new Blogg();
-            newBlog = _blogsService._mapper.Map<Blogg>(blog);
-            var result = _blogsService.Create(newBlog);
+            var result = _blogsService.Create(blog);
             return Ok(true);
         }
 

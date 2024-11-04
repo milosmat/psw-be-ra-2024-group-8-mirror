@@ -10,10 +10,11 @@ namespace Explorer.Tours.API.Dtos
         public string[] Tags { get; set; }
         public TourStatus Status { get; private set; }
         public decimal? Price { get; set; }
+        public long LengthInKm { get; private set; }
         public DateTime PublishedDate { get; private set; }
         public DateTime ArchivedDate { get; private set; }
         public List<EquipmentDto> Equipments {  get; set; }
-        public List<TourCheckpointDto> TourCheckpoint { get; set; }
+        public List<TourCheckpointDto> TourCheckpoints { get; set; }
         //public List<TravelTime> TravelTimes { get; set; }
     }
 }

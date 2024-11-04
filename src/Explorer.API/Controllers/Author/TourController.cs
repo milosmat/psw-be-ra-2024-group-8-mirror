@@ -15,14 +15,11 @@ namespace Explorer.API.Controllers.Author
     {
         private readonly ITourService _tourService;
 
-        private readonly IEquipmentService _equipmentService;
-        private readonly ITourCheckpointService _tourCheckpointService;
-        public TourController(ITourService tourService, IEquipmentService equipmentService, ITourCheckpointService checkpointService)
+        public TourController(ITourService tourService)
         {
             _tourService = tourService;
-            _equipmentService = equipmentService;
-            _tourCheckpointService = checkpointService;
         }
+
         [HttpGet]
         public ActionResult<PagedResult<TourDTO>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
         {
@@ -74,19 +71,83 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
-        // Route to add a checkpoint to a tour
-        [HttpPost("{id:int}/checkpoints")]
-        public ActionResult AddCheckpoint(int id, [FromBody] TourCheckpointDto checkpointDto)
+        // Route to get all equipment
+        [HttpGet("equipment")]
+        public ActionResult<PagedResult<EquipmentDto>> GetAllEquipment([FromQuery] int page, [FromQuery] int pageSize)
         {
-            var result = _tourService.AddCheckpoint(id, checkpointDto);
+            var result = _tourService.GetPagedEquipment(page, pageSize);
             return CreateResponse(result);
         }
 
-        // Route to remove a checkpoint from a tour
-        [HttpDelete("{id:int}/checkpoints")]
-        public ActionResult RemoveCheckpoint(int id, [FromBody] TourCheckpointDto checkpointDto)
+        // Route to create new equipment
+        [HttpPost("equipment")]
+        public ActionResult<EquipmentDto> CreateEquipment([FromBody] EquipmentDto equipmentDto)
         {
-            var result = _tourService.RemoveCheckpoint(id, checkpointDto);
+            var result = _tourService.CreateEquipment(equipmentDto);
+            return CreateResponse(result);
+        }
+
+        // Route to update equipment
+        [HttpPut("equipment/{id:int}")]
+        public ActionResult<EquipmentDto> UpdateEquipment(int id, [FromBody] EquipmentDto equipmentDto)
+        {
+            var result = _tourService.UpdateEquipment(id, equipmentDto);
+            return CreateResponse(result);
+        }
+
+        // Route to delete equipment
+        [HttpDelete("equipment/{id:int}")]
+        public ActionResult DeleteEquipment(int id)
+        {
+            var result = _tourService.DeleteEquipment(id);
+            return CreateResponse(result);
+        }
+
+        // Route to get equipment by ID
+        [HttpGet("equipment/{id:int}")]
+        public ActionResult<EquipmentDto> GetEquipmentById(int id)
+        {
+            var result = _tourService.GetEquipment(id);
+            return CreateResponse(result);
+        }
+
+        // Route to get all checkpoints
+        [HttpGet("checkpoints")]
+        public ActionResult<PagedResult<TourCheckpointDto>> GetAllCheckpoints([FromQuery] int page, [FromQuery] int pageSize)
+        {
+            var result = _tourService.GetPagedCheckpoint(page, pageSize);
+            return CreateResponse(result);
+        }
+
+        // Route to create new checkpoint
+        [HttpPost("checkpoints")]
+        public ActionResult<TourCheckpointDto> CreateCheckpoint([FromBody] TourCheckpointDto tourCheckpointDto)
+        {
+            var result = _tourService.CreateCheckpoint(tourCheckpointDto);
+            return CreateResponse(result);
+        }
+
+        // Route to get checkpoint by ID
+        [HttpGet("checkpoints/{id:int}")]
+        public ActionResult<TourCheckpointDto> GetCheckpointById(int id)
+        {
+            var result = _tourService.GetCheckpoint(id);
+            return CreateResponse(result);
+        }
+
+        // Route to update checkpoint
+        [HttpPut("checkpoints/{id:int}")]
+        public ActionResult<TourCheckpointDto> UpdateCheckpoint(int id, [FromBody] TourCheckpointDto tourCheckpointDto)
+        {
+            var result = _tourService.UpdateCheckpoint(id,tourCheckpointDto);
+            return CreateResponse(result);
+        }
+
+        // Route to delete checkpoint
+        [HttpDelete("checkpoints/{id:int}")]
+        public ActionResult DeleteCheckpoint(int id)
+        {
+            var result = _tourService.DeleteCheckpoint(id);
             return CreateResponse(result);
         }
     }

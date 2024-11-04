@@ -26,5 +26,16 @@ namespace Explorer.Tours.API.Public.Author
 
         //Result AddTravelTime(int tourId, TravelTimeDto travelTime); 
         //Result RemoveTravelTime(int tourId, TravelTimeDto travelTime);
+        Result<PagedResult<TourCheckpointDto>> GetPagedCheckpoint(int page, int pageSize);
+        Result<TourCheckpointDto> CreateCheckpoint(TourCheckpointDto checkpoint);
+        Result<TourCheckpointDto> GetCheckpoint(int id);
+        Result<TourCheckpointDto> UpdateCheckpoint(int id, TourCheckpointDto checkpoint);
+        Result DeleteCheckpoint(int id);
+
+        Result<PagedResult<EquipmentDto>> GetPagedEquipment(int page, int pageSize);
+        Result<EquipmentDto> CreateEquipment(EquipmentDto equipment);
+        Result<EquipmentDto> UpdateEquipment(int id, EquipmentDto equipment);
+        Result<EquipmentDto> GetEquipment(int id);
+        Result DeleteEquipment(int id);
     }
 }

@@ -3,6 +3,8 @@ using Explorer.Blog.API.Public;
 using Explorer.BuildingBlocks.Core.UseCases;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorer.Blog.Core.UseCases;
+using Explorer.Blog.Core.Domain.Blogs;
 
 namespace Explorer.API.Controllers.Author
 {
@@ -10,25 +12,28 @@ namespace Explorer.API.Controllers.Author
     [Route("api/author/blogs")]
     public class BlogsController : BaseApiController
     {
-        private readonly IBlogsService _blogsService;
+        private readonly BlogsService _blogsService;
 
-        public BlogsController(IBlogsService blogsService)
+        public BlogsController(BlogsService blogsService)
         {
             _blogsService = blogsService;
         }
 
 
+
         [HttpGet]
         public ActionResult<PagedResult<BlogsDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
         {
-         //   var result = _blogsService.GetPaged(page, pageSize);
+            var result = _blogsService.GetPaged(page, pageSize);
             return Ok(true);
         }
 
         [HttpPost]
         public ActionResult<BlogsDto> Create([FromBody] BlogsDto blog)
         {
-          //  var result = _blogsService.Create(blog);
+            Blogg newBlog = new Blogg();
+            newBlog = _blogsService._mapper.Map<Blogg>(blog);
+            var result = _blogsService.Create(newBlog);
             return Ok(true);
         }
 

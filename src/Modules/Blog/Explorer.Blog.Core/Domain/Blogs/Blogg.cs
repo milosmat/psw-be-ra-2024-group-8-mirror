@@ -19,6 +19,7 @@ namespace Explorer.Blog.Core.Domain.Blogs
         public List<Vote> Votes { get; private set; }
         public List<Comment> Comments { get; private set; }
 
+        public Blogg() { }
 
         public Blogg(int userId, string title, string description, List<string>? images, BlogsStatus status)
         {

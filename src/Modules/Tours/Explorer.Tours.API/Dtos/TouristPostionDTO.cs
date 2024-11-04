@@ -11,7 +11,6 @@ namespace Explorer.Tours.API.Dtos
         public long Id { get; set; }             
         public long TouristId { get; set; }        
 
-        // CurrentLocation svojstvo koje koristi MapLocationDto
         public MapLocationDto CurrentLocation { get; set; }
 
         public class MapLocationDto

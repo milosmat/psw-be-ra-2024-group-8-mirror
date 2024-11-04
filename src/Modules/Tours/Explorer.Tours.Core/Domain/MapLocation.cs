@@ -8,8 +8,8 @@ namespace Explorer.Tours.Core.Domain
 {
     public class MapLocation
     {
-        public double Latitude { get; }
-        public double Longitude { get; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public MapLocation(double latitude, double longitude)
         {

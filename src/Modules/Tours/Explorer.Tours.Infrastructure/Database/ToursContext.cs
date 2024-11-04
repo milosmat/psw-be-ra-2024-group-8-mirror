@@ -43,11 +43,7 @@ public class ToursContext : DbContext
         modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
 
         modelBuilder.Entity<TouristPosition>()
-        .OwnsOne(tp => tp.CurrentLocation, cb =>
-        {
-            cb.Property(cl => cl.Latitude).HasColumnName("Latitude");
-            cb.Property(cl => cl.Longitude).HasColumnName("Longitude");
-        });
+        .OwnsOne(tp => tp.CurrentLocation);
 
         base.OnModelCreating(modelBuilder);
 

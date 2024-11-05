@@ -19,7 +19,6 @@ namespace Explorer.Tours.Core.Domain
         public long LengthInKm { get; private set; }
         public DateTime PublishedDate { get; private set; }
         public DateTime ArchivedDate { get; private set; }
-
         // Kolekcije vrednosnih objekata i entiteta
         public List<Equipment> Equipments { get; private set; } = new List<Equipment>();
         public List<TourCheckpoint> TourCheckpoints { get; private set; } = new List<TourCheckpoint>();

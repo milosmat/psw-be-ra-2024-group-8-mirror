@@ -12,7 +12,7 @@ public class ToursContext : DbContext
     public DbSet<TourPreferences> TourPreferences { get; set; }  
     public DbSet<Tour> Tours { get; set; }
     public DbSet<TourCheckpoint> TourCheckpoints { get; set; }
-
+    public DbSet<TourExecution> TourExecutions { get; set; }
     public DbSet<TouristEquipment> TouristEquipments { get; set; }
     
     public DbSet<TourReview> TourReviews { get; set; }
@@ -38,6 +38,7 @@ public class ToursContext : DbContext
         //modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
+        modelBuilder.Entity<TourExecution>().ToTable("TourExecution");
 
 
     }

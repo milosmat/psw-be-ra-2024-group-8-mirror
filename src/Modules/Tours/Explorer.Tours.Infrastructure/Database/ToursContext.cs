@@ -19,6 +19,8 @@ public class ToursContext : DbContext
 
     public DbSet<Object> Objects { get; set; }
 
+    public DbSet<TouristPosition> TouristPositions { get; set; }
+
     public ToursContext(DbContextOptions<ToursContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,7 +40,12 @@ public class ToursContext : DbContext
         modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
+        modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
 
+        modelBuilder.Entity<TouristPosition>()
+        .OwnsOne(tp => tp.CurrentLocation);
+
+        base.OnModelCreating(modelBuilder);
 
     }
 }

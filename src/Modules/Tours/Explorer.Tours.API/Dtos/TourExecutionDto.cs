@@ -12,7 +12,6 @@ namespace Explorer.Tours.API.Dtos
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public TourExecutionStatus Status { get; set; } // IN_PROGRESS, COMPLETED, ABANDONED
-        //public List<LocationDto> Locations { get; set; } = new List<LocationDto>();
     }
 
     public enum TourExecutionStatus

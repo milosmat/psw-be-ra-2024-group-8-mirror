@@ -7,7 +7,6 @@ public class TourExecution : Entity
     public DateTime StartTime { get; private set; }
     public DateTime? EndTime { get; private set; }
     public TourExecutionStatus Status { get; private set; } // IN_PROGRESS, COMPLETED, ABANDONED
-    //public List<Location> Locations { get; private set; } = new List<Location>();
 
     public TourExecution(int tourId, int userId)
     {

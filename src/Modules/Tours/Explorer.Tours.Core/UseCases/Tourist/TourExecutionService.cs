@@ -10,7 +10,7 @@ namespace Explorer.Tours.Core.UseCases.Tourist
 {
     public class TourExecutionService : CrudService<TourExecutionDto, TourExecution>, ITourExecutionService
     {
-        private ICrudRepository<TourExecution> _tourExecutionRepository;
+        private readonly ICrudRepository<TourExecution> _tourExecutionRepository;
         private readonly ICrudRepository<Tour> _tourRepository;
         private readonly IMapper _mapper;
 
@@ -23,23 +23,22 @@ namespace Explorer.Tours.Core.UseCases.Tourist
             _mapper = mapper;
         }
 
-        public Result<TourExecutionDto> StartTourExecution(int tourId, int userId)//, LocationDto startLocationDto)
+        public Result<TourExecutionDto> StartTourExecution(int tourId, int userId)
         {
+            // Pribavi turu
             var tour = _tourRepository.Get(tourId);
             if (tour == null) return Result.Fail("Tour not found.");
 
-            // Proverava da li je tura dostupna za pokretanje (mora biti objavljena ili arhivirana)
+            // Proverava da li je tura dostupna za pokretanje
             if (tour.Status is not (Domain.TourStatus)TourStatus.PUBLISHED and not (Domain.TourStatus)TourStatus.ARCHIVED)
                 return Result.Fail("Tour is not available for starting.");
 
-            // Mapira početnu lokaciju
-            //var startLocation = _mapper.Map<Location>(startLocationDto);
+            // Kreira novu sesiju ture koristeći `tourId`, `userId`, i početnu lokaciju
+            var tourExecution = new TourExecution(tourId, userId); // beleži početno vreme i status
+            var createdTourExecution = _tourExecutionRepository.Create(tourExecution);
 
-            // Kreira novu sesiju ture sa početnom lokacijom
-            var tourExecution = new TourExecution(tourId, userId);//, startLocation);
-            var obj = _tourExecutionRepository.Create(tourExecution);
-
-            var executionDto = _mapper.Map<TourExecutionDto>(obj);
+            // Mapira `TourExecution` na `TourExecutionDto` i vraća rezultat
+            var executionDto = _mapper.Map<TourExecutionDto>(createdTourExecution);
             return Result.Ok(executionDto);
         }
 

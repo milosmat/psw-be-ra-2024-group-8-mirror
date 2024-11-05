@@ -42,6 +42,13 @@ namespace Explorer.API.Controllers.Tourist
             return CreateResponse(result);
         }
 
+        [HttpPost("{executionId:int}/check-visited-checkpoint")]
+        public ActionResult CheckVisitedCheckpoint(int executionId, [FromBody] Tours.Core.Domain.MapLocation locationDto)
+        {
+            var result = _tourExecutionService.CheckForVisitedCheckpoints(executionId, locationDto.Latitude, locationDto.Longitude);
+            return CreateResponse(result);
+        }
+
         // Optional route to get a specific tour execution by ID
         /*[HttpGet("{executionId:int}")]
         public ActionResult<TourExecutionDto> GetTourExecution(int executionId)

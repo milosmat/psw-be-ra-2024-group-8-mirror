@@ -20,6 +20,7 @@ public class ToursContext : DbContext
     public DbSet<Object> Objects { get; set; }
 
     public DbSet<TouristPosition> TouristPositions { get; set; }
+    public DbSet<VisitedCheckpoint> VisitedCheckpoints { get; set; }
 
     public ToursContext(DbContextOptions<ToursContext> options) : base(options) {}
 
@@ -43,6 +44,7 @@ public class ToursContext : DbContext
         modelBuilder.Entity<TourExecution>().ToTable("TourExecution");
 
         modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
+        modelBuilder.Entity<VisitedCheckpoint>().ToTable("VisitedCheckpoints");
 
         modelBuilder.Entity<TouristPosition>()
         .OwnsOne(tp => tp.CurrentLocation);

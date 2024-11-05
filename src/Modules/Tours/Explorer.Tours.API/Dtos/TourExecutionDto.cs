@@ -11,6 +11,8 @@ namespace Explorer.Tours.API.Dtos
         public int UserId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+
+        public DateTime? LastActivity { get; set; }
         public TourExecutionStatus Status { get; set; } // IN_PROGRESS, COMPLETED, ABANDONED
     }
 

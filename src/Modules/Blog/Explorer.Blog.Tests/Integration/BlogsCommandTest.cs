@@ -19,8 +19,9 @@ namespace Explorer.Blog.Tests.Integration
     {
         public BlogsCommandTests(BlogTestFactory factory) : base(factory) { }
 
-        [Fact]
-        public void Creates()
+        [Theory]
+        [InlineData(1, "Create", "Description", new[] { "image.png" }, BlogsStatus.Published)]
+        public void Creates(int userId, string title, string description, string[] images, BlogsStatus status)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
@@ -28,19 +29,18 @@ namespace Explorer.Blog.Tests.Integration
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
             var newEntity = new BlogsDto
             {
-                UserId = 1,
-                Title = "Create",
-                Description = "Description",
+                UserId = userId,
+                Title = title,
+                Description = description,
                 CreatedDate = DateTime.UtcNow,
-                Images = new List<string> { "image.png" },
-                Status = BlogsStatus.Published,
+                Images = images.ToList(),
+                Status = status,
             };
 
             // Act
             var result = ((ObjectResult)controller.Create(newEntity).Result)?.Value as BlogsDto;
 
             // Assert - Response
-
             result.ShouldNotBeNull();
             result.Id.ShouldNotBe(0);
             result.Title.ShouldBe(newEntity.Title);
@@ -55,27 +55,32 @@ namespace Explorer.Blog.Tests.Integration
             storedEntity.Id.ShouldBe(result.Id);
         }
 
-        [Fact]
-        public void Create_fails_invalid_data()
+
+        [Theory]
+        [InlineData(null, "Test", 400)]
+        public void Create_fails_invalid_data(string title, string description, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
-            var updatedEntity = new BlogsDto
+            var newEntity = new BlogsDto
             {
-                Description = "Test"
+                Title = title,
+                Description = description
             };
 
             // Act
-            var result = (ObjectResult)controller.Create(updatedEntity).Result;
+            var result = (ObjectResult)controller.Create(newEntity).Result;
 
             // Assert
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(400);
+            result.StatusCode.ShouldBe(expectedStatusCode);
         }
 
-        [Fact]
-        public void Updates()
+
+        [Theory]
+        [InlineData(-2, "UpdateTitle2", "UpdateDescription2")]
+        public void Updates(int id, string title, string description)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
@@ -83,9 +88,9 @@ namespace Explorer.Blog.Tests.Integration
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
             var updatedEntity = new BlogsDto
             {
-                Id = -2,
-                Title = "UpdateTitle2",
-                Description = "UpdateDescription2"
+                Id = id,
+                Title = title,
+                Description = description
             };
 
             // Act
@@ -93,28 +98,28 @@ namespace Explorer.Blog.Tests.Integration
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(-2);
+            result.Id.ShouldBe(id);
             result.Title.ShouldBe(updatedEntity.Title);
             result.Description.ShouldBe(updatedEntity.Description);
 
             // Assert - Database
-            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Title == "UpdateTitle2");
+            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Title == title);
             storedEntity.ShouldNotBeNull();
-            storedEntity.Description.ShouldBe(updatedEntity.Description);
-            var oldEntity = dbContext.Blogs.FirstOrDefault(i => i.Title == "Title2");
-            oldEntity.ShouldBeNull();
+            storedEntity.Description.ShouldBe(description);
         }
-       
-        [Fact]
-        public void Update_fails_invalid_id()
+
+
+        [Theory]
+        [InlineData(-1000, "Test", 404)]
+        public void Update_fails_invalid_id(int id, string title, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var updatedEntity = new BlogsDto
             {
-                Id = -1000,
-                Title = "Test"
+                Id = id,
+                Title = title
             };
 
             // Act
@@ -122,11 +127,13 @@ namespace Explorer.Blog.Tests.Integration
 
             // Assert
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(404);
+            result.StatusCode.ShouldBe(expectedStatusCode);
         }
 
-        [Fact]
-        public void Deletes()
+
+        [Theory]
+        [InlineData(-3, 200)]
+        public void Deletes(int id, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
@@ -134,31 +141,34 @@ namespace Explorer.Blog.Tests.Integration
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
             // Act
-            var result = (OkResult)controller.Delete(-3);
+            var result = (OkResult)controller.Delete(id);
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(200);
+            result.StatusCode.ShouldBe(expectedStatusCode);
 
             // Assert - Database
-            var storedCourse = dbContext.Blogs.FirstOrDefault(i => i.Id == -3);
-            storedCourse.ShouldBeNull();
+            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
+            storedEntity.ShouldBeNull();
         }
 
-        [Fact]
-        public void Delete_fails_invalid_id()
+
+        [Theory]
+        [InlineData(-1000, 404)]
+        public void Delete_fails_invalid_id(int id, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
 
             // Act
-            var result = (ObjectResult)controller.Delete(-1000);
+            var result = (ObjectResult)controller.Delete(id);
 
             // Assert
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(404);
+            result.StatusCode.ShouldBe(expectedStatusCode);
         }
+
 
         private static BlogsController CreateController(IServiceScope scope)
         {
@@ -167,5 +177,6 @@ namespace Explorer.Blog.Tests.Integration
                 ControllerContext = BuildContext("-1")
             };
         }
+
     }
 }

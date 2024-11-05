@@ -17,5 +17,7 @@ namespace Explorer.Blog.API.Public
         void Delete(long id);
         BlogsDto Update(BlogsDto updateBlog);
         BlogsDto Get(long id);
+        VoteDto AddVote(VoteDto voteDto);
+
     }
 }

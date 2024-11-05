@@ -34,6 +34,29 @@ namespace Explorer.Blog.Core.Domain.Blogs
             Status = status;
         }
 
+        public Vote AddVote(Vote newVote)
+        {
+            var vote = Votes.Find(v => v.BlogId == newVote.BlogId && v.UserId == newVote.UserId);
+            if(vote != null && vote.UserId==newVote.UserId && vote.BlogId==newVote.BlogId)
+            {
+                if((newVote.Mark == Markdown.Upvote && vote.Mark == Markdown.Upvote) || (newVote.Mark == Markdown.Downvote && vote.Mark == Markdown.Downvote))
+                {
+                    Votes.RemoveAll(v => v.UserId == vote.UserId && v.BlogId == vote.BlogId);
+                }
+                if((newVote.Mark == Markdown.Upvote && vote.Mark == Markdown.Downvote) || (newVote.Mark == Markdown.Downvote && vote.Mark == Markdown.Upvote))
+                {
+                    Votes.RemoveAll(v => v.UserId == vote.UserId && v.BlogId == vote.BlogId);
+                    Votes.Add(newVote);
+                }
+            }
+            else
+            {
+                Votes.Add(newVote);
+            }
+            return newVote;
+
+        }
+
     }
 
     public enum BlogsStatus

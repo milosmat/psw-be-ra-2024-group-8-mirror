@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Explorer.Blog.Core.UseCases;
 using Explorer.Blog.Core.Domain.Blogs;
+using System.Reflection.Metadata;
 
 namespace Explorer.API.Controllers.Author
 {
@@ -28,7 +29,7 @@ namespace Explorer.API.Controllers.Author
             {
                 var result = _blogsService.GetPaged(page, pageSize);
 
-                if (result == null || result.Results.Count == 0)
+                if (result == null)
                 {
                     return NotFound("No blogs found for the specified page.");
                 }
@@ -41,6 +42,28 @@ namespace Explorer.API.Controllers.Author
             }
         }
 
+        [HttpPut("vote/")]
+        public ActionResult<VoteDto> AddVote([FromBody] VoteDto dto) 
+        {
+            try
+            {
+                VoteDto result = _blogsService.AddVote(dto);
+
+                if (result != null)
+                {
+                    return Ok(true);
+                }
+                else
+                {
+                    return BadRequest("The blog could not be created due to invalid data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+
+        }
 
         [HttpPost]
         public ActionResult<BlogsDto> Create([FromBody] BlogsDto blog)

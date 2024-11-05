@@ -31,12 +31,25 @@ namespace Explorer.Blog.Core.UseCases
 
         public PagedResult<BlogsDto> GetPaged(int page, int pageSize)
         {
-            return null;
+            PagedResult<Blogg> blogs = _blogRepository.GetPaged(page, pageSize);
+
+            var blogDtos = _mapper.Map<List<BlogsDto>>(blogs.Results);
+            return new PagedResult<BlogsDto>(blogDtos, blogs.TotalCount);
         }
+
+
 
         public BlogsDto Create(BlogsDto newBlog)
         {
             return _mapper.Map<BlogsDto>(_blogRepository.Create(_mapper.Map<Blogg>(newBlog)));
+        }
+
+        public VoteDto AddVote(VoteDto voteDto)
+        {
+            Blogg blog = _blogRepository.Get(voteDto.BlogId);
+            blog.AddVote(_mapper.Map<Vote>(voteDto));
+            _blogRepository.Update(blog);
+            return voteDto;
         }
 
         public void Delete(long id)

@@ -205,5 +205,43 @@ namespace Explorer.Tours.Core.UseCases.Author
                 return Result.Fail("Equipment not found.");
             }
         }
+
+        public Result ArchiveTour(int tourId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
+                tour.SetArchived();
+                CrudRepository.Update(tour);
+                return Result.Ok();
+            }
+            catch(KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch(ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
+
+        public Result PublishTour(int tourId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
+                tour.setPublished();
+                CrudRepository.Update(tour);
+                return Result.Ok();
+            }
+            catch(KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch(ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
     }
 }

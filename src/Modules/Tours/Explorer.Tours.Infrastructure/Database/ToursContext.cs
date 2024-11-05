@@ -19,6 +19,8 @@ public class ToursContext : DbContext
 
     public DbSet<Object> Objects { get; set; }
 
+    public DbSet<TouristPosition> TouristPositions { get; set; }
+
     public ToursContext(DbContextOptions<ToursContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +42,11 @@ public class ToursContext : DbContext
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
         modelBuilder.Entity<TourExecution>().ToTable("TourExecution");
 
+        modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
+
+        modelBuilder.Entity<TouristPosition>()
+        .OwnsOne(tp => tp.CurrentLocation);
+        base.OnModelCreating(modelBuilder);
 
     }
 }

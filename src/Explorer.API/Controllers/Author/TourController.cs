@@ -139,7 +139,7 @@ namespace Explorer.API.Controllers.Author
         [HttpPut("checkpoints/{id:int}")]
         public ActionResult<TourCheckpointDto> UpdateCheckpoint(int id, [FromBody] TourCheckpointDto tourCheckpointDto)
         {
-            var result = _tourService.UpdateCheckpoint(id,tourCheckpointDto);
+            var result = _tourService.UpdateCheckpoint(id, tourCheckpointDto);
             return CreateResponse(result);
         }
 
@@ -150,5 +150,18 @@ namespace Explorer.API.Controllers.Author
             var result = _tourService.DeleteCheckpoint(id);
             return CreateResponse(result);
         }
+        [HttpPost("{id:int}/archive")]
+        public ActionResult ArchiveTour(int id)
+        {
+            var result = _tourService.ArchiveTour(id);
+            return CreateResponse(result);
+        }
+        [HttpPost("{id:int}/publish")]
+        public ActionResult PublishTour(int id)
+        {
+            var result = _tourService.PublishTour(id);
+            return CreateResponse(result);
+        }
+
     }
 }

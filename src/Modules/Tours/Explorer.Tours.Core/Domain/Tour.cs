@@ -76,25 +76,33 @@ namespace Explorer.Tours.Core.Domain
             TourCheckpoints.Remove(checkpoint);
             return Result.Ok();
         }
-
-        // Metode za upravljanje TravelTimes (vrednosni objekti)
-/*        public Result AddTravelTime(TravelTime travelTime)
+        public void SetArchived()
         {
-            if (TravelTimes.Contains(travelTime))
-                return Result.Fail("Travel time already exists.");
-
-            TravelTimes.Add(travelTime);
-            return Result.Ok();
+            Status = TourStatus.ARCHIVED;
         }
 
-        public Result RemoveTravelTime(TravelTime travelTime)
+        public void setPublished()
         {
-            if (!TravelTimes.Contains(travelTime))
-                return Result.Fail("Travel time not found.");
+            Status = TourStatus.PUBLISHED;
+        }
+        // Metode za upravljanje TravelTimes (vrednosni objekti)
+        /*        public Result AddTravelTime(TravelTime travelTime)
+                {
+                    if (TravelTimes.Contains(travelTime))
+                        return Result.Fail("Travel time already exists.");
 
-            TravelTimes.Remove(travelTime);
-            return Result.Ok();
-        }*/
+                    TravelTimes.Add(travelTime);
+                    return Result.Ok();
+                }
+
+                public Result RemoveTravelTime(TravelTime travelTime)
+                {
+                    if (!TravelTimes.Contains(travelTime))
+                        return Result.Fail("Travel time not found.");
+
+                    TravelTimes.Remove(travelTime);
+                    return Result.Ok();
+                }*/
     }
 
     public enum TourStatus

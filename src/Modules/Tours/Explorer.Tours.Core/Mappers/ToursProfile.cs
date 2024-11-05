@@ -18,5 +18,8 @@ public class ToursProfile : Profile
 
         CreateMap<ObjectDTO, Object>().ReverseMap();
 
+        CreateMap<TouristPositionDto, TouristPosition>()
+            .ForMember(dest => dest.CurrentLocation, opt => opt.MapFrom(src => new MapLocation(src.CurrentLocation.Latitude, src.CurrentLocation.Longitude)))
+            .ReverseMap();
     }
 }

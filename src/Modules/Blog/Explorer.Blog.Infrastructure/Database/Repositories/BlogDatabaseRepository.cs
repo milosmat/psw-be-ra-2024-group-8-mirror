@@ -14,11 +14,9 @@ namespace Explorer.Blog.Infrastructure.Database.Repositories
 {
     public class BlogDatabaseRepository : CrudDatabaseRepository<Blogg, BlogContext>, IBlogRepository
     {
-        public BlogDatabaseRepository(BlogContext dbContext) : base(dbContext)
-        {
-        }
+        public BlogDatabaseRepository(BlogContext dbContext) : base(dbContext) { }
 
-        public new Blogg? Get(long id)
+        public new Blogg? Get(int id)
         {
             return DbContext.Blogs.Where(t => t.Id == id)
                 .Include(t => t.Comments!).FirstOrDefault();

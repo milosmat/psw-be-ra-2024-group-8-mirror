@@ -53,5 +53,23 @@ namespace Explorer.Blog.Core.UseCases
         {
             return _mapper.Map<BlogsDto>(_blogRepository.Get(id));
         }
+
+        public CommentDto AddComment(long blogId, CommentDto newComment)
+        {
+            var blog = _blogRepository.Get(blogId);
+            if (blog == null)
+            {
+                throw new Exception("Blog not found");
+            }
+
+            var comment = _mapper.Map<Comment>(newComment);
+            comment.InitializeComment(); 
+
+            blog.AddComment(comment);
+            _blogRepository.Update(blog);
+
+            return _mapper.Map<CommentDto>(comment);
+        }
+
     }
 }

@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Explorer.API.Controllers.Author
 {
-    [Authorize(Policy = "authorPolicy")]
-    [Route("api/author/comment")]
+    
+    [Route("api/author/blog/{blogId}/comment")]
     public class CommentController : BaseApiController
     {
         private readonly ICommentService _commentService;
@@ -18,31 +18,43 @@ namespace Explorer.API.Controllers.Author
         }
 
         [HttpGet]
-        public ActionResult<PagedResult<CommentDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
+        public ActionResult<PagedResult<CommentDto>> GetAll([FromRoute] long blogId,[FromQuery] int page, [FromQuery] int pageSize)
         {
-            var result = _commentService.GetPaged(page, pageSize);
-            return CreateResponse(result);
+            var result = _commentService.GetPagedByBlog(blogId, page, pageSize);
+            if (result == null || !result.Results.Any())
+            {
+                return NotFound("No comments found for the specified blog.");
+            }
+
+            return Ok(result);
         }
 
+        [Authorize(Policy = "authorPolicy")]
         [HttpPost]
-        public ActionResult<CommentDto> Create([FromBody] CommentDto comment)
+        public ActionResult<CommentDto> Create([FromRoute]long blogId,[FromBody] CommentDto comment)
         {
-            var result = _commentService.Create(comment);
-            return CreateResponse(result);
+            var createdComment = _commentService.Create(blogId, comment);
+            return CreatedAtAction(nameof(Create), new { blogId, commentId = createdComment.Id }, createdComment);
         }
 
+        [Authorize(Policy = "authorPolicy")]
         [HttpPut("{id:int}")]
-        public ActionResult<CommentDto> Update([FromBody] CommentDto comment)
+        public ActionResult<CommentDto> Update([FromRoute]long blogId, long id, [FromBody] CommentDto updatedComment)
         {
-            var result = _commentService.Update(comment);
-            return CreateResponse(result);
+            if (id != updatedComment.Id)
+            {
+                return BadRequest("Comment ID mismatch.");
+            }
+            var result = _commentService.Update(blogId, updatedComment);
+            return Ok(result);
         }
 
+        [Authorize(Policy = "authorPolicy")]
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult Delete([FromRoute]long blogId,int id)
         {
-            var result = _commentService.Delete(id);
-            return CreateResponse(result);
+            _commentService.Delete(blogId, id);
+            return NoContent();
         }
     }
 }

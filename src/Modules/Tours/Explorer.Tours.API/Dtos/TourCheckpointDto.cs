@@ -13,6 +13,8 @@ public class TourCheckpointDto
     public double Longitude { get; set; }
     public string? CheckpointName { get; set; }
     public string? CheckpointDescription { get; set; }
-    public string? Image { get; set; }
+    public string? Image { get; set; } 
+    public long TourId { get; set; }
+
 }
 

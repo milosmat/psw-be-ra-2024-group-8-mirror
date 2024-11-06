@@ -10,17 +10,20 @@ namespace Explorer.Blog.Core.Domain.Blogs
 {
     public class Vote : ValueObject<Vote>
     {
+        public int BlogId { get; private set; }
         public int UserId { get; private set; }
         public DateTime CreatedTime { get; private set; }
         public Markdown Mark { get; private set; }
 
         [JsonConstructor]
-        public Vote(int userId, Markdown mark)
+        public Vote(int userId, int blogId, Markdown mark)
         { 
             UserId = userId;
+            BlogId = blogId;
             Mark = mark;
             CreatedTime = DateTime.Now;
-        }   
+        }
+
 
         protected override bool EqualsCore(Vote other)
         {

@@ -20,20 +20,23 @@ namespace Explorer.Blog.Tests.Integration
     {
         public BlogsQueryTests(BlogTestFactory factory) : base(factory) { }
 
-        [Fact]
-        public void Retrieves_all()
+        [Theory]
+        [InlineData(0, 0, 3, 3)]
+        [InlineData(1, 1, 1, 3)] // Testira stranicu sa 1 rezultat po stranici
+        [InlineData(0, 2, 2, 3)] // Testira prvu stranicu sa 2 rezultata
+        public void Retrieves_all(int pageNumber, int pageSize, int expectedResultsCount, int expectedTotalCount)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
 
             // Act
-            var result = ((ObjectResult)controller.GetAll(0, 0).Result)?.Value as PagedResult<BlogsDto>;
+            var result = ((ObjectResult)controller.GetAll(pageNumber, pageSize).Result)?.Value as PagedResult<BlogsDto>;
 
             // Assert
             result.ShouldNotBeNull();
-            result.Results.Count.ShouldBe(3);
-            result.TotalCount.ShouldBe(3);
+            result.Results.Count.ShouldBe(expectedResultsCount);
+            result.TotalCount.ShouldBe(expectedTotalCount);
         }
 
         private static BlogsController CreateController(IServiceScope scope)
@@ -43,6 +46,7 @@ namespace Explorer.Blog.Tests.Integration
                 ControllerContext = BuildContext("-1")
             };
         }
+
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
 using Explorer.Tours.Core.Domain.ValueObjects;
+using FluentResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ public class Tour : Entity
     public TourStatus Status { get; private set; }
     public Decimal? Price { get; init; }
     public long LengthInKm { get; init; }
-    public DateTime PublishedDate { get; init; }
+    public DateTime PublishedDate { get; private set; }
     public DateTime ArchivedDate {  get; init; }
     public List<TravelTime> TravelTimes { get; init; }
     public List<Equipment> Equipments { get; init; }
@@ -44,9 +45,32 @@ public class Tour : Entity
         Status = TourStatus.ARCHIVED;
     }
 
-    public void setPublished()
+    public Result setPublished()
     {
-        Status = TourStatus.PUBLISHED;
+
+        if(Name != "" && Description != "" && Weight != "" && Tags.Length > 0 && 
+            TourCheckpoints.Count >= 2 && TravelTimes.Count > 0) { 
+            Status = TourStatus.PUBLISHED;
+            PublishedDate = DateTime.UtcNow;
+            return Result.Ok();
+        }
+        else
+        {
+            return Result.Fail("Tour must have name, description, travel time and al least 2 checkpoints.");
+            
+        }
+        
+    }
+    public TourCheckpoint AddNewCheckpoint(TourCheckpoint checkpoint)
+    {
+        TourCheckpoints.Add(checkpoint);
+        return checkpoint;
+    }
+
+    public TravelTime AddNewTravelTime(TravelTime travelTime)
+    {
+        TravelTimes.Add(travelTime);
+        return travelTime;
     }
 }
 

@@ -20,6 +20,8 @@ namespace Explorer.Tours.API.Public.Author
         Result<List<long>> GetEquipmentIds(int tourId);
         Result AddEquipmentId(int tourId, long equipmentId);
         Result RemoveEquipmentId(int tourId, long equipmentId);
+        Result<TourCheckpointDto> AddNewCheckpoint(long tourId, TourCheckpointDto tourCheckpoint);
+        Result<TravelTimeDTO> AddNewTravelTime(long tourId, TravelTimeDTO travelTime);
         Result ArchiveTour (int tourId);
         Result PublishTour(int tourId);
 

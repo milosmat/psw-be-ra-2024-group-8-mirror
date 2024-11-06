@@ -11,8 +11,8 @@ public class TourCheckpointDto
     public int Id { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-    public string CheckpointName { get; set; }
-    public string CheckpointDescription { get; set; }
-    public string Image { get; set; }
+    public string? CheckpointName { get; set; }
+    public string? CheckpointDescription { get; set; }
+    public string? Image { get; set; }
 }
 

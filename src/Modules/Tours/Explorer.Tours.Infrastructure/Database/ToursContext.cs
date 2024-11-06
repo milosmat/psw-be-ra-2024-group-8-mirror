@@ -31,11 +31,14 @@ public class ToursContext : DbContext
         v => (ObjectCategory)Enum.Parse(typeof(ObjectCategory), v)
     );
 
-
+        
         modelBuilder.Entity<Equipment>().ToTable("Equipment");
         modelBuilder.Entity<Tour>().ToTable("Tours");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoints");
-        modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
+        modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb").HasConversion(
+            v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+            v => JsonSerializer.Deserialize<List<TravelTime>>(v, (JsonSerializerOptions)null)
+        );
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
 

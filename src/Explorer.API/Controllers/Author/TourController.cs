@@ -15,6 +15,7 @@ namespace Explorer.API.Controllers.Author
     public class TourController : BaseApiController
     {
        private readonly ITourService _tourService;
+       
        private readonly IEquipmentService _equipmentService;
         private readonly ITourCheckpointService _tourCheckpointService;
         
@@ -61,6 +62,21 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        [HttpPost("{tourId:int}/checkpoint")]
+        public ActionResult<TourCheckpointDto> AddNewCheckpoint([FromBody] TourCheckpointDto checkpoint, long tourId)
+        {
+            
+            var result = _tourService.AddNewCheckpoint(tourId, checkpoint);
+            return CreateResponse(result);
+
+        }
+        [HttpPost("{tourId:int}/addNewTravelTime")]
+        public ActionResult<TravelTimeDTO> AddNewTravelTime1([FromBody] TravelTimeDTO newTravelTime, long tourId)
+        {
+            var result = _tourService.AddNewTravelTime(tourId, newTravelTime);
+            return CreateResponse(result);
+            
+        }
         [HttpPut("{id:int}")]
         public ActionResult<TourDTO> Update([FromBody] TourDTO tourDto)
         {
@@ -93,7 +109,8 @@ namespace Explorer.API.Controllers.Author
         public ActionResult PublishTour(int id)
         {
             var result = _tourService.PublishTour(id);
-            return CreateResponse(result);
+            var res = CreateResponse(result);
+            return res;
         }
 
 
@@ -139,5 +156,6 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        
     }
 }

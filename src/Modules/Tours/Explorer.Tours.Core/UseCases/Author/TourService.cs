@@ -3,6 +3,8 @@ using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.Core.Domain;
+using Explorer.Tours.Core.Domain.RepositoryInterfaces;
+using Explorer.Tours.Core.Domain.ValueObjects;
 using FluentResults;
 
 namespace Explorer.Tours.Core.UseCases.Author
@@ -11,18 +13,20 @@ namespace Explorer.Tours.Core.UseCases.Author
     {
         private readonly ICrudRepository<TourCheckpoint> _tourCheckpointRepository;
         private readonly ICrudRepository<Equipment> _equipmentRepository;
-        public TourService(ICrudRepository<Tour> repository, IMapper mapper, 
+        private readonly ITourRepository tourRepository;
+        public TourService(ICrudRepository<Tour> repository, IMapper mapper,
             ICrudRepository<TourCheckpoint> tourCheckpointRepository,
-            ICrudRepository<Equipment> equipmentRepository) : base(repository, mapper) 
+            ICrudRepository<Equipment> equipmentRepository, ITourRepository tourRepository) : base(repository, mapper)
         {
             _tourCheckpointRepository = tourCheckpointRepository;
             _equipmentRepository = equipmentRepository;
+            this.tourRepository = tourRepository;
         }
         public Result<List<long>> GetCheckpointIds(int tourId)
         {
             try
             {
-                var tourResult = CrudRepository.Get(tourId);
+                var tourResult = tourRepository.Get(tourId);
                 List<long> result = new List<long>();
                 foreach (var item in tourResult.TourCheckpoints)
                 {
@@ -34,6 +38,11 @@ namespace Explorer.Tours.Core.UseCases.Author
             {
                 return Result.Fail(FailureCode.NotFound).WithError(e.Message);
             }
+        }
+        public new Result<PagedResult<TourDTO>> GetPaged(int page, int pageSize)
+        {
+            var result = tourRepository.GetPaged(page, pageSize);
+            return MapToDto(result);
         }
         public Result<List<long>> GetEquipmentIds(int tourId)
         {
@@ -151,7 +160,7 @@ namespace Explorer.Tours.Core.UseCases.Author
         {
             try
             {
-                var tour = CrudRepository.Get(tourId);
+                var tour = tourRepository.Get(tourId);
                 var tourCheckpoint = _tourCheckpointRepository.Get(checkpointId);
                 // Ažuriraj listu checkpointa
                 if (!tour.TourCheckpoints.Contains(tourCheckpoint))
@@ -196,10 +205,10 @@ namespace Explorer.Tours.Core.UseCases.Author
         {
             try
             {
-                var tour = CrudRepository.Get(tourId);
-                tour.setPublished();
+                Tour tour = tourRepository.Get(tourId);
+                var result = tour.setPublished();
                 CrudRepository.Update(tour);
-                return Result.Ok();
+                return result;
             }
             catch(KeyNotFoundException e)
             {
@@ -209,6 +218,25 @@ namespace Explorer.Tours.Core.UseCases.Author
             {
                 return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }
+        }
+        public Result<TourCheckpointDto> AddNewCheckpoint(long tourId, TourCheckpointDto tourCheckpoint)
+        {
+            Tour tour = tourRepository.Get(tourId);
+            TourCheckpoint checkpoint = new TourCheckpoint(tourCheckpoint.Latitude, tourCheckpoint.Longitude, tourCheckpoint.CheckpointName,
+                tourCheckpoint.CheckpointDescription, tourCheckpoint.Image);
+            tour.AddNewCheckpoint(checkpoint);
+            CrudRepository.Update(tour);
+            return tourCheckpoint;
+           
+        }
+
+        public Result<TravelTimeDTO> AddNewTravelTime(long tourId, TravelTimeDTO tourTravelTime)
+        {
+            Tour tour = CrudRepository.Get(tourId);
+            TravelTime travelTime = new TravelTime(tourTravelTime.Time, (TransportType)tourTravelTime.TransportType);
+            tour.AddNewTravelTime(travelTime);
+            CrudRepository.Update(tour);
+            return tourTravelTime;
         }
     }
 }

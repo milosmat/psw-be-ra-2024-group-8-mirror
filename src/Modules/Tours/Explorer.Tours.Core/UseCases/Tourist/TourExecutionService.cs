@@ -13,16 +13,19 @@ namespace Explorer.Tours.Core.UseCases.Tourist
         private readonly ICrudRepository<TourExecution> _tourExecutionRepository;
         private readonly ICrudRepository<Tour> _tourRepository;
         private readonly ICrudRepository<VisitedCheckpoint> _visitedCheckpointRepository;
+        private readonly ICrudRepository<TourCheckpoint> _tourCheckpointRepository;
         private readonly IMapper _mapper;
 
         public TourExecutionService(ICrudRepository<TourExecution> tourExecutionRepository,
                                     ICrudRepository<Tour> tourRepository,
                                     ICrudRepository<VisitedCheckpoint> visitedCheckpointRepository,
+                                    ICrudRepository<TourCheckpoint> tourCheckpointRepository,
                                     IMapper mapper) : base(tourExecutionRepository, mapper)
         {
             _tourExecutionRepository = tourExecutionRepository;
             _tourRepository = tourRepository;
             _visitedCheckpointRepository = visitedCheckpointRepository;
+            _tourCheckpointRepository = tourCheckpointRepository;
             _mapper = mapper;
         }
 
@@ -48,55 +51,44 @@ namespace Explorer.Tours.Core.UseCases.Tourist
         public Result CheckForVisitedCheckpoints(int executionId, double lat, double lon)
         {
             const double maxDistanceMeters = 500;
-            var tourExecution = _tourExecutionRepository.Get(executionId);
+            var tourExecution = _tourExecutionRepository.Get(executionId, te => te.visitedCheckpoints);
             if (tourExecution == null) return Result.Fail("Tour execution not found.");
 
             int tourId = tourExecution.TourId;
 
-            var tour = _tourRepository.Get(tourId);
+            var tour = _tourRepository.Get(tourId, t => t.TourCheckpoints);
+
             if (tour == null) return Result.Fail("Tour not found.");
 
-            foreach(var ch in tour.TourCheckpoints)
+
+            foreach (var ch in tour.TourCheckpoints)
             {
                 bool alreadyVisited = tourExecution.visitedCheckpoints.Any(vc => vc.CheckpointId == ch.Id);
                 if (!alreadyVisited)
                 {
-                    VisitCheckpoint(executionId, (int)ch.Id);
-                    return Result.Ok();
-                }
-                else
-                {
-                    return Result.Fail("Checkpoint already visited.");
+                    if (IsNearby(lat, lon, ch.Latitude, ch.Longitude, maxDistanceMeters))
+                    { 
+                        VisitCheckpoint(executionId, (int)ch.Id);
+                        return Result.Ok();
+                    }
                 }
             }
-            return Result.Fail("No nearby checkpoints");
+            return Result.Fail("No nearby checkpoints -> 2");
         }
 
         private bool IsNearby(double lat1, double lon1, double lat2, double lon2, double maxDistanceMeters)
         {
-            const double EarthRadiusMeters = 6371000; // Poluprečnik Zemlje u metrima
+            // Prag razlike u stepenima za otprilike 500 metara
+            double degreeThreshold = 0.01;
 
-            // Konverzija stepena u radijane
-            double dLat = DegreesToRadians(lat2 - lat1);
-            double dLon = DegreesToRadians(lon2 - lon1);
+            // Razlika u latitudi i longitudi
+            double dLat = Math.Abs(lat1 - lat2);
+            double dLon = Math.Abs(lon1 - lon2);
 
-            // Haversinova formula
-            double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                       Math.Cos(DegreesToRadians(lat1)) * Math.Cos(DegreesToRadians(lat2)) *
-                       Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-            // Udaljenost između tačaka u metrima
-            double distance = EarthRadiusMeters * c;
-
-            return distance <= maxDistanceMeters;
+            // Proverava da li su obe razlike unutar praga
+            return dLat <= degreeThreshold && dLon <= degreeThreshold;
         }
 
-        // Pomoćna metoda za konverziju stepena u radijane
-        private double DegreesToRadians(double degrees)
-        {
-            return degrees * (Math.PI / 180);
-        }
 
         public Result VisitCheckpoint(int executionId, int checkpointId)
         {
@@ -105,6 +97,7 @@ namespace Explorer.Tours.Core.UseCases.Tourist
 
             var visitedCheckpoint = new VisitedCheckpoint(checkpointId, DateTime.UtcNow);
             tourExecution.VisitCheckpoint(visitedCheckpoint);
+            _visitedCheckpointRepository.Create(visitedCheckpoint);
             return Result.Ok();
         }
 

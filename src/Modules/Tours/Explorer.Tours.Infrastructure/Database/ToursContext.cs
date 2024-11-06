@@ -50,5 +50,11 @@ public class ToursContext : DbContext
         .OwnsOne(tp => tp.CurrentLocation);
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Tour>()
+        .HasMany(t => t.TourCheckpoints)    // Navodi se kolekcija TourCheckpoints unutar Tour
+        .WithOne()                           // Navodi se da TourCheckpoint ima referencu na Tour (bez navigacione property)
+        .HasForeignKey(tc => tc.TourId);     // TourId se koristi kao spoljni ključ u TourCheckpoint
+
+
     }
 }

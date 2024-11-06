@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Explorer.Tours.API.Dtos
 {   public class TourExecutionDto
     {
+        public int Id { get; set; }
         public int TourId { get; set; }
         public int UserId { get; set; }
         public DateTime StartTime { get; set; }

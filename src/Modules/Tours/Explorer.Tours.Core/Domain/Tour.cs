@@ -21,7 +21,7 @@ namespace Explorer.Tours.Core.Domain
         public DateTime ArchivedDate { get; private set; }
         // Kolekcije vrednosnih objekata i entiteta
         public List<Equipment> Equipments { get; private set; } = new List<Equipment>();
-        public List<TourCheckpoint> TourCheckpoints { get; private set; } = new List<TourCheckpoint>();
+        public List<TourCheckpoint> TourCheckpoints { get;  set; } = new List<TourCheckpoint>();
         //public List<TravelTime> TravelTimes { get; private set; } = new List<TravelTime>();
         public Tour() { }
         public Tour(string name, string description, string weight, string[] tags, long lengthInKm, DateTime publishedDate, DateTime archivedDate)

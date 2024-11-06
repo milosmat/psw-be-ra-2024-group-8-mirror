@@ -174,6 +174,8 @@ namespace Explorer.API.Controllers.Author
         public ActionResult DeleteReview(int reviewId)
         {
             var result = _tourService.DeleteReview(reviewId);
+            return CreateResponse(result);
+        }
 
         [HttpPost("{id:int}/archive")]
         public ActionResult ArchiveTour(int id)

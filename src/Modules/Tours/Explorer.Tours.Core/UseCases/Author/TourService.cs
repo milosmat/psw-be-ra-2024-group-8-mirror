@@ -211,7 +211,7 @@ namespace Explorer.Tours.Core.UseCases.Author
 
         public Result<PagedResult<TourReviewDto>> GetPagedReviews(int tourId, int page, int pageSize)
         {
-            var tour = CrudRepository.Get(tourId);
+            var tour = CrudRepository.Get(tourId, t => t.TourReviews);
             if (tour == null)
                 return Result.Fail("Tour not found.");
             //var reviews = _tourReviewRepository.GetPaged(page, pageSize).Results.FindAll(r => r.Tour.Id == tourId);
@@ -238,7 +238,7 @@ namespace Explorer.Tours.Core.UseCases.Author
 
         public Result<TourReviewDto> UpdateReview(int reviewId, TourReviewDto reviewDto)
         {
-            var tour = CrudRepository.Get(reviewId);
+            var tour = CrudRepository.Get(reviewId, t => t.TourReviews);
             if (tour == null)
                 return Result.Fail("Tour not found.");
 
@@ -254,7 +254,7 @@ namespace Explorer.Tours.Core.UseCases.Author
 
         public Result DeleteReview(int reviewId)
         {
-            var tour = CrudRepository.Get(reviewId);
+            var tour = CrudRepository.Get(reviewId, t => t.TourReviews);
             if (tour == null)
                 return Result.Fail("Tour not found.");
 
@@ -277,11 +277,11 @@ namespace Explorer.Tours.Core.UseCases.Author
                 CrudRepository.Update(tour);
                 return Result.Ok();
             }
-            catch(KeyNotFoundException e)
+            catch (KeyNotFoundException e)
             {
                 return Result.Fail(FailureCode.NotFound).WithError(e.Message);
             }
-            catch(ArgumentException e)
+            catch (ArgumentException e)
             {
                 return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }
@@ -296,11 +296,11 @@ namespace Explorer.Tours.Core.UseCases.Author
                 CrudRepository.Update(tour);
                 return Result.Ok();
             }
-            catch(KeyNotFoundException e)
+            catch (KeyNotFoundException e)
             {
                 return Result.Fail(FailureCode.NotFound).WithError(e.Message);
             }
-            catch(ArgumentException e)
+            catch (ArgumentException e)
             {
                 return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }

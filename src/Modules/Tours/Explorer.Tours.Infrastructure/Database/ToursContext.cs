@@ -34,23 +34,16 @@ public class ToursContext : DbContext
         v => (ObjectCategory)Enum.Parse(typeof(ObjectCategory), v)
     );
 
-        
+
         modelBuilder.Entity<Equipment>().ToTable("Equipment");
         modelBuilder.Entity<Tour>().ToTable("Tours")
             .HasMany(t => t.TourReviews)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoints");
-
-        modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb").HasConversion(
-            v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-            v => JsonSerializer.Deserialize<List<TravelTime>>(v, (JsonSerializerOptions)null)
-        );
-
         modelBuilder.Entity<TourReview>().ToTable("TourReviews");
-        
-
-       
+        //modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
+        modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
         modelBuilder.Entity<TourExecution>().ToTable("TourExecution");
 

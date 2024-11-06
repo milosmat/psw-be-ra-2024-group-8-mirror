@@ -148,6 +148,7 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+
         [HttpGet("{id:int}/reviews")]
         public ActionResult<PagedResult<TourReviewDto>> GetAllReviews(int id, [FromQuery] int page, [FromQuery] int pageSize)
         {
@@ -173,6 +174,17 @@ namespace Explorer.API.Controllers.Author
         public ActionResult DeleteReview(int reviewId)
         {
             var result = _tourService.DeleteReview(reviewId);
+
+        [HttpPost("{id:int}/archive")]
+        public ActionResult ArchiveTour(int id)
+        {
+            var result = _tourService.ArchiveTour(id);
+            return CreateResponse(result);
+        }
+        [HttpPost("{id:int}/publish")]
+        public ActionResult PublishTour(int id)
+        {
+            var result = _tourService.PublishTour(id);
             return CreateResponse(result);
         }
 

@@ -14,9 +14,9 @@ namespace Explorer.Tours.Core.Domain
         public long LengthInKm { get; private set; }
         public DateTime PublishedDate { get; private set; }
         public DateTime ArchivedDate { get; private set; }
-
         // Kolekcije vrednosnih objekata i entiteta
         public List<Equipment> Equipments { get; private set; } = new List<Equipment>();
+
         public List<TourCheckpoint> TourCheckpoints { get; private set; } = new List<TourCheckpoint>();
 
         // Tour review
@@ -94,6 +94,34 @@ namespace Explorer.Tours.Core.Domain
             TourReviews.Remove(review);
             return Result.Ok();
         }
+
+        public void SetArchived()
+        {
+            Status = TourStatus.ARCHIVED;
+        }
+
+        public void setPublished()
+        {
+            Status = TourStatus.PUBLISHED;
+        }
+        // Metode za upravljanje TravelTimes (vrednosni objekti)
+        /*        public Result AddTravelTime(TravelTime travelTime)
+                {
+                    if (TravelTimes.Contains(travelTime))
+                        return Result.Fail("Travel time already exists.");
+
+                    TravelTimes.Add(travelTime);
+                    return Result.Ok();
+                }
+
+                public Result RemoveTravelTime(TravelTime travelTime)
+                {
+                    if (!TravelTimes.Contains(travelTime))
+                        return Result.Fail("Travel time not found.");
+
+                    TravelTimes.Remove(travelTime);
+                    return Result.Ok();
+                }*/
     }
 
     public enum TourStatus

@@ -36,10 +36,14 @@ namespace Explorer.Tours.API.Public.Author
         Result<EquipmentDto> UpdateEquipment(int id, EquipmentDto equipment);
         Result<EquipmentDto> GetEquipment(int id);
         Result DeleteEquipment(int id);
+      
         Result<PagedResult<TourReviewDto>> GetPagedReviews(int tourId, int page, int pageSize);
         Result<TourReviewDto> AddReview(int tourId, TourReviewDto reviewDto);
         Result<TourReviewDto> UpdateReview(int reviewId, TourReviewDto reviewDto);
         Result DeleteReview(int reviewId);
+      
+        Result ArchiveTour(int tourId);
+        Result PublishTour(int tourId);
 
     }
 }

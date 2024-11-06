@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Explorer.BuildingBlocks.Core.Domain;
 
-namespace Explorer.Blog.Core.Domain
+namespace Explorer.Blog.Core.Domain.Blogs
 {
     public class Comment : Entity
     {

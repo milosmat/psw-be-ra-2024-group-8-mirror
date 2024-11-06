@@ -208,6 +208,7 @@ namespace Explorer.Tours.Core.UseCases.Author
             }
         }
 
+
         public Result<PagedResult<TourReviewDto>> GetPagedReviews(int tourId, int page, int pageSize)
         {
             var tour = CrudRepository.Get(tourId);
@@ -267,5 +268,42 @@ namespace Explorer.Tours.Core.UseCases.Author
             return Result.Ok();
         }
 
+        public Result ArchiveTour(int tourId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
+                tour.SetArchived();
+                CrudRepository.Update(tour);
+                return Result.Ok();
+            }
+            catch(KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch(ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
+
+        public Result PublishTour(int tourId)
+        {
+            try
+            {
+                var tour = CrudRepository.Get(tourId);
+                tour.setPublished();
+                CrudRepository.Update(tour);
+                return Result.Ok();
+            }
+            catch(KeyNotFoundException e)
+            {
+                return Result.Fail(FailureCode.NotFound).WithError(e.Message);
+            }
+            catch(ArgumentException e)
+            {
+                return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
+            }
+        }
     }
 }

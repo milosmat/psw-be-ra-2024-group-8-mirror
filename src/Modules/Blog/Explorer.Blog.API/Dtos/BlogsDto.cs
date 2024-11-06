@@ -15,6 +15,8 @@ namespace Explorer.Blog.API.Dtos
         public DateTime CreatedDate { get; set; }
         public List<string>? Images { get; set; }
         public BlogsStatus Status { get; set; }
+
+        public List<VoteDto> Votes { get; set; } = new List<VoteDto>();
     }
     public enum BlogsStatus
     {

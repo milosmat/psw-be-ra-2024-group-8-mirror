@@ -11,14 +11,16 @@ namespace Explorer.Tours.Core.UseCases.Author
     {
         private readonly ICrudRepository<TourCheckpoint> _tourCheckpointRepository;
         private readonly ICrudRepository<Equipment> _equipmentRepository;
+        private readonly ICrudRepository<TourReview> _tourReviewRepository;
         private readonly IMapper _mapper;
         public TourService(ICrudRepository<Tour> repository, IMapper mapper,
             ICrudRepository<TourCheckpoint> tourCheckpointRepository,
-            ICrudRepository<Equipment> equipmentRepository) : base(repository, mapper)
+            ICrudRepository<Equipment> equipmentRepository, ICrudRepository<TourReview> tourReviewRepository) : base(repository, mapper)
         {
             _mapper = mapper;
             _tourCheckpointRepository = tourCheckpointRepository;
             _equipmentRepository = equipmentRepository;
+            _tourReviewRepository = tourReviewRepository;
         }
 
         public Result AddEquipment(int tourId, EquipmentDto equipmentDto)
@@ -205,5 +207,65 @@ namespace Explorer.Tours.Core.UseCases.Author
                 return Result.Fail("Equipment not found.");
             }
         }
+
+        public Result<PagedResult<TourReviewDto>> GetPagedReviews(int tourId, int page, int pageSize)
+        {
+            var tour = CrudRepository.Get(tourId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+            //var reviews = _tourReviewRepository.GetPaged(page, pageSize).Results.FindAll(r => r.Tour.Id == tourId);
+            var reviewDtos = tour.TourReviews.Select(r => _mapper.Map<TourReviewDto>(r)).ToList();
+            var pagedResult = new PagedResult<TourReviewDto>(reviewDtos, tour.TourReviews.Count);
+
+            return Result.Ok(pagedResult);
+        }
+
+        public Result<TourReviewDto> AddReview(int tourId, TourReviewDto reviewDto)
+        {
+            var tour = CrudRepository.Get(tourId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+
+            var review = _mapper.Map<TourReview>(reviewDto);
+            var result = tour.AddTourReview(review);
+
+            if (result.IsSuccess)
+                CrudRepository.Update(tour);
+
+            return Result.Ok(_mapper.Map<TourReviewDto>(review));
+        }
+
+        public Result<TourReviewDto> UpdateReview(int reviewId, TourReviewDto reviewDto)
+        {
+            var tour = CrudRepository.Get(reviewId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+
+            var review = tour.TourReviews.FirstOrDefault(r => r.Id == reviewId);
+            if (review == null)
+                return Result.Fail("Review not found.");
+
+            _mapper.Map(reviewDto, review);
+            CrudRepository.Update(tour);
+
+            return Result.Ok(_mapper.Map<TourReviewDto>(review));
+        }
+
+        public Result DeleteReview(int reviewId)
+        {
+            var tour = CrudRepository.Get(reviewId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+
+            var review = tour.TourReviews.FirstOrDefault(r => r.Id == reviewId);
+            if (review == null)
+                return Result.Fail("Review not found.");
+
+            tour.TourReviews.Remove(review);
+            CrudRepository.Update(tour);
+
+            return Result.Ok();
+        }
+
     }
 }

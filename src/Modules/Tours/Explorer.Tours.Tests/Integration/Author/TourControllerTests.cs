@@ -1,17 +1,10 @@
 ﻿using Explorer.API.Controllers.Author;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
-using Explorer.Tours.Core.Domain;
 using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
-using Explorer.Tours.API.Public.Administration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Explorer.Tours.Tests.Integration.Author
 {
@@ -125,7 +118,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
 
-            var result = (OkResult)controller.Delete(1); 
+            var result = (OkResult)controller.Delete(1);
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
@@ -150,9 +143,9 @@ namespace Explorer.Tours.Tests.Integration.Author
 
         private static TourController CreateController(IServiceScope scope)
         {
-            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>(), scope.ServiceProvider.GetRequiredService<IEquipmentService>(), scope.ServiceProvider.GetRequiredService<ITourCheckpointService>())
+            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>())
             {
-                ControllerContext = BuildContext("-1") 
+                ControllerContext = BuildContext("-1")
             };
         }
     }

@@ -1,7 +1,6 @@
 ﻿using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Tours.API.Dtos;
 using FluentResults;
-using System.Collections.Generic;
 
 namespace Explorer.Tours.API.Public.Author
 {
@@ -18,10 +17,10 @@ namespace Explorer.Tours.API.Public.Author
         //Result<List<long>> GetCheckpointIds(int tourId);
 
         // Metode za upravljanje opremom, tačkama i vremenom putovanja u okviru agregata Tour
-        Result AddEquipment(int tourId, EquipmentDto equipment); 
+        Result AddEquipment(int tourId, EquipmentDto equipment);
         Result RemoveEquipment(int tourId, EquipmentDto equipment);
 
-        Result AddCheckpoint(int tourId, TourCheckpointDto checkpoint); 
+        Result AddCheckpoint(int tourId, TourCheckpointDto checkpoint);
         Result RemoveCheckpoint(int tourId, TourCheckpointDto checkpoint);
 
         //Result AddTravelTime(int tourId, TravelTimeDto travelTime); 
@@ -37,5 +36,10 @@ namespace Explorer.Tours.API.Public.Author
         Result<EquipmentDto> UpdateEquipment(int id, EquipmentDto equipment);
         Result<EquipmentDto> GetEquipment(int id);
         Result DeleteEquipment(int id);
+        Result<PagedResult<TourReviewDto>> GetPagedReviews(int tourId, int page, int pageSize);
+        Result<TourReviewDto> AddReview(int tourId, TourReviewDto reviewDto);
+        Result<TourReviewDto> UpdateReview(int reviewId, TourReviewDto reviewDto);
+        Result DeleteReview(int reviewId);
+
     }
 }

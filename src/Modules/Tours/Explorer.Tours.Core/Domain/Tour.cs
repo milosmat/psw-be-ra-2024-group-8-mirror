@@ -1,8 +1,15 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
+using Explorer.Tours.Core.Domain.ValueObjects;
+using FluentResults;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using FluentResults;
 
-namespace Explorer.Tours.Core.Domain
-{
+namespace Explorer.Tours.Core.Domain;
+
     public class Tour : Entity
     {
         public string Name { get; private set; }
@@ -18,7 +25,7 @@ namespace Explorer.Tours.Core.Domain
         public List<Equipment> Equipments { get; private set; } = new List<Equipment>();
 
         public List<TourCheckpoint> TourCheckpoints { get; private set; } = new List<TourCheckpoint>();
-
+        public List<TravelTime> TravelTimes { get; init; }
         // Tour review
         public List<TourReview> TourReviews { get; private set; } = new List<TourReview>();
 
@@ -100,10 +107,7 @@ namespace Explorer.Tours.Core.Domain
             Status = TourStatus.ARCHIVED;
         }
 
-        public void setPublished()
-        {
-            Status = TourStatus.PUBLISHED;
-        }
+        
         // Metode za upravljanje TravelTimes (vrednosni objekti)
         /*        public Result AddTravelTime(TravelTime travelTime)
                 {
@@ -122,10 +126,39 @@ namespace Explorer.Tours.Core.Domain
                     TravelTimes.Remove(travelTime);
                     return Result.Ok();
                 }*/
+    
+
+
+    public Result setPublished()
+    {
+
+        if(Name != "" && Description != "" && Weight != "" && Tags.Length > 0 && 
+            TourCheckpoints.Count >= 2 && TravelTimes.Count > 0) { 
+            Status = TourStatus.PUBLISHED;
+            PublishedDate = DateTime.UtcNow;
+            return Result.Ok();
+        }
+        else
+        {
+            return Result.Fail("Tour must have name, description, travel time and al least 2 checkpoints.");
+            
+        }
+        
     }
+    public TourCheckpoint AddNewCheckpoint(TourCheckpoint checkpoint)
+    {
+        TourCheckpoints.Add(checkpoint);
+        return checkpoint;
+    }
+
+    public TravelTime AddNewTravelTime(TravelTime travelTime)
+    {
+        TravelTimes.Add(travelTime);
+        return travelTime;
 
     public enum TourStatus
     {
         DRAFT, PUBLISHED, ARCHIVED
+
     }
 }

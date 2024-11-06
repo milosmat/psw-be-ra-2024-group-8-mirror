@@ -12,6 +12,13 @@ namespace Explorer.Tours.API.Public.Author
         Result<TourDTO> Update(TourDTO tourDto);
         Result Delete(int id);
 
+
+        Result<List<long>> GetEquipmentIds(int tourId);
+        Result AddEquipmentId(int tourId, long equipmentId);
+        Result RemoveEquipmentId(int tourId, long equipmentId);
+        Result<TourCheckpointDto> AddNewCheckpoint(long tourId, TourCheckpointDto tourCheckpoint);
+        Result<TravelTimeDTO> AddNewTravelTime(long tourId, TravelTimeDTO travelTime);
+        Result ArchiveTour (int tourId);
         // Metode za dobijanje ID-ova povezane opreme i tačaka
         //Result<List<long>> GetEquipmentIds(int tourId);
         //Result<List<long>> GetCheckpointIds(int tourId);

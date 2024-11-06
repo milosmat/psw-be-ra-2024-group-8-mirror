@@ -22,9 +22,14 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
         public new Tour? Get(long id)
         {
             return DbContext.Tours.Where(t => t.Id == id)
-                .Include(t => t.TourCheckpoints!).Include(t => t.Equipments).FirstOrDefault();
+                .Include(t => t.TourCheckpoints).Include(t => t.Equipments).FirstOrDefault();
         }
-
+        public new PagedResult<Tour> GetPaged(int page, int pageSize)
+        {
+            var task = DbContext.Tours.Include(t => t.TourCheckpoints!).Include(t => t.Equipments).GetPagedById(page, pageSize);
+            task.Wait();
+            return task.Result;
+        }
         public Tour Update(Tour aggregateRoot)
         {
             DbContext.Entry(aggregateRoot).State = EntityState.Modified;

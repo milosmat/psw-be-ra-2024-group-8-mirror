@@ -10,7 +10,13 @@ namespace Explorer.API.Controllers.Author
     [Route("api/author/tours")]
     public class TourController : BaseApiController
     {
-        private readonly ITourService _tourService;
+
+       private readonly ITourService _tourService;
+       
+       private readonly IEquipmentService _equipmentService;
+        private readonly ITourCheckpointService _tourCheckpointService;
+        
+
 
         public TourController(ITourService tourService)
         {
@@ -38,6 +44,21 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        [HttpPost("{tourId:int}/checkpoint")]
+        public ActionResult<TourCheckpointDto> AddNewCheckpoint([FromBody] TourCheckpointDto checkpoint, long tourId)
+        {
+            
+            var result = _tourService.AddNewCheckpoint(tourId, checkpoint);
+            return CreateResponse(result);
+
+        }
+        [HttpPost("{tourId:int}/addNewTravelTime")]
+        public ActionResult<TravelTimeDTO> AddNewTravelTime1([FromBody] TravelTimeDTO newTravelTime, long tourId)
+        {
+            var result = _tourService.AddNewTravelTime(tourId, newTravelTime);
+            return CreateResponse(result);
+            
+        }
         [HttpPut("{id:int}")]
         public ActionResult<TourDTO> Update([FromBody] TourDTO tourDto)
         {
@@ -72,8 +93,10 @@ namespace Explorer.API.Controllers.Author
         [HttpGet("equipment")]
         public ActionResult<PagedResult<EquipmentDto>> GetAllEquipment([FromQuery] int page, [FromQuery] int pageSize)
         {
+
             var result = _tourService.GetPagedEquipment(page, pageSize);
             return CreateResponse(result);
+
         }
 
         // Route to create new equipment
@@ -190,5 +213,6 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        
     }
 }

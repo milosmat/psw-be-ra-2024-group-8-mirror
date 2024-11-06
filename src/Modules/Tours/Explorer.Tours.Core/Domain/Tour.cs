@@ -1,10 +1,5 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
-using Explorer.Tours.Core.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
 using FluentResults;
-using Explorer.Tours.API.Dtos;
-using Explorer.Tours.API.Public;
 
 namespace Explorer.Tours.Core.Domain
 {
@@ -21,9 +16,14 @@ namespace Explorer.Tours.Core.Domain
         public DateTime ArchivedDate { get; private set; }
         // Kolekcije vrednosnih objekata i entiteta
         public List<Equipment> Equipments { get; private set; } = new List<Equipment>();
-        public List<TourCheckpoint> TourCheckpoints { get;  set; } = new List<TourCheckpoint>();
-        //public List<TravelTime> TravelTimes { get; private set; } = new List<TravelTime>();
+
+        public List<TourCheckpoint> TourCheckpoints { get; private set; } = new List<TourCheckpoint>();
+
+        // Tour review
+        public List<TourReview> TourReviews { get; private set; } = new List<TourReview>();
+
         public Tour() { }
+
         public Tour(string name, string description, string weight, string[] tags, long lengthInKm, DateTime publishedDate, DateTime archivedDate)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
@@ -41,7 +41,6 @@ namespace Explorer.Tours.Core.Domain
         // Metode za upravljanje Equipments (vrednosni objekti)
         public Result AddEquipment(Equipment equipment)
         {
-
             if (Equipments.Contains(equipment))
                 return Result.Fail("Equipment already exists.");
 
@@ -76,6 +75,26 @@ namespace Explorer.Tours.Core.Domain
             TourCheckpoints.Remove(checkpoint);
             return Result.Ok();
         }
+
+        // Metode za upravljanje TourReviews (entiteti)
+        public Result AddTourReview(TourReview review)
+        {
+            if (TourReviews.Any(r => r.Personn.Id == review.Personn.Id && r.TourDate == review.TourDate))
+                return Result.Fail("Review already exists for this tour date by the same person.");
+
+            TourReviews.Add(review);
+            return Result.Ok();
+        }
+
+        public Result RemoveTourReview(TourReview review)
+        {
+            if (!TourReviews.Contains(review))
+                return Result.Fail("Review not found.");
+
+            TourReviews.Remove(review);
+            return Result.Ok();
+        }
+
         public void SetArchived()
         {
             Status = TourStatus.ARCHIVED;

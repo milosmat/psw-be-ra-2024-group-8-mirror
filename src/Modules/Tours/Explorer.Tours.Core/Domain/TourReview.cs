@@ -1,10 +1,5 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
 using Explorer.Stakeholders.Core.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Explorer.Tours.Core.Domain
 {
@@ -19,7 +14,7 @@ namespace Explorer.Tours.Core.Domain
 
         public TourReview() { }
 
-        public TourReview(int rating, string comment,Person person, DateTime tourDate, DateTime reviewDate, string[] images)
+        public TourReview(int rating, string comment, Person person, DateTime tourDate, DateTime reviewDate, string[] images)
         {
             if (rating < 1 || rating > 5) throw new ArgumentException("Rating must be between 1 and 5.");
             if (tourDate > reviewDate) throw new ArgumentException("Tour date cannot be later than the review date.");

@@ -100,5 +100,27 @@ namespace Explorer.API.Controllers.Tourist
             return Ok($"Blog with ID {id} has been successfully deleted.");
         }
 
+        [HttpPut("vote/")]
+        public ActionResult<VoteDto> AddVote([FromBody] VoteDto dto)
+        {
+            try
+            {
+                VoteDto result = _blogsService.AddVote(dto);
+
+                if (result != null)
+                {
+                    return Ok(true);
+                }
+                else
+                {
+                    return BadRequest("The blog could not be created due to invalid data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+
+        }
     }
 }

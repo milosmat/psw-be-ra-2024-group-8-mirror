@@ -14,8 +14,10 @@ namespace Explorer.Blog.API.Public
         //Result Vote(int id, Vote voteDto);
         PagedResult<BlogsDto> GetPaged(int page, int pageSize);
         BlogsDto Create(BlogsDto newBlog);
-        void Delete(long id);
+        void Delete(int id);
         BlogsDto Update(BlogsDto updateBlog);
-        BlogsDto Get(long id);
+        BlogsDto Get(int id);
+        VoteDto AddVote(VoteDto voteDto);
+
     }
 }

@@ -16,7 +16,7 @@ namespace Explorer.Blog.Core.Domain.RepositoryInterfaces
 
         Blogg Update(Blogg updateBlog);
 
-        Blogg Get(long id);
+        Blogg Get(int id);
 
     }
 }

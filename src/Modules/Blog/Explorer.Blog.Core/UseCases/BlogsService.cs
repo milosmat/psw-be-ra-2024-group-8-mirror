@@ -31,16 +31,27 @@ namespace Explorer.Blog.Core.UseCases
 
         public PagedResult<BlogsDto> GetPaged(int page, int pageSize)
         {
-            var blogs =  _mapper.Map<List<BlogsDto>>(_blogRepository.GetPaged(page, pageSize).Results);
-            return new PagedResult<BlogsDto>(blogs, blogs.Count);
+            PagedResult<Blogg> blogs = _blogRepository.GetPaged(page, pageSize);
+
+            var blogDtos = _mapper.Map<List<BlogsDto>>(blogs.Results);
+            return new PagedResult<BlogsDto>(blogDtos, blogs.TotalCount);
         }
+
 
         public BlogsDto Create(BlogsDto newBlog)
         {
             return _mapper.Map<BlogsDto>(_blogRepository.Create(_mapper.Map<Blogg>(newBlog)));
         }
 
-        public void Delete(long id)
+        public VoteDto AddVote(VoteDto voteDto)
+        {
+            Blogg blog = _blogRepository.Get(voteDto.BlogId);
+            blog.AddVote(_mapper.Map<Vote>(voteDto));
+            _blogRepository.Update(blog);
+            return voteDto;
+        }
+
+        public void Delete(int id)
         {
             _blogRepository.Delete(id);
         }
@@ -50,7 +61,7 @@ namespace Explorer.Blog.Core.UseCases
             return _mapper.Map<BlogsDto>(_blogRepository.Update(_mapper.Map<Blogg>(updateBlog)));
         }
 
-        public BlogsDto Get(long id)
+        public BlogsDto Get(int id)
         {
             return _mapper.Map<BlogsDto>(_blogRepository.Get(id));
         }

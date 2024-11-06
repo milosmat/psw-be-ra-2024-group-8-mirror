@@ -21,17 +21,19 @@ namespace Explorer.Blog.Core.Domain.Blogs
 
         public Blogg() { }
 
-        public Blogg(int userId, string title, string description, List<string>? images, BlogsStatus status)
+        public Blogg(int id,int userId, string title, string description, List<string>? images, BlogsStatus status, List<Vote> votes)
         {
             if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Invalid Title.");
             if (description != null && string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Description cannot be empty.");
             
+            Id = id;
             UserId = userId;
             Title = title;
             Description = description;
             CreatedDate = DateTime.Now;
             Images = images ?? new List<string>();
             Status = status;
+            Votes = votes ?? new List<Vote>();
             Comments = new List<Comment>();
         }
         public void AddComment(Comment newComment)
@@ -79,6 +81,30 @@ namespace Explorer.Blog.Core.Domain.Blogs
             {
                 Comments.RemoveAll(c=> c.Id == commentId);
             }
+           
+        }
+
+        public Vote AddVote(Vote newVote)
+        {
+            var vote = Votes.Find(v => v.BlogId == newVote.BlogId && v.UserId == newVote.UserId);
+            if(vote != null && vote.UserId==newVote.UserId && vote.BlogId==newVote.BlogId)
+            {
+                if((newVote.Mark == Markdown.Upvote && vote.Mark == Markdown.Upvote) || (newVote.Mark == Markdown.Downvote && vote.Mark == Markdown.Downvote))
+                {
+                    Votes.RemoveAll(v => v.UserId == vote.UserId && v.BlogId == vote.BlogId);
+                }
+                if((newVote.Mark == Markdown.Upvote && vote.Mark == Markdown.Downvote) || (newVote.Mark == Markdown.Downvote && vote.Mark == Markdown.Upvote))
+                {
+                    Votes.RemoveAll(v => v.UserId == vote.UserId && v.BlogId == vote.BlogId);
+                    Votes.Add(newVote);
+                }
+            }
+            else
+            {
+                Votes.Add(newVote);
+            }
+            return newVote;
+
         }
 
     }

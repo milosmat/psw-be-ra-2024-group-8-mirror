@@ -14,6 +14,7 @@ public class TourCheckpoint : Entity
     public string CheckpointName { get; private set; }
     public string CheckpointDescription { get; private set; }
     public string Image { get; private set; }
+    public long TourId { get; set; }
 
     public TourCheckpoint(double latitude, double longitude, string checkpointName, string checkpointDescription, string image)
     {

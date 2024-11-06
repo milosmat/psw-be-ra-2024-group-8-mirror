@@ -1,4 +1,5 @@
-﻿namespace Explorer.Tours.API.Dtos
+﻿using Explorer.Tours;
+namespace Explorer.Tours.API.Dtos
 {
     public class TourDTO
     {
@@ -7,10 +8,13 @@
         public string Description { get; set; }
         public string Weight { get; set; }
         public string[] Tags { get; set; }
-        public int Status {  get; set; }
+        public int Status { get; set; }
         public decimal? Price { get; set; }
-        public List<long> equipmentIds {  get; set; }
-        public List<long> TourCheckpointIds { get; set; }
-
+        public long LengthInKm { get; set; }
+        public DateTime PublishedDate { get; set; }
+        public DateTime ArchivedDate { get; set; }
+        public List<EquipmentDto> Equipments { get; set; }
+        public List<TourCheckpointDto> TourCheckpoints { get; set; }
+        //public List<TravelTime> TravelTimes { get; set; }
     }
 }

@@ -21,17 +21,19 @@ namespace Explorer.Blog.Core.Domain.Blogs
 
         public Blogg() { }
 
-        public Blogg(int userId, string title, string description, List<string>? images, BlogsStatus status)
+        public Blogg(int id,int userId, string title, string description, List<string>? images, BlogsStatus status, List<Vote> votes)
         {
             if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Invalid Title.");
             if (description != null && string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Description cannot be empty.");
             
+            Id = id;
             UserId = userId;
             Title = title;
             Description = description;
             CreatedDate = DateTime.Now;
             Images = images ?? new List<string>();
             Status = status;
+            Votes = votes ?? new List<Vote>();
         }
 
         public Vote AddVote(Vote newVote)

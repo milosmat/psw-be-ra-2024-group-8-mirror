@@ -52,7 +52,7 @@ namespace Explorer.Blog.Core.UseCases
             return voteDto;
         }
 
-        public void Delete(long id)
+        public void Delete(int id)
         {
             _blogRepository.Delete(id);
         }
@@ -62,7 +62,7 @@ namespace Explorer.Blog.Core.UseCases
             return _mapper.Map<BlogsDto>(_blogRepository.Update(_mapper.Map<Blogg>(updateBlog)));
         }
 
-        public BlogsDto Get(long id)
+        public BlogsDto Get(int id)
         {
             return _mapper.Map<BlogsDto>(_blogRepository.Get(id));
         }

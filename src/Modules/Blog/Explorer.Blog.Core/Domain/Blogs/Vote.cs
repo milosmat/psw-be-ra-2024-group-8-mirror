@@ -22,7 +22,7 @@ namespace Explorer.Blog.Core.Domain.Blogs
             BlogId = blogId;
             Mark = mark;
             CreatedTime = DateTime.Now;
-        }   
+        }
 
 
         protected override bool EqualsCore(Vote other)

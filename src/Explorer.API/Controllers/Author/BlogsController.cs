@@ -93,19 +93,21 @@ namespace Explorer.API.Controllers.Author
         {
             try
             {
-                BlogsDto result = _blogsService.Update(blog);
-
-                if (result != null)
+                BlogsDto findBlog = _blogsService.Get(blog.Id);
+                if(findBlog == null)
                 {
-                    return Ok(result);
+                    return NotFound("The blog with the specified ID was not found.");
                 }
                 else
                 {
-                    return BadRequest("The blog could not be created due to invalid data.");
+                    BlogsDto result = _blogsService.Update(blog);
+                    return Ok(result);
                 }
+
             }
             catch (Exception ex)
             {
+                // Return a 500 error for unexpected issues
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }

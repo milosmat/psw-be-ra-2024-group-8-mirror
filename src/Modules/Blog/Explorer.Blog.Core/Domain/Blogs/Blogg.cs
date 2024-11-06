@@ -77,7 +77,7 @@ namespace Explorer.Blog.Core.Domain.Blogs
             }
             else
             {
-                Comments.Remove(comment);
+                Comments.RemoveAll(c=> c.Id == commentId);
             }
         }
 
@@ -89,5 +89,6 @@ namespace Explorer.Blog.Core.Domain.Blogs
         Published,
         Closed
     }
+
      
 }

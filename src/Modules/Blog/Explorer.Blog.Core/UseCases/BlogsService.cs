@@ -31,7 +31,8 @@ namespace Explorer.Blog.Core.UseCases
 
         public PagedResult<BlogsDto> GetPaged(int page, int pageSize)
         {
-            return null;
+            var blogs =  _mapper.Map<List<BlogsDto>>(_blogRepository.GetPaged(page, pageSize).Results);
+            return new PagedResult<BlogsDto>(blogs, blogs.Count);
         }
 
         public BlogsDto Create(BlogsDto newBlog)

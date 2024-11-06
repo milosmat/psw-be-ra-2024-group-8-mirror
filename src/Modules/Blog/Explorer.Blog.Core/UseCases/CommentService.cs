@@ -32,7 +32,7 @@ namespace Explorer.Blog.Core.UseCases
             {
                 throw new KeyNotFoundException($"Blog with ID {blogId} not found.");
             }
-            newComment.Id = 0;
+            //newComment.Id = 0;
             blog.AddComment(_mapper.Map<Comment>(newComment));
             _blogRepository.Update(blog);
             return newComment;

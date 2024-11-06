@@ -34,6 +34,54 @@ namespace Explorer.Blog.Core.Domain.Blogs
             Images = images ?? new List<string>();
             Status = status;
             Votes = votes ?? new List<Vote>();
+            Comments = new List<Comment>();
+        }
+        public void AddComment(Comment newComment)
+        {
+            if (newComment == null) 
+            {
+                throw new ArgumentNullException(nameof(newComment));
+            }
+            newComment.SetBlogId(this.Id);
+            Comments.Add(newComment);
+        }
+        public void RemoveComment(long commentId)
+        {
+            var comment = Comments.FirstOrDefault(c => c.Id == commentId);
+            if(comment != null)
+            {
+                Comments.Remove(comment);
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Comment with ID {commentId} not found");
+            }
+        }
+        public void UpdateComment(Comment updatedComment)
+        {
+            var comment = Comments.FirstOrDefault(c => c.Id == updatedComment.Id);  
+            if(comment == null)
+            {
+                throw new KeyNotFoundException($"Comment with ID {updatedComment.Id} not found");
+            }
+            else
+            {
+                comment.UpdateText(updatedComment.Text);
+            }
+
+        }
+        public void DeleteComment(long commentId)
+        {
+            var comment = Comments.FirstOrDefault(c => c.Id == commentId);
+            if(comment == null)
+            {
+                throw new KeyNotFoundException($"Comment with ID {commentId} not found");
+            }
+            else
+            {
+                Comments.RemoveAll(c=> c.Id == commentId);
+            }
+           
         }
 
         public Vote AddVote(Vote newVote)
@@ -67,5 +115,6 @@ namespace Explorer.Blog.Core.Domain.Blogs
         Published,
         Closed
     }
+
      
 }

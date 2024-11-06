@@ -14,6 +14,22 @@ public class BlogContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("blog");
+
+        modelBuilder.Entity<Comment>()
+       .ToTable("Comments")
+       .Property(c => c.Id)
+       .ValueGeneratedOnAdd();  // Automatski generisan ID
+
+        modelBuilder.Entity<Comment>()
+            .Property(c => c.CreationTime)
+            .HasDefaultValueSql("timezone('utc', now())");
+
+        modelBuilder.Entity<Comment>()
+       .HasOne(c => c.Blog)
+       .WithMany(b => b.Comments)
+       .HasForeignKey(c => c.BlogId)
+       .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<Comment>().ToTable("Comments");
         modelBuilder.Entity<Blogg>().Property(item => item.Votes).HasColumnType("jsonb");
     }

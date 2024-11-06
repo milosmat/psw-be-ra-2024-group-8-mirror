@@ -18,5 +18,7 @@ namespace Explorer.Blog.Core.Domain.RepositoryInterfaces
 
         Blogg Get(int id);
 
+        Blogg GetBlogWithComments(long blogId);
+
     }
 }

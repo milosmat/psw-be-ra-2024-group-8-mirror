@@ -68,7 +68,7 @@ namespace Explorer.Blog.Core.UseCases
 
         public CommentDto AddComment(long blogId, CommentDto newComment)
         {
-            var blog = _blogRepository.Get(blogId);
+            var blog = _blogRepository.GetBlogWithComments(blogId);
             if (blog == null)
             {
                 throw new Exception("Blog not found");

@@ -17,7 +17,9 @@ namespace Explorer.Blog.Core.Domain.Blogs
         public List<string>? Images { get; private set; }
         public BlogsStatus Status { get; private set; }
         public List<Vote> Votes { get; private set; }
-        public List<Comment> Comments { get; private set; }
+        public List<Comment> Comments  { get; private set; } = new List<Comment>();
+
+        public Status BlogStatus { get; private set; }
 
         public Blogg() { }
 
@@ -114,6 +116,14 @@ namespace Explorer.Blog.Core.Domain.Blogs
         Draft,
         Published,
         Closed
+    }
+
+    public enum Status
+    {
+        None,
+        ReadOnly,
+        Active,
+        Famous
     }
 
      

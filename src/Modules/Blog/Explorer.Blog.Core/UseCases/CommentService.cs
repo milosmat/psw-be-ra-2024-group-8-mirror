@@ -27,12 +27,12 @@ namespace Explorer.Blog.Core.UseCases
 
         public CommentDto Create(long blogId, CommentDto newComment)
         {
-            var blog = _blogRepository.Get(blogId);
+            var blog = _blogRepository.GetBlogWithComments(blogId);
             if (blog == null)
             {
                 throw new KeyNotFoundException($"Blog with ID {blogId} not found.");
             }
-            //newComment.Id = 0;
+            newComment.Id = 0;
             blog.AddComment(_mapper.Map<Comment>(newComment));
             _blogRepository.Update(blog);
             return newComment;
@@ -41,7 +41,7 @@ namespace Explorer.Blog.Core.UseCases
 
         public void Delete(long blogId, long commentId)
         {
-            var blog = _blogRepository.Get(blogId);
+            var blog = _blogRepository.GetBlogWithComments(blogId);
             if (blog == null)
             {
                 throw new KeyNotFoundException("Blog not found.");
@@ -53,7 +53,7 @@ namespace Explorer.Blog.Core.UseCases
 
         public CommentDto Update(long blogId, CommentDto updatedComment)
         {
-            var blog = _blogRepository.Get(blogId);
+            var blog = _blogRepository.GetBlogWithComments(blogId);
             if (blog == null)
             {
                 throw new KeyNotFoundException("Blog not found.");
@@ -68,13 +68,13 @@ namespace Explorer.Blog.Core.UseCases
 
         public PagedResult<CommentDto> GetPagedByBlog(long blogId, int page, int pageSize)
         {
-            var blog = _blogRepository.Get(blogId);
+            var blog = _blogRepository.GetBlogWithComments(blogId);
             if (blog == null)
             {
                 throw new KeyNotFoundException("Blog not found.");
             }
 
-            var allComments = blog.Comments.ToList();
+            var allComments = blog.Comments?.ToList();
 
             int totalCount = allComments.Count;
 

@@ -36,10 +36,15 @@ namespace Explorer.Blog.Infrastructure.Database.Repositories
             var newComments = aggregateRoot.Comments.Where(c => c.Id == 0).ToList();
             if (newComments.Any())
             {
+                foreach (var comment in newComments)
+                {
+                    comment.BlogId = aggregateRoot.Id; // Set BlogId for new comments
+                }
                 DbContext.Comments.AddRange(newComments);
             }
 
             // Ažuriranje postojećih komentara
+            
             var existingComments = aggregateRoot.Comments.Where(c => c.Id != 0).ToList();
             if (existingComments.Any())
             {
@@ -47,6 +52,7 @@ namespace Explorer.Blog.Infrastructure.Database.Repositories
             }
 
             // Brisanje komentara koji više ne postoje u kolekciji
+            
             var existingCommentIds = aggregateRoot.Comments.Select(c => c.Id).ToList();
             var commentsToDelete = DbContext.Comments
                 .Where(c => c.BlogId == aggregateRoot.Id && !existingCommentIds.Contains(c.Id))
@@ -58,7 +64,7 @@ namespace Explorer.Blog.Infrastructure.Database.Repositories
                 DbContext.Comments.RemoveRange(commentsToDelete);
             }
 
-            
+
             DbContext.Entry(aggregateRoot).State = EntityState.Modified;
             DbContext.Blogs.Update(aggregateRoot);
 
@@ -66,6 +72,14 @@ namespace Explorer.Blog.Infrastructure.Database.Repositories
 
             return aggregateRoot;
         }
+
+        public Blogg GetBlogWithComments(long blogId)
+        {
+            return DbContext.Blogs
+                            .Include(b => b.Comments)  // Eager load comments
+                            .FirstOrDefault(b => b.Id == blogId);
+        }
+
 
 
 

@@ -70,6 +70,7 @@ namespace Explorer.API.Controllers.Author
         {
             try
             {
+                blog.BlogStatus = Blog.API.Dtos.Status.None;
                 BlogsDto result = _blogsService.Create(blog);
 
                 if (result != null)

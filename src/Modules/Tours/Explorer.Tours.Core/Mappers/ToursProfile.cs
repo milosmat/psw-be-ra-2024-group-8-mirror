@@ -15,8 +15,11 @@ public class ToursProfile : Profile
         CreateMap<TourDTO, Tour>().ReverseMap();
         CreateMap<TourExecutionDto, TourExecution>().ReverseMap();
         CreateMap<TouristEquipmentDTO, TouristEquipment>().ReverseMap();
+        CreateMap<VisitedCheckpointDTO, VisitedCheckpoint>().ReverseMap();
+
 
         CreateMap<ObjectDTO, Object>().ReverseMap();
+        CreateMap<TourReviewDto, TourReview>().ReverseMap();
 
         CreateMap<TouristPositionDto, TouristPosition>()
             .ForMember(dest => dest.CurrentLocation, opt => opt.MapFrom(src => new MapLocation(src.CurrentLocation.Latitude, src.CurrentLocation.Longitude)))

@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 namespace Explorer.Tours.API.Dtos
 {   public class TourExecutionDto
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public int TourId { get; set; }
         public int UserId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+
+        public DateTime? LastActivity { get; set; }
         public TourExecutionStatus Status { get; set; } // IN_PROGRESS, COMPLETED, ABANDONED
     }
 

@@ -47,10 +47,18 @@ namespace Explorer.API.Controllers.Tourist
             return CreateResponse(result);
         }
 
+
         [HttpGet("all-tours")]
         public ActionResult<TourDTO> GetAllTours()
         {
             var result = _tourExecutionService.GetAllTours();
+            return CreateResponse(result);
+        }
+
+        [HttpPost("{executionId:int}/check-visited-checkpoint")]
+        public ActionResult CheckVisitedCheckpoint(int executionId, [FromBody] Tours.Core.Domain.MapLocation locationDto)
+        {
+            var result = _tourExecutionService.CheckForVisitedCheckpoints(executionId, locationDto.Latitude, locationDto.Longitude);
             return CreateResponse(result);
         }
 

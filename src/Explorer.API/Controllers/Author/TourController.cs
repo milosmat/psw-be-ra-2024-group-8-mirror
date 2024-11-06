@@ -151,6 +151,36 @@ namespace Explorer.API.Controllers.Author
             var result = _tourService.DeleteCheckpoint(id);
             return CreateResponse(result);
         }
+
+
+        [HttpGet("{id:int}/reviews")]
+        public ActionResult<PagedResult<TourReviewDto>> GetAllReviews(int id, [FromQuery] int page, [FromQuery] int pageSize)
+        {
+            var result = _tourService.GetPagedReviews(id, page, pageSize);
+            return CreateResponse(result);
+        }
+
+        [HttpPost("{id:int}/reviews")]
+        public ActionResult<TourReviewDto> AddReview(int id, [FromBody] TourReviewDto reviewDto)
+        {
+            var result = _tourService.AddReview(id, reviewDto);
+            return CreateResponse(result);
+        }
+
+        [HttpPut("reviews/{reviewId:int}")]
+        public ActionResult<TourReviewDto> UpdateReview(int reviewId, [FromBody] TourReviewDto reviewDto)
+        {
+            var result = _tourService.UpdateReview(reviewId, reviewDto);
+            return CreateResponse(result);
+        }
+
+        [HttpDelete("reviews/{reviewId:int}")]
+        public ActionResult DeleteReview(int reviewId)
+        {
+            var result = _tourService.DeleteReview(reviewId);
+            return CreateResponse(result);
+        }
+
         [HttpPost("{id:int}/archive")]
         public ActionResult ArchiveTour(int id)
         {

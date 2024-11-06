@@ -14,5 +14,6 @@ public class TourCheckpointDto
     public string CheckpointName { get; set; }
     public string CheckpointDescription { get; set; }
     public string Image { get; set; }
+    public long TourId { get; set; }
 }
 

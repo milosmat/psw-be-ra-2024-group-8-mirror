@@ -18,11 +18,16 @@ namespace Explorer.API.Controllers.Tourist
             _tourExecutionService = tourExecutionService;
         }
 
-        // Route to start a tour execution
         [HttpPost("start")]
-        public ActionResult<TourExecutionDto> StartTourExecution(int tourId, int userId)//, [FromBody] LocationDto startLocationDto)
+        public ActionResult<TourExecutionDto> StartTourExecution([FromQuery] int tourId, [FromQuery] int userId)
         {
-            var result = _tourExecutionService.StartTourExecution(tourId, userId);//, startLocationDto);
+            // Proveravamo da li su `tourId` i `userId` validni
+            if (tourId <= 0 || userId <= 0)
+            {
+                return BadRequest("Invalid tour or user ID.");
+            }
+
+            var result = _tourExecutionService.StartTourExecution(tourId, userId);
             return CreateResponse(result);
         }
 
@@ -42,28 +47,23 @@ namespace Explorer.API.Controllers.Tourist
             return CreateResponse(result);
         }
 
-        // Optional route to get a specific tour execution by ID
-        /*[HttpGet("{executionId:int}")]
-        public ActionResult<TourExecutionDto> GetTourExecution(int executionId)
+        [HttpGet("all-tours")]
+        public ActionResult<TourDTO> GetAllTours()
         {
-            var result = _tourExecutionService.GetExecution(executionId);
+            var result = _tourExecutionService.GetAllTours();
             return CreateResponse(result);
         }
 
-        // Optional route to get all tour executions (paged)
-        [HttpGet]
-        public ActionResult<PagedResult<TourExecutionDto>> GetPagedTourExecutions([FromQuery] int page, [FromQuery] int pageSize)
+        [HttpGet("status")]
+        public ActionResult<TourExecutionDto> GetTourExecutionStatus([FromQuery] int tourId, [FromQuery] int userId)
         {
-            var result = _tourExecutionService.GetPagedExecutions(page, pageSize);
+            if (tourId <= 0 || userId <= 0)
+            {
+                return BadRequest("Invalid tour or user ID.");
+            }
+
+            var result = _tourExecutionService.GetTourExecutionStatus(tourId, userId);
             return CreateResponse(result);
         }
-
-        // Optional route to record an activity (location update)
-        [HttpPost("{executionId:int}/record-activity")]
-        public ActionResult RecordActivity(int executionId, [FromBody] LocationDto locationDto)
-        {
-            var result = _tourExecutionService.RecordActivity(executionId, locationDto);
-            return CreateResponse(result);
-        }*/
     }
 }

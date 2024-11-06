@@ -14,5 +14,7 @@ namespace Explorer.Tours.API.Public.Tourist
         Result<TourExecutionDto> StartTourExecution(int tourId, int userId);//, LocationDto startLocation);
         Result CompleteTourExecution(int executionId);
         Result AbandonTourExecution(int executionId);
+        Result<List<TourDTO>> GetAllTours();
+        Result<TourExecutionDto> GetTourExecutionStatus(int tourId, int userId);
     }
 }

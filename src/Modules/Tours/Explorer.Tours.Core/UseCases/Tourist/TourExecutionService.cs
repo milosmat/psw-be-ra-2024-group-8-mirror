@@ -63,5 +63,59 @@ namespace Explorer.Tours.Core.UseCases.Tourist
 
             return Result.Ok();
         }
+
+        public Result<List<TourDTO>> GetAllTours()
+        {
+            try
+            {
+                // Dohvati sve ture u jednoj stranici sa velikim pageSize
+                var pagedResult = _tourRepository.GetPaged(1, int.MaxValue);
+
+                // Mapiraj rezultate na listu TourDto objekata
+                var tours = pagedResult.Results.Select(tour => _mapper.Map<TourDTO>(tour)).ToList();
+
+                return Result.Ok(tours);
+            }
+            catch (Exception ex)
+            {
+                // Logovanje greške ako je potrebno
+                return Result.Fail<List<TourDTO>>("Failed to load tours.").WithError(ex.Message);
+            }
+        }
+
+        public Result<TourExecutionDto> GetTourExecutionStatus(int tourId, int userId)
+        {
+            int page = 1;
+            int pageSize = 100; // Postavite veličinu stranice prema potrebi
+
+            while (true)
+            {
+                // Dohvati stranicu podataka
+                var pagedResult = _tourExecutionRepository.GetPaged(page, pageSize);
+
+                // Pronađi traženi zapis u trenutnoj stranici
+                var tourExecution = pagedResult.Results
+                    .FirstOrDefault(te => te.TourId == tourId && te.UserId == userId);
+
+                if (tourExecution != null)
+                {
+                    // Ako je pronađen, mapiraj ga na DTO i vrati rezultat
+                    var executionDto = _mapper.Map<TourExecutionDto>(tourExecution);
+                    return Result.Ok(executionDto);
+                }
+
+                // Ako nije pronađen i nema više stranica za proveru, vrati grešku
+                if (pagedResult.Results.Count < pageSize)
+                {
+                    // Nema više rezultata za pretragu
+                    break;
+                }
+
+                // Uvećaj broj stranice za sledeći ciklus
+                page++;
+            }
+
+            return Result.Fail("Tour execution not found.");
+        }
     }
 }

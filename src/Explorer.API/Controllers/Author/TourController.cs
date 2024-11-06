@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Explorer.Tours.Core.Domain;
 using FluentResults;
 using Explorer.Tours.API.Public.Administration;
+using Explorer.Tours.API.Public.Tourist;
 
 namespace Explorer.API.Controllers.Author
 {

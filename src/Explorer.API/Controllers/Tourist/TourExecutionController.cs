@@ -73,5 +73,12 @@ namespace Explorer.API.Controllers.Tourist
             var result = _tourExecutionService.GetTourExecutionStatus(tourId, userId);
             return CreateResponse(result);
         }
+
+        [HttpGet("{executionId:int}/checkpoint/{checkpointId:int}/secret")]
+        public ActionResult<string> GetCheckpointSecret(int executionId, int checkpointId)
+        {
+            var result = _tourExecutionService.GetCheckpointSecret(executionId, checkpointId);
+            return CreateResponse(result);
+        }
     }
 }

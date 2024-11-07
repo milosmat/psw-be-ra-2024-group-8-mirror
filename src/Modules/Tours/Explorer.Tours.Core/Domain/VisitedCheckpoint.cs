@@ -11,11 +11,12 @@ namespace Explorer.Tours.Core.Domain
     {
         public int CheckpointId { get; private set; }
         public DateTime VisitTime { get; private set; }
-
-        public VisitedCheckpoint(int checkpointId, DateTime visitTime)
+        public string Secret {  get; private set; }
+        public VisitedCheckpoint(int checkpointId, DateTime visitTime, string secret)
         {
             CheckpointId = checkpointId;
             VisitTime = visitTime;
+            Secret = secret;
         }
         
     }

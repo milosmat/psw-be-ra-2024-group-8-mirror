@@ -11,11 +11,6 @@
     <ProjectReference Include="..\Explorer.Tours.API\Explorer.Tours.API.csproj" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <Folder Include="Domain\Entities\" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
   </ItemGroup>

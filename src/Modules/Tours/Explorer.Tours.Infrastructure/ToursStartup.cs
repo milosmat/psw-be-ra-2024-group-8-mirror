@@ -4,6 +4,7 @@ using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.API.Public.Tourist;
 using Explorer.Tours.Core.Domain;
+using Explorer.Tours.Core.Domain.Entities;
 using Explorer.Tours.Core.Domain.RepositoryInterfaces;
 using Explorer.Tours.Core.Mappers;
 using Explorer.Tours.Core.UseCases.Administration;
@@ -44,6 +45,10 @@ public static class ToursStartup
         services.AddScoped<ITouristPositionService, TouristPositionService>();
         services.AddScoped<ITourExecutionService, TourExecutionService>();
 
+        services.AddScoped<IShoppingCartService, ShoppingCartService>();
+
+        services.AddScoped<ITourPurchaseTokenService, TourPurchaseTokenService>();
+
     }
 
     private static void SetupInfrastructure(IServiceCollection services)
@@ -60,6 +65,12 @@ public static class ToursStartup
         services.AddScoped(typeof(ICrudRepository<Object>), typeof(CrudDatabaseRepository<Object, ToursContext>));
         services.AddScoped(typeof(ICrudRepository<TouristPosition>), typeof(CrudDatabaseRepository<TouristPosition, ToursContext>));
         services.AddScoped(typeof(ICrudRepository<VisitedCheckpoint>), typeof(CrudDatabaseRepository<VisitedCheckpoint, ToursContext>));
+
+        services.AddScoped(typeof(ICrudRepository<ShoppingCart>), typeof(CrudDatabaseRepository<ShoppingCart, ToursContext>));
+
+        services.AddScoped(typeof(ICrudRepository<TourPurchaseToken>), typeof(CrudDatabaseRepository<TourPurchaseToken, ToursContext>));
+
+        services.AddScoped<ICardRepository, CardDataBaseRepository>();
 
         services.AddDbContext<ToursContext>(opt =>
             opt.UseNpgsql(DbConnectionStringBuilder.Build("tours"),

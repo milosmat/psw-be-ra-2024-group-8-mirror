@@ -3,10 +3,6 @@ using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Explorer.Tours.Core.Domain;
-using FluentResults;
-using Explorer.Tours.API.Public.Administration;
-using Explorer.Tours.API.Public.Tourist;
 
 namespace Explorer.API.Controllers.Author
 {
@@ -161,6 +157,7 @@ namespace Explorer.API.Controllers.Author
         }
 
         [HttpPost("{id:int}/reviews")]
+        [Authorize(Policy = "touristPolicy")]
         public ActionResult<TourReviewDto> AddReview(int id, [FromBody] TourReviewDto reviewDto)
         {
             var result = _tourService.AddReview(id, reviewDto);

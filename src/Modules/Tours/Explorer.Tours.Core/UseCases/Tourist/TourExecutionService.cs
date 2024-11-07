@@ -51,7 +51,7 @@ namespace Explorer.Tours.Core.UseCases.Tourist
         public Result CheckForVisitedCheckpoints(int executionId, double lat, double lon)
         {
             const double maxDistanceMeters = 500;
-            var tourExecution = _tourExecutionRepository.Get(executionId, te => te.visitedCheckpoints);
+            var tourExecution = _tourExecutionRepository.Get(executionId, te => te.VisitedCheckpoints);
             if (tourExecution == null) return Result.Fail("Tour execution not found.");
 
             int tourId = tourExecution.TourId;
@@ -63,7 +63,7 @@ namespace Explorer.Tours.Core.UseCases.Tourist
 
             foreach (var ch in tour.TourCheckpoints)
             {
-                bool alreadyVisited = tourExecution.visitedCheckpoints.Any(vc => vc.CheckpointId == ch.Id);
+                bool alreadyVisited = tourExecution.VisitedCheckpoints.Any(vc => vc.CheckpointId == ch.Id);
                 if (!alreadyVisited)
                 {
                     if (IsNearby(lat, lon, ch.Latitude, ch.Longitude, maxDistanceMeters))
@@ -95,7 +95,7 @@ namespace Explorer.Tours.Core.UseCases.Tourist
             var tourExecution = _tourExecutionRepository.Get(executionId);
             if (tourExecution == null) return Result.Fail("Tour execution not found.");
 
-            var visitedCheckpoint = new VisitedCheckpoint(checkpointId, DateTime.UtcNow);
+            var visitedCheckpoint = new VisitedCheckpoint(checkpointId, DateTime.UtcNow, "Tajna za checkpoint");
             tourExecution.VisitCheckpoint(visitedCheckpoint);
             _visitedCheckpointRepository.Create(visitedCheckpoint);
             return Result.Ok();
@@ -153,11 +153,12 @@ namespace Explorer.Tours.Core.UseCases.Tourist
                 var pagedResult = _tourExecutionRepository.GetPaged(page, pageSize);
 
                 // Pronađi traženi zapis u trenutnoj stranici
-                var tourExecution = pagedResult.Results
+                var tourExecution2 = pagedResult.Results
                     .FirstOrDefault(te => te.TourId == tourId && te.UserId == userId);
 
-                if (tourExecution != null)
+                if (tourExecution2 != null)
                 {
+                    var tourExecution = _tourExecutionRepository.Get(tourExecution2.Id, te => te.VisitedCheckpoints);
                     // Ako je pronađen, mapiraj ga na DTO i vrati rezultat
                     var executionDto = _mapper.Map<TourExecutionDto>(tourExecution);
                     return Result.Ok(executionDto);
@@ -176,5 +177,22 @@ namespace Explorer.Tours.Core.UseCases.Tourist
 
             return Result.Fail("Tour execution not found.");
         }
+
+        public Result<string> GetCheckpointSecret(int executionId, int checkpointId)
+        {
+            var tourExecution = _tourExecutionRepository.Get(executionId, te => te.VisitedCheckpoints);
+            if (tourExecution == null) return Result.Fail("Tour execution not found.");
+
+            // Pronađi `VisitedCheckpoint` sa odgovarajućim `checkpointId`
+            var visitedCheckpoint = tourExecution.VisitedCheckpoints
+                .FirstOrDefault(vc => vc.CheckpointId == checkpointId);
+
+            if (visitedCheckpoint == null)
+                return Result.Fail("Checkpoint not visited.");
+
+            // Vrati tajnu za checkpoint
+            return Result.Ok(visitedCheckpoint.Secret);
+        }
+
     }
 }

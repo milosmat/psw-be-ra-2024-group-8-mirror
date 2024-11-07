@@ -21,16 +21,16 @@ namespace Explorer.Blog.Infrastructure.Database.Repositories
             return DbContext.Blogs.Where(t => t.Id == id)
                 .Include(t => t.Comments!).FirstOrDefault();
         }
-        /*
+        
         public Blogg Update(Blogg aggregateRoot)
         {
             DbContext.Entry(aggregateRoot).State = EntityState.Modified;
             DbContext.Blogs.Update(aggregateRoot);
             DbContext.SaveChanges();
             return aggregateRoot;
-        }*/
+        }
 
-        public Blogg Update(Blogg aggregateRoot)
+       /* public Blogg Update(Blogg aggregateRoot)
         {
             // Dodavanje novih komentara
             var newComments = aggregateRoot.Comments.Where(c => c.Id == 0).ToList();
@@ -71,7 +71,7 @@ namespace Explorer.Blog.Infrastructure.Database.Repositories
             DbContext.SaveChanges();
 
             return aggregateRoot;
-        }
+        }*/
 
         public Blogg GetBlogWithComments(long blogId)
         {

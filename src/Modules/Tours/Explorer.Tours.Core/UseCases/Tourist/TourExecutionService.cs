@@ -4,7 +4,6 @@ using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Tourist;
 using Explorer.Tours.Core.Domain;
 using FluentResults;
-using System;
 
 namespace Explorer.Tours.Core.UseCases.Tourist
 {
@@ -67,7 +66,7 @@ namespace Explorer.Tours.Core.UseCases.Tourist
                 if (!alreadyVisited)
                 {
                     if (IsNearby(lat, lon, ch.Latitude, ch.Longitude, maxDistanceMeters))
-                    { 
+                    {
                         VisitCheckpoint(executionId, (int)ch.Id);
                         return Result.Ok();
                     }
@@ -194,5 +193,14 @@ namespace Explorer.Tours.Core.UseCases.Tourist
             return Result.Ok(visitedCheckpoint.Secret);
         }
 
+
+        public Result<List<TourCheckpointDto>> GetTourCheckpoints(int tourId)
+        {
+            var tour = _tourRepository.Get(tourId, t => t.TourCheckpoints);
+            if (tour == null) return Result.Fail("Tour not found.");
+
+            var checkpoints = tour.TourCheckpoints.Select(tc => _mapper.Map<TourCheckpointDto>(tc)).ToList();
+            return Result.Ok(checkpoints);
+        }
     }
 }

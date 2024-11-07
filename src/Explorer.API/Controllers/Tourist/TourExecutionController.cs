@@ -1,9 +1,7 @@
-﻿using Explorer.BuildingBlocks.Core.UseCases;
-using Explorer.Tours.API.Dtos;
+﻿using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Tourist;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FluentResults;
 
 namespace Explorer.API.Controllers.Tourist
 {
@@ -78,6 +76,13 @@ namespace Explorer.API.Controllers.Tourist
         public ActionResult<string> GetCheckpointSecret(int executionId, int checkpointId)
         {
             var result = _tourExecutionService.GetCheckpointSecret(executionId, checkpointId);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("{tourId:int}/checkpoints")]
+        public ActionResult<List<TourCheckpointDto>> GetTourCheckpoints(int tourId)
+        {
+            var result = _tourExecutionService.GetTourCheckpoints(tourId);
             return CreateResponse(result);
         }
     }

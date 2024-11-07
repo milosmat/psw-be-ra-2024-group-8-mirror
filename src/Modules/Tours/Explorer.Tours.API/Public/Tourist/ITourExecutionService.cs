@@ -1,11 +1,5 @@
-﻿using Explorer.BuildingBlocks.Core.UseCases;
-using Explorer.Tours.API.Dtos;
+﻿using Explorer.Tours.API.Dtos;
 using FluentResults;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Explorer.Tours.API.Public.Tourist
 {
@@ -19,5 +13,6 @@ namespace Explorer.Tours.API.Public.Tourist
         Result CheckForVisitedCheckpoints(int executionId, double lat, double lon);
         Result VisitCheckpoint(int executionId, int checkpointId);
         Result<string> GetCheckpointSecret(int executionId, int checkpointId);
+        Result<List<TourCheckpointDto>> GetTourCheckpoints(int tourId);
     }
 }

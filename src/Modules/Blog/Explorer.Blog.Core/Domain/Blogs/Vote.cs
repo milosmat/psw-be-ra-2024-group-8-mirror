@@ -1,10 +1,6 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Explorer.Blog.Core.Domain.Blogs
 {
@@ -17,22 +13,28 @@ namespace Explorer.Blog.Core.Domain.Blogs
 
         [JsonConstructor]
         public Vote(int userId, int blogId, Markdown mark)
-        { 
+        {
             UserId = userId;
             BlogId = blogId;
             Mark = mark;
             CreatedTime = DateTime.Now;
         }
 
-
         protected override bool EqualsCore(Vote other)
         {
-            throw new NotImplementedException();
+            return UserId == other.UserId && BlogId == other.BlogId && Mark == other.Mark;
         }
 
         protected override int GetHashCodeCore()
         {
-            throw new NotImplementedException();
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + UserId.GetHashCode();
+                hash = hash * 23 + BlogId.GetHashCode();
+                hash = hash * 23 + Mark.GetHashCode();
+                return hash;
+            }
         }
     }
 

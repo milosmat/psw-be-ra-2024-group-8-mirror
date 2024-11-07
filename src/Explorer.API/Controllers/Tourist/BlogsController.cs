@@ -69,23 +69,20 @@ namespace Explorer.API.Controllers.Tourist
         {
             try
             {
+                if (_blogsService.Get(blog.Id) == null)
+                {
+                    return NotFound("The blog with the specified ID was not found.");
+                }
                 BlogsDto result = _blogsService.Update(blog);
+                return Ok(result);
 
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return BadRequest("The blog could not be created due to invalid data.");
-                }
             }
             catch (Exception ex)
             {
+                // Return a 500 error for unexpected issues
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
-
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {

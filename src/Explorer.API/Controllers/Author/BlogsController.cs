@@ -94,16 +94,12 @@ namespace Explorer.API.Controllers.Author
         {
             try
             {
-                BlogsDto findBlog = _blogsService.Get(blog.Id);
-                if(findBlog == null)
-                {
-                    return NotFound("The blog with the specified ID was not found.");
-                }
-                else
-                {
-                    BlogsDto result = _blogsService.Update(blog);
-                    return Ok(result);
-                }
+                //if(_blogsService.Get(blog.Id) == null)
+                //{
+                    //return NotFound("The blog with the specified ID was not found.");
+                //}
+                BlogsDto result = _blogsService.Update(blog);
+                return Ok(result);
 
             }
             catch (Exception ex)

@@ -7,15 +7,3 @@ VALUES (-2, 'Štapovi za šetanje', 'Štapovi umanjuju umor nogu, pospešuju akt
 INSERT INTO tours."Equipment"(
     "Id", "Name", "Description")
 VALUES (-3, 'Obična baterijska lampa', 'Baterijska lampa od 200 do 400 lumena.');
-
-INSERT INTO tours."TourPreferences"(
-	"Id", "Difficulty", "WalkRating", "BikeRating", "CarRating", "BoatRating", "InterestTags")
-VALUES (-1, 1, 3, 2, 0, 1, '{"nature"}');
-
-INSERT INTO tours."TourPreferences"(
-	"Id", "Difficulty", "WalkRating", "BikeRating", "CarRating", "BoatRating", "InterestTags")
-VALUES (-2, 2, 1, 1, 0, 1, '{"city"}');
-
-INSERT INTO tours."TourPreferences"(
-	"Id", "Difficulty", "WalkRating", "BikeRating", "CarRating", "BoatRating", "InterestTags")
-VALUES (-3, 1, 3, 0, 0, 3, '{"beach"}');

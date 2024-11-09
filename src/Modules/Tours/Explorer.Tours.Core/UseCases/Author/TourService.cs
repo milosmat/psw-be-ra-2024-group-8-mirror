@@ -11,12 +11,14 @@ namespace Explorer.Tours.Core.UseCases.Author
     {
         private readonly ICrudRepository<TourCheckpoint> _tourCheckpointRepository;
         private readonly ICrudRepository<Equipment> _equipmentRepository;
+        public IMapper _mapper;
         public TourService(ICrudRepository<Tour> repository, IMapper mapper, 
             ICrudRepository<TourCheckpoint> tourCheckpointRepository,
             ICrudRepository<Equipment> equipmentRepository) : base(repository, mapper) 
         {
             _tourCheckpointRepository = tourCheckpointRepository;
             _equipmentRepository = equipmentRepository;
+            _mapper = mapper;
         }
         public Result<List<long>> GetCheckpointIds(int tourId)
         {
@@ -210,5 +212,22 @@ namespace Explorer.Tours.Core.UseCases.Author
                 return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }
         }
+
+        public Result<List<TourDTO>> GetAllTours()
+        {  
+            try
+            {
+                var tours = CrudRepository.GetPaged(1, int.MaxValue);
+                var publishedTours = tours.Results.Where(t => t.Status == TourStatus.PUBLISHED).ToList();
+                var tourDtos = _mapper.Map<List<TourDTO>>(publishedTours);
+                return Result.Ok(tourDtos);
+            }           
+            catch (Exception e)
+            {
+                return Result.Fail("Error retrieving all tours").WithError(e.Message);
+            }
+        }
+
+
     }
 }

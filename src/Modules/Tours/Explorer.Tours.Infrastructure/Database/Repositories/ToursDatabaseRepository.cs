@@ -1,9 +1,12 @@
-﻿using Explorer.BuildingBlocks.Core.Domain;
+﻿using AutoMapper;
+using Explorer.BuildingBlocks.Core.Domain;
 using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.BuildingBlocks.Infrastructure.Database;
+using Explorer.Tours.API.Dtos;
 using Explorer.Tours.Core.Domain;
 using Explorer.Tours.Core.Domain.RepositoryInterfaces;
 using Explorer.Tours.Core.Domain.ValueObjects;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,5 +35,6 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
             return aggregateRoot;
         }
 
+        
     }
 }

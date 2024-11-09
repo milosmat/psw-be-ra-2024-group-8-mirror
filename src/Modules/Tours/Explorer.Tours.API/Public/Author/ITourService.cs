@@ -22,6 +22,7 @@ namespace Explorer.Tours.API.Public.Author
         Result RemoveEquipmentId(int tourId, long equipmentId);
         Result ArchiveTour (int tourId);
         Result PublishTour(int tourId);
+        Result<List<TourDTO>> GetAllTours();
 
         Result<List<long>> GetCheckpointIds(int tourId);
         Result AddCheckpointId(int tourId, long checkpointId);

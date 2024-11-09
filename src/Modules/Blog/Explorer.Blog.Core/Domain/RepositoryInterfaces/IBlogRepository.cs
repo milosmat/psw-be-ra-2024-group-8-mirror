@@ -10,5 +10,15 @@ namespace Explorer.Blog.Core.Domain.RepositoryInterfaces
 {
     public interface IBlogRepository: ICrudRepository<Blogg>
     {
+        PagedResult<Blogg> GetPaged(int page, int pageSize);
+        Blogg Create(Blogg newBlog);
+        void Delete(long id);
+
+        Blogg Update(Blogg updateBlog);
+
+        Blogg Get(int id);
+
+        Blogg GetBlogWithComments(long blogId);
+
     }
 }

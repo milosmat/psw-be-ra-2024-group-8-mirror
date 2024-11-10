@@ -1,9 +1,13 @@
 ﻿using Explorer.API.Controllers.Administrator.Administration;
 using Explorer.API.Controllers.Author;
+using Explorer.API.Controllers.Tourist;
 using Explorer.Blog.API.Dtos;
 using Explorer.Blog.API.Public;
+using Explorer.Blog.Core.Domain.Blogs;
+using Explorer.Blog.Core.UseCases;
 using Explorer.Blog.Infrastructure.Database;
 using Explorer.Tours.API.Public.Administration;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -17,162 +21,174 @@ namespace Explorer.Blog.Tests.Integration.Administration
 {
 
     [Collection("Sequential")]
-    public class CommentCommandTests : BaseBlogIntegrationTest
+    public class CommentsCommandTests : BaseBlogIntegrationTest
     {
-        public CommentCommandTests(BlogTestFactory factory) : base(factory){ }
+        public CommentsCommandTests(BlogTestFactory factory) : base(factory) { }
 
-        [Fact]
-        public void CreatesComment()
+        [Theory]
+        [InlineData(1, "Test comment", 1)] // User 1, Blog 1, Comment content
+        public void Creates(int userId, string content, int blogId)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
-            var controller = CreateController(scope); // Kreira CommentController instancu
-            var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>(); // Pretpostavimo da koristiš BlogContext za bazu
+            var controller = CreateController(scope);
+            var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
             var newComment = new CommentDto
             {
-                BlogId = 1, // Pretpostavi da blog sa ID 1 postoji u bazi
-                UserId = 1, // Pretpostavi da korisnik sa ID 1 postoji u bazi
+                Id = 0,
+                UserId = userId,
+                Text = content,
+                BlogId = blogId,
                 CreationTime = DateTime.UtcNow,
-                LastModifiedTime = DateTime.UtcNow,
-                Text = "Ovo je testni komentar.",
-                
+                LastModifiedTime = DateTime.UtcNow
             };
 
             // Act
-            /*var result = ((ObjectResult)controller.Create(newComment).Result)?.Value as CommentDto;
+            var result = ((ObjectResult)controller.Create(blogId, newComment).Result)?.Value as CommentDto;
 
             // Assert - Response
             result.ShouldNotBeNull();
             result.Id.ShouldNotBe(0);
-            result.BlogId.ShouldBe(newComment.BlogId);
-            result.UserId.ShouldBe(newComment.UserId);
             result.Text.ShouldBe(newComment.Text);
+            result.UserId.ShouldBe(newComment.UserId);
+            result.BlogId.ShouldBe(newComment.BlogId);
+            result.CreationTime.ShouldBe(newComment.CreationTime);
 
             // Assert - Database
-            var storedComment = dbContext.Comments.FirstOrDefault(c => c.Text == newComment.Text);
-            storedComment.ShouldNotBeNull();
-            storedComment.Id.ShouldBe(result.Id);
-            storedComment.BlogId.ShouldBe(result.BlogId);
-            storedComment.UserId.ShouldBe(result.UserId);
-            storedComment.Text.ShouldBe(result.Text);*/
+            var storedEntity = dbContext.Comments.FirstOrDefault(i => i.Id == result.Id);
+            storedEntity.ShouldNotBeNull();
+            storedEntity.Text.ShouldBe(newComment.Text);
         }
 
-        [Fact]
-        public void Create_fails_invalid_data()
+        [Theory]
+        [InlineData(0, "Test comment", 400)] // Invalid userId returns 400 Bad Request
+        [InlineData(-1, "Test comment", 400)] // Invalid userId returns 400 Bad Request
+        public void Create_fails_invalid_data(int? userId, string content, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
-            var invalidComment = new CommentDto
+            var newComment = new CommentDto
             {
-                Text = "", // Prazan tekst
+                UserId = userId.GetValueOrDefault(),
+                Text = content,
                 BlogId = 1,
-                UserId = 1
+                CreationTime = DateTime.UtcNow
             };
 
             // Act
-            /*var result = (ObjectResult)controller.Create(invalidComment).Result;
+            var result = (ObjectResult)controller.Create(1, newComment).Result;
 
             // Assert
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(400); // 400 Bad Request zbog nevalidnih podataka*/
+            result.StatusCode.ShouldBe(expectedStatusCode);
         }
 
-        [Fact]
-        public void Updates()
+        [Theory]
+        [InlineData(2, "Updated comment content", 1, 1)]
+        public void Updates(int id, string content, int blogId, int userId)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
+
             var updatedComment = new CommentDto
             {
-                Id = -2,
-                Text = "Ažurirani komentar",
-                BlogId = 1,
-                UserId = 1
+                Id = id,
+                Text = content,
+                BlogId = blogId,
+                UserId = userId
             };
 
             // Act
-            /*var result = ((ObjectResult)controller.Update(updatedComment).Result)?.Value as CommentDto;
+            var result = ((ObjectResult)controller.Update(blogId, id, updatedComment).Result)?.Value as CommentDto;
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(-2);
+            result.Id.ShouldBe(id);
             result.Text.ShouldBe(updatedComment.Text);
 
             // Assert - Database
-            var storedComment = dbContext.Comments.FirstOrDefault(c => c.Text == "Ažurirani komentar");
-            storedComment.ShouldNotBeNull();
-            storedComment.Text.ShouldBe(updatedComment.Text);*/
+            var storedEntity = dbContext.Comments.FirstOrDefault(i => i.Id == id);
+            storedEntity.ShouldNotBeNull();
+            storedEntity.Text.ShouldBe(content);
         }
 
-        [Fact]
-        public void Update_fails_invalid_id()
+        [Theory]
+        [InlineData(-1000, "Updated comment", 404)] // Invalid comment ID
+        public void Update_fails_invalid_id(int id, string content, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
+
             var updatedComment = new CommentDto
             {
-                Id = -1000, // Nevalidan ID
-                BlogId= 1,
-                UserId = 1,
-                Text = "Nevažeći komentar"
+                Id = id,
+                Text = content,
+                BlogId = 1
             };
 
             // Act
-          /*  var result = (ObjectResult)controller.Update(updatedComment).Result;
+            var result = (ObjectResult)controller.Update(1, id, updatedComment).Result;
 
             // Assert
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(404); */
+            result.StatusCode.ShouldBe(expectedStatusCode);
         }
 
-        [Fact]
-        public void Deletes()
+        [Theory]
+        [InlineData(1, true)]
+        public void Deletes(int id, bool shouldExist)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
-            // Act
-          /*  var result = (OkResult)controller.Delete(-3);
+            var preDeleteEntity = dbContext.Comments.FirstOrDefault(i => i.Id == id);
+            if (shouldExist)
+            {
+                preDeleteEntity.ShouldNotBeNull();
+            }
+            else
+            {
+                preDeleteEntity.ShouldBeNull();
+            }
 
-            // Assert - Response
-            result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(200); // Uspešno obrisano
+            // Act: Call Delete method
+            controller.Delete(1, id);
 
-            // Assert - Database
-            var storedComment = dbContext.Comments.FirstOrDefault(c => c.Id == -3);
-            storedComment.ShouldBeNull(); // Proveri da li je komentar obrisan*/
+            // Assert - Check if entity was deleted from the database
+            var postDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
+            postDeleteEntity.ShouldBeNull(); // Should be null if successfully deleted or if it didn't exist initially
+
+
         }
 
-        [Fact]
-        public void Delete_fails_invalid_id()
+        [Theory]
+        [InlineData(-1000, 404)] // Invalid comment ID
+        public void Delete_fails_invalid_id(int id, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
 
             // Act
-           /* var result = (ObjectResult)controller.Delete(-1000);
+            var result = (ObjectResult)controller.Delete(1, id);
 
             // Assert
             result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(404); // 404 Not Found za nevalidan ID*/
+            result.StatusCode.ShouldBe(expectedStatusCode);
         }
 
-
-
-        private static CommentController CreateController(IServiceScope scope)
+        private static Explorer.API.Controllers.Author.CommentController CreateController(IServiceScope scope)
         {
-            return new CommentController(scope.ServiceProvider.GetRequiredService<ICommentService>())
+            return new Explorer.API.Controllers.Author.CommentController(scope.ServiceProvider.GetRequiredService<ICommentService>())
             {
                 ControllerContext = BuildContext("-1")
             };
         }
-
     }
 }

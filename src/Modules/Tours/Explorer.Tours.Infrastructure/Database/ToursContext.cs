@@ -1,4 +1,5 @@
 ﻿using Explorer.Tours.Core.Domain;
+using Explorer.Tours.Core.Domain.TourProblems;
 using Microsoft.EntityFrameworkCore;
 using Object = Explorer.Tours.Core.Domain.Object;
 
@@ -20,6 +21,7 @@ public class ToursContext : DbContext
 
     public DbSet<TouristPosition> TouristPositions { get; set; }
     public DbSet<VisitedCheckpoint> VisitedCheckpoints { get; set; }
+    public DbSet<TourProblem> TourProblems { get; set; }
 
     public ToursContext(DbContextOptions<ToursContext> options) : base(options) {}
 
@@ -59,6 +61,7 @@ public class ToursContext : DbContext
         .WithOne()                           // Navodi se da TourCheckpoint ima referencu na Tour (bez navigacione property)
         .HasForeignKey(tc => tc.TourId);     // TourId se koristi kao spoljni ključ u TourCheckpoint
 
+        modelBuilder.Entity<TourProblem>().ToTable("TourProblems").Property(item => item.ProblemComments).HasColumnType("jsonb");
 
     }
 }

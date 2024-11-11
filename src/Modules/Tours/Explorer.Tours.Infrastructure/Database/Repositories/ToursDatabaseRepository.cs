@@ -30,7 +30,7 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
             task.Wait();
             return task.Result;
         }
-        public Tour Update(Tour aggregateRoot)
+        public new Tour Update(Tour aggregateRoot)
         {
             DbContext.Entry(aggregateRoot).State = EntityState.Modified;
             DbContext.SaveChanges();

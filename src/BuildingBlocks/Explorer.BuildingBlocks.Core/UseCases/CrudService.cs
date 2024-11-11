@@ -12,7 +12,6 @@ namespace Explorer.BuildingBlocks.Core.UseCases;
 public abstract class CrudService<TDto, TDomain> : BaseService<TDto, TDomain> where TDomain : Entity
 {
     protected readonly ICrudRepository<TDomain> CrudRepository;
-
     protected CrudService(ICrudRepository<TDomain> crudRepository, IMapper mapper) : base(mapper)
     {
         CrudRepository = crudRepository;

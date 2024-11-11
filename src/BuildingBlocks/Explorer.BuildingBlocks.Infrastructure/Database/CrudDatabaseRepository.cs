@@ -40,6 +40,12 @@ public class CrudDatabaseRepository<TEntity, TDbContext> : ICrudRepository<TEnti
         if (entity == null) throw new KeyNotFoundException("Not found: " + id);
         return entity;
     }
+    public TEntity Get(long id)
+    {
+        var entity = _dbSet.Find(id);
+        if (entity == null) throw new KeyNotFoundException("Not found: " + id);
+        return entity;
+    }
 
     public TEntity Create(TEntity entity)
     {

@@ -1,5 +1,6 @@
 ﻿using Explorer.API.Controllers.Author;
 using Explorer.Tours.API.Dtos;
+using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.Core.Domain;
 using Explorer.Tours.Infrastructure.Database;
@@ -143,9 +144,16 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.StatusCode.ShouldBe(404);
         }
 
-        private static TourController CreateController(IServiceScope scope)
+        /*private static TourController CreateController(IServiceScope scope)
         {
             return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>())
+            {
+                ControllerContext = BuildContext("-1")
+            };
+        }*/
+        private static TourController CreateController(IServiceScope scope)
+        {
+            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>(), scope.ServiceProvider.GetRequiredService<IEquipmentService>(), scope.ServiceProvider.GetRequiredService<ITourCheckpointService>())
             {
                 ControllerContext = BuildContext("-1")
             };

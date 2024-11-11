@@ -1,5 +1,7 @@
 ﻿using Explorer.Tours.Core.Domain;
+using Explorer.Tours.Core.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Object = Explorer.Tours.Core.Domain.Object;
 
 namespace Explorer.Tours.Infrastructure.Database;
@@ -61,7 +63,7 @@ public class ToursContext : DbContext
         modelBuilder.Entity<Tour>()
         .HasMany(t => t.TourCheckpoints)    // Navodi se kolekcija TourCheckpoints unutar Tour
         .WithOne()                           // Navodi se da TourCheckpoint ima referencu na Tour (bez navigacione property)
-        .HasForeignKey(tc => tc.TourId);     // TourId se koristi kao spoljni ključ u TourCheckpoint
+        .HasForeignKey(tc => tc.TourId);    // TourId se koristi kao spoljni ključ u TourCheckpoint
 
 
     }

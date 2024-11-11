@@ -23,7 +23,7 @@ public class Tour : Entity
     public List<Equipment> Equipments { get; init; }
     public List<TourCheckpoint> TourCheckpoints { get; init; }
 
-        public List<TourCheckpoint> TourCheckpoints { get; private set; } = new List<TourCheckpoint>();
+        
 
         // Tour review
         public List<TourReview> TourReviews { get; private set; } = new List<TourReview>();
@@ -42,7 +42,10 @@ public class Tour : Entity
             LengthInKm = lengthInKm;
             PublishedDate = publishedDate;
             ArchivedDate = archivedDate;
-        }
+            TravelTimes = new List<TravelTime>();
+            Equipments = new List<Equipment>();
+            TourCheckpoints = new List<TourCheckpoint>();
+    }
 
         // Metode za upravljanje Equipments (vrednosni objekti)
         public Result AddEquipment(Equipment equipment)
@@ -139,4 +142,4 @@ public class Tour : Entity
     {
         DRAFT, PUBLISHED, ARCHIVED
     }
-}
+

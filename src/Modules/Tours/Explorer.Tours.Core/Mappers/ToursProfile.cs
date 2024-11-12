@@ -17,6 +17,19 @@ public class ToursProfile : Profile
         CreateMap<TouristEquipmentDTO, TouristEquipment>().ReverseMap();
         CreateMap<VisitedCheckpointDTO, VisitedCheckpoint>().ReverseMap();
 
+        CreateMap<TourPurchaseTokenDTO, TourPurchaseToken>().ReverseMap();
+
+        CreateMap<ShoppingCartDTO, ShoppingCart>()
+                 .ForMember(dest => dest.ShopingItems, opt => opt.MapFrom(src => src.ShopingItems))
+                 .ReverseMap();
+
+        CreateMap<ShoppingCartDTO.ShoppingCartItemDTO, ShoppingCartItem>()
+            .ForMember(dest => dest.TourId, opt => opt.MapFrom(src => src.TourId))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.TourName))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.TourPrice))
+            .ReverseMap();
+
+
         CreateMap<ObjectDTO, Object>().ReverseMap();
         CreateMap<TourReview, TourReviewDto>()
             .ForMember(dest => dest.Personn, opt => opt.MapFrom(src => src.Personn))

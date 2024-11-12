@@ -8,7 +8,7 @@ namespace Explorer.Blog.API.Dtos
 {
     public class CommentDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public long BlogId { get; set; }
         public int UserId { get; set; }
         public DateTime CreationTime { get; set; }

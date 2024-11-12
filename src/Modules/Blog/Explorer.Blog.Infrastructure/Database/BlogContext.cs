@@ -14,11 +14,17 @@ public class BlogContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("blog");
+        modelBuilder.Entity<Comment>().ToTable("Comments");
 
         modelBuilder.Entity<Comment>()
        .ToTable("Comments")
        .Property(c => c.Id)
        .ValueGeneratedOnAdd();  // Automatski generisan ID
+
+        modelBuilder.Entity<Blogg>()
+        .HasMany(b => b.Comments)    // Navodi se kolekcija Comments unutar Bloga
+        .WithOne()                           // Navodi se da Comment ima referencu na Blog (bez navigacione property)
+        .HasForeignKey(c => c.BlogId);
 
         modelBuilder.Entity<Comment>()
             .Property(c => c.CreationTime)
@@ -30,7 +36,7 @@ public class BlogContext : DbContext
        .HasForeignKey(c => c.BlogId)
        .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Comment>().ToTable("Comments");
+
         modelBuilder.Entity<Blogg>().Property(item => item.Votes).HasColumnType("jsonb");
     }
 }

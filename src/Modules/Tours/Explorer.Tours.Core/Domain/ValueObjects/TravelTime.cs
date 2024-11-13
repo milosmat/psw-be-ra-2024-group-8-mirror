@@ -10,8 +10,13 @@ namespace Explorer.Tours.Core.Domain.ValueObjects
 {
     public class TravelTime : ValueObject<TravelTime>
     {
+        [JsonPropertyName("Time")]
         public int Time { get; set; }
+
+        [JsonPropertyName("TransportType")]
         public TransportType TransportType { get; set; }
+
+        public TravelTime() { }
 
         [JsonConstructor]
         public TravelTime(int time, TransportType transportType) {
@@ -20,16 +25,23 @@ namespace Explorer.Tours.Core.Domain.ValueObjects
         }
         protected override bool EqualsCore(TravelTime other)
         {
-            throw new NotImplementedException();
+            return this.Time == other.Time && this.TransportType == other.TransportType;
         }
 
         protected override int GetHashCodeCore()
         {
-            throw new NotImplementedException();
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + Time.GetHashCode();
+                hash = hash * 23 + TransportType.GetHashCode();
+                return hash;
+            }
         }
+        
     }
     public enum TransportType
     {
-        WALK, BIKE, CAR
+        WALK = 1, BIKE = 2, CAR = 3
     }
 }

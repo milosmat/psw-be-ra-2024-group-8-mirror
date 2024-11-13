@@ -1,26 +1,48 @@
 ﻿using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Tours.API.Dtos;
+using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.API.Public.Author;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Explorer.API.Controllers.Author
 {
-    [Authorize(Policy = "authorPolicy")]
+    //[Authorize(Policy = "authorPolicy")]
     [Route("api/author/tours")]
     public class TourController : BaseApiController
     {
-        private readonly ITourService _tourService;
+       private readonly ITourService _tourService;
+       
+       private readonly IEquipmentService _equipmentService;
+        private readonly ITourCheckpointService _tourCheckpointService;
+        
 
-        public TourController(ITourService tourService)
+        public TourController(ITourService tourService, IEquipmentService equipmentService, ITourCheckpointService checkpointService)
         {
             _tourService = tourService;
+            _equipmentService = equipmentService;
+            _tourCheckpointService = checkpointService;
         }
 
         [HttpGet]
         public ActionResult<PagedResult<TourDTO>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
+        
         {
             var result = _tourService.GetPaged(page, pageSize);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("equipment/{id:int}")]
+        public ActionResult<EquipmentDto> GetEquipment(int id)
+        {
+            var result = _equipmentService.Get(id);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("equipment")]
+        public ActionResult<PagedResult<EquipmentDto>> GetAllEquipment([FromQuery] int page, [FromQuery] int pageSize)
+        {
+            var result = _equipmentService.GetPaged(page, pageSize);
             return CreateResponse(result);
         }
 
@@ -38,6 +60,21 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        [HttpPost("{tourId:int}/checkpoint")]
+        public ActionResult<TourCheckpointDto> AddNewCheckpoint([FromBody] TourCheckpointDto checkpoint, long tourId)
+        {
+            
+            var result = _tourService.AddNewCheckpoint(tourId, checkpoint);
+            return CreateResponse(result);
+
+        }
+        [HttpPost("{tourId:int}/addNewTravelTime")]
+        public ActionResult<TravelTimeDTO> AddNewTravelTime1([FromBody] TravelTimeDTO newTravelTime, long tourId)
+        {
+            var result = _tourService.AddNewTravelTime(tourId, newTravelTime);
+            return CreateResponse(result);
+            
+        }
         [HttpPut("{id:int}")]
         public ActionResult<TourDTO> Update([FromBody] TourDTO tourDto)
         {
@@ -69,12 +106,12 @@ namespace Explorer.API.Controllers.Author
         }
 
         // Route to get all equipment
-        [HttpGet("equipment")]
+        /*[HttpGet("equipment")]
         public ActionResult<PagedResult<EquipmentDto>> GetAllEquipment([FromQuery] int page, [FromQuery] int pageSize)
         {
             var result = _tourService.GetPagedEquipment(page, pageSize);
             return CreateResponse(result);
-        }
+        }*/
 
         // Route to create new equipment
         [HttpPost("equipment")]
@@ -109,26 +146,32 @@ namespace Explorer.API.Controllers.Author
         }
 
         // Route to get all checkpoints
-        [HttpGet("checkpoints")]
+       /* [HttpGet("checkpoints")]
         public ActionResult<PagedResult<TourCheckpointDto>> GetAllCheckpoints([FromQuery] int page, [FromQuery] int pageSize)
         {
             var result = _tourService.GetPagedCheckpoint(page, pageSize);
             return CreateResponse(result);
-        }
+        }*/
 
         // Route to create new checkpoint
-        [HttpPost("checkpoints")]
+        /*[HttpPost("checkpoints")]
         public ActionResult<TourCheckpointDto> CreateCheckpoint([FromBody] TourCheckpointDto tourCheckpointDto)
         {
             var result = _tourService.CreateCheckpoint(tourCheckpointDto);
             return CreateResponse(result);
-        }
+        }*/
 
         // Route to get checkpoint by ID
         [HttpGet("checkpoints/{id:int}")]
         public ActionResult<TourCheckpointDto> GetCheckpointById(int id)
         {
             var result = _tourService.GetCheckpoint(id);
+            return CreateResponse(result);
+        }
+        [HttpGet("{id:int}/checkpoint-ids")]
+        public ActionResult<List<long>> GetCheckpointIds(int id)
+        {
+            var result = _tourService.GetCheckpointIds(id);
             return CreateResponse(result);
         }
 
@@ -188,8 +231,10 @@ namespace Explorer.API.Controllers.Author
         public ActionResult PublishTour(int id)
         {
             var result = _tourService.PublishTour(id);
-            return CreateResponse(result);
+            var res = CreateResponse(result);
+            return res;
         }
 
+        
     }
 }

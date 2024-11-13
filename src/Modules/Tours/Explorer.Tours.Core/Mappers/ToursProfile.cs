@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.Core.Domain;
+using Explorer.Tours.Core.Domain.ValueObjects;
 using Object = Explorer.Tours.Core.Domain.Object;
 
 namespace Explorer.Tours.Core.Mappers;
@@ -14,6 +15,7 @@ public class ToursProfile : Profile
         CreateMap<TourCheckpointDto, TourCheckpoint>().ReverseMap();
         CreateMap<TourDTO, Tour>().ReverseMap();
         CreateMap<TourExecutionDto, TourExecution>().ReverseMap();
+        CreateMap<TravelTimeDTO, TravelTime>().ReverseMap();
         CreateMap<TouristEquipmentDTO, TouristEquipment>().ReverseMap();
         CreateMap<VisitedCheckpointDTO, VisitedCheckpoint>().ReverseMap();
 

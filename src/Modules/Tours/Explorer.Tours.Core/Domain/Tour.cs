@@ -1,23 +1,29 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
+using Explorer.Tours.Core.Domain.ValueObjects;
 using FluentResults;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Explorer.Tours.Core.Domain
+namespace Explorer.Tours.Core.Domain;
+public class Tour : Entity
 {
-    public class Tour : Entity
-    {
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public string Weight { get; private set; }
-        public string[] Tags { get; private set; }
-        public TourStatus Status { get; private set; }
-        public decimal? Price { get; private set; }
-        public long LengthInKm { get; private set; }
-        public DateTime PublishedDate { get; private set; }
-        public DateTime ArchivedDate { get; private set; }
-        // Kolekcije vrednosnih objekata i entiteta
-        public List<Equipment> Equipments { get; private set; } = new List<Equipment>();
+    public String Name { get; init; }
+    public String Description { get; init; }
+    public String Weight { get; init; }
+    public String[] Tags { get; init; }
+    public TourStatus Status { get; private set; }
+    public Decimal? Price { get; init; }
+    public long LengthInKm { get; init; }
+    public DateTime PublishedDate { get; private set; }
+    public DateTime ArchivedDate {  get; init; }
+    public List<TravelTime> TravelTimes { get; init; }
+    public List<Equipment> Equipments { get; init; }
+    public List<TourCheckpoint> TourCheckpoints { get; init; }
 
-        public List<TourCheckpoint> TourCheckpoints { get; private set; } = new List<TourCheckpoint>();
+        
 
         // Tour review
         public List<TourReview> TourReviews { get; private set; } = new List<TourReview>();
@@ -36,7 +42,10 @@ namespace Explorer.Tours.Core.Domain
             LengthInKm = lengthInKm;
             PublishedDate = publishedDate;
             ArchivedDate = archivedDate;
-        }
+            TravelTimes = new List<TravelTime>();
+            Equipments = new List<Equipment>();
+            TourCheckpoints = new List<TourCheckpoint>();
+    }
 
         // Metode za upravljanje Equipments (vrednosni objekti)
         public Result AddEquipment(Equipment equipment)
@@ -100,32 +109,37 @@ namespace Explorer.Tours.Core.Domain
             Status = TourStatus.ARCHIVED;
         }
 
-        public void setPublished()
-        {
+    public Result setPublished()
+    {
+
+        if(Name != "" && Description != "" && Weight != "" && Tags.Length > 0 && 
+            TourCheckpoints.Count >= 2 && TravelTimes.Count > 0) { 
             Status = TourStatus.PUBLISHED;
+            PublishedDate = DateTime.UtcNow;
+            return Result.Ok();
         }
-        // Metode za upravljanje TravelTimes (vrednosni objekti)
-        /*        public Result AddTravelTime(TravelTime travelTime)
-                {
-                    if (TravelTimes.Contains(travelTime))
-                        return Result.Fail("Travel time already exists.");
-
-                    TravelTimes.Add(travelTime);
-                    return Result.Ok();
-                }
-
-                public Result RemoveTravelTime(TravelTime travelTime)
-                {
-                    if (!TravelTimes.Contains(travelTime))
-                        return Result.Fail("Travel time not found.");
-
-                    TravelTimes.Remove(travelTime);
-                    return Result.Ok();
-                }*/
+        else
+        {
+            return Result.Fail("Tour must have name, description, travel time and al least 2 checkpoints.");
+            
+        }
+        
     }
+    public TourCheckpoint AddNewCheckpoint(TourCheckpoint checkpoint)
+    {
+        TourCheckpoints.Add(checkpoint);
+        return checkpoint;
+    }
+
+    public TravelTime AddNewTravelTime(TravelTime travelTime)
+    {
+        TravelTimes.Add(travelTime);
+        return travelTime;
+    }
+}
 
     public enum TourStatus
     {
         DRAFT, PUBLISHED, ARCHIVED
     }
-}
+

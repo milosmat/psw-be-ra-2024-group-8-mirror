@@ -64,12 +64,16 @@ public static class ToursStartup
         services.AddScoped(typeof(ICrudRepository<TouristPosition>), typeof(CrudDatabaseRepository<TouristPosition, ToursContext>));
         services.AddScoped(typeof(ICrudRepository<VisitedCheckpoint>), typeof(CrudDatabaseRepository<VisitedCheckpoint, ToursContext>));
 
+
+        services.AddScoped(typeof(ITourRepository), typeof(ToursDatabaseRepository));
+
         services.AddScoped(typeof(ICrudRepository<ShoppingCart>), typeof(CrudDatabaseRepository<ShoppingCart, ToursContext>));
 
         services.AddScoped(typeof(ICrudRepository<TourPurchaseToken>), typeof(CrudDatabaseRepository<TourPurchaseToken, ToursContext>));
 
         services.AddScoped<ICardRepository, CardDataBaseRepository>();
         services.AddScoped<ITourPurchaseTokenRepository, TourPurchaseTokenRepository>();
+
 
 
 

@@ -1,5 +1,7 @@
 ﻿using Explorer.Tours.Core.Domain;
+using Explorer.Tours.Core.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using Object = Explorer.Tours.Core.Domain.Object;
 
 namespace Explorer.Tours.Infrastructure.Database;
@@ -40,13 +42,17 @@ public class ToursContext : DbContext
         v => (ObjectCategory)Enum.Parse(typeof(ObjectCategory), v)
     );
 
-
+        
         modelBuilder.Entity<Equipment>().ToTable("Equipment");
         modelBuilder.Entity<Tour>().ToTable("Tours")
             .HasMany(t => t.TourReviews)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoints");
+        modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb").HasConversion(
+            v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+            v => JsonSerializer.Deserialize<List<TravelTime>>(v, (JsonSerializerOptions)null)
+        );
         modelBuilder.Entity<TourReview>().ToTable("TourReviews");
         //modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
@@ -79,7 +85,7 @@ public class ToursContext : DbContext
         modelBuilder.Entity<Tour>()
         .HasMany(t => t.TourCheckpoints)    // Navodi se kolekcija TourCheckpoints unutar Tour
         .WithOne()                           // Navodi se da TourCheckpoint ima referencu na Tour (bez navigacione property)
-        .HasForeignKey(tc => tc.TourId);     // TourId se koristi kao spoljni ključ u TourCheckpoint
+        .HasForeignKey(tc => tc.TourId);    // TourId se koristi kao spoljni ključ u TourCheckpoint
 
 
     }

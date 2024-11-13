@@ -19,5 +19,12 @@ public class StakeholderProfile : Profile
     CreateMap<AppRatingDto, AppRating>().ReverseMap();
 
     CreateMap<ProblemDto, Problem>().ReverseMap();
+        CreateMap<FollowersDto, Followers>().ReverseMap();
+
+        CreateMap<MessageDto, Message>().ReverseMap();
+
+        CreateMap<NotificationDto, Notification>()
+            .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message)) 
+            .ReverseMap();
     }
 }

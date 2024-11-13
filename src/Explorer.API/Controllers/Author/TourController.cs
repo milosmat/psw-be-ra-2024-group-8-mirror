@@ -200,6 +200,7 @@ namespace Explorer.API.Controllers.Author
         }
 
         [HttpPost("{id:int}/reviews")]
+        [Authorize(Policy = "touristPolicy")]
         public ActionResult<TourReviewDto> AddReview(int id, [FromBody] TourReviewDto reviewDto)
         {
             var result = _tourService.AddReview(id, reviewDto);

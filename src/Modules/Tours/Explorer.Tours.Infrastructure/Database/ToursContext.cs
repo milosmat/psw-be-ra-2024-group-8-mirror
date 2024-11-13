@@ -19,6 +19,12 @@ public class ToursContext : DbContext
 
     public DbSet<Object> Objects { get; set; }
 
+    public DbSet<ShoppingCart> ShoppingCard { get; set; }
+
+    public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; } 
+
+    public DbSet<TourPurchaseToken> Tokens { get; set; }
+
 
     public DbSet<TouristPosition> TouristPositions { get; set; }
     public DbSet<VisitedCheckpoint> VisitedCheckpoints { get; set; }
@@ -55,6 +61,22 @@ public class ToursContext : DbContext
 
         modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
         modelBuilder.Entity<VisitedCheckpoint>().ToTable("VisitedCheckpoints");
+
+        modelBuilder.Entity<ShoppingCart>().ToTable("ShoppingCart");
+        modelBuilder.Entity<ShoppingCartItem>().ToTable("ShoppingCartItems"); // Konfiguracija tabele za ShoppingCartItem
+        modelBuilder.Entity<TourPurchaseToken>().ToTable("Tokens");
+
+        modelBuilder.Entity<ShoppingCart>()
+       .Property(sc => sc.ShopItemsCapacity)
+       .HasColumnName("ShopingItems_Capacity")
+       .IsRequired(false);  // Omogućava null vrednost za ovu kolonu
+
+        // Povezivanje ShoppingCart i ShoppingCartItem
+        modelBuilder.Entity<ShoppingCart>()
+            .HasMany(sc => sc.ShopingItems)  // Povezivanje sa kolekcijom stavki
+            .WithOne() // Svaka stavka pripada jednom shopping cart-u
+            .HasForeignKey("ShoppingCartId")  // Spoljni ključ
+            .OnDelete(DeleteBehavior.Cascade);  // Ako se obriše korpa, brišu se i stavke
 
         modelBuilder.Entity<TouristPosition>()
         .OwnsOne(tp => tp.CurrentLocation);

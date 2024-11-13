@@ -79,7 +79,7 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Name = "Izmenjena Tura",
                 Description = "Izmenjen opis nove ture.",
                 Weight = "6kg",
-                Status = (int)TourStatus.DRAFT,
+                Status = (int)Core.Domain.TourStatus.DRAFT,
                 Tags = new[] { "avantura", "priroda", "izmenjeno" },
                 Price = 150.00m
             };

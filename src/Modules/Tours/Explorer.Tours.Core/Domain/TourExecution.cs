@@ -8,7 +8,7 @@ public class TourExecution : Entity
     public DateTime? EndTime { get; private set; }
     public DateTime? LastActivity { get; private set; }
     public TourExecutionStatus Status { get; private set; } // IN_PROGRESS, COMPLETED, ABANDONED
-    public List<VisitedCheckpoint> visitedCheckpoints { get; private set; }
+    public List<VisitedCheckpoint> VisitedCheckpoints { get; private set; }
 
     public TourExecution(int tourId, int userId)
     {
@@ -17,7 +17,7 @@ public class TourExecution : Entity
         StartTime = DateTime.UtcNow;
         LastActivity = DateTime.UtcNow;
         Status = TourExecutionStatus.IN_PROGRESS;
-        visitedCheckpoints = new List<VisitedCheckpoint>();
+        VisitedCheckpoints = new List<VisitedCheckpoint>();
     }
 
     public void CompleteTour()
@@ -32,7 +32,7 @@ public class TourExecution : Entity
 
     public void VisitCheckpoint(VisitedCheckpoint checkpoint)
     {
-        visitedCheckpoints.Add(checkpoint);
+        VisitedCheckpoints.Add(checkpoint);
     }
 
     public void AbandonTour()
@@ -43,6 +43,14 @@ public class TourExecution : Entity
             EndTime = DateTime.UtcNow;
             LastActivity = EndTime;
         }
+    }
+    public string? UnlockSecret(int checkpointId)
+    {
+        // Proverava da li je korisnik posetio traženi checkpoint
+        var visited = VisitedCheckpoints.FirstOrDefault(vc => vc.CheckpointId == checkpointId);
+
+        // Ako je posetio, vraća tajnu, inače vraća null
+        return visited?.Secret;
     }
 
 }

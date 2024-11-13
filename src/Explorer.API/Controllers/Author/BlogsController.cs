@@ -70,6 +70,7 @@ namespace Explorer.API.Controllers.Author
         {
             try
             {
+                blog.BlogStatus = Blog.API.Dtos.Status.None;
                 BlogsDto result = _blogsService.Create(blog);
 
                 if (result != null)
@@ -93,16 +94,8 @@ namespace Explorer.API.Controllers.Author
         {
             try
             {
-                BlogsDto findBlog = _blogsService.Get(blog.Id);
-                if(findBlog == null)
-                {
-                    return NotFound("The blog with the specified ID was not found.");
-                }
-                else
-                {
-                    BlogsDto result = _blogsService.Update(blog);
-                    return Ok(result);
-                }
+                BlogsDto result = _blogsService.Update(blog);
+                return Ok(result);
 
             }
             catch (Exception ex)

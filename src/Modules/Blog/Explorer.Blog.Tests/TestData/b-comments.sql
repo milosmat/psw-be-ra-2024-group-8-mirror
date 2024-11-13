@@ -1,14 +1,14 @@
 INSERT INTO blog."Comments"(
-    "Id", "BlogId", "UserId", "CreationTime", "LastModifiedTime", "Text"
+    "BlogId", "UserId", "CreationTime", "LastModifiedTime", "Text"
 ) 
-VALUES (-1, 1, 1, '2024-10-14 15:23:44.223+02', '2024-10-14 15:23:44.223+02', 'danas je lijep dan');
+VALUES (1, 1, '2024-10-14 15:23:44.223+02', '2024-10-14 15:23:44.223+02', 'danas je lijep dan');
 
 INSERT INTO blog."Comments"(
-    "Id", "BlogId", "UserId", "CreationTime", "LastModifiedTime", "Text"
+    "BlogId", "UserId", "CreationTime", "LastModifiedTime", "Text"
 ) 
-VALUES (-2, 1, 1, '2024-10-14 15:23:44.223+02', '2024-10-14 15:23:44.223+02', 'String');
+VALUES (1, 1, '2024-10-14 15:23:44.223+02', '2024-10-14 15:23:44.223+02', 'String');
 
 INSERT INTO blog."Comments"(
-    "Id", "BlogId", "UserId", "CreationTime", "LastModifiedTime", "Text"
+    "BlogId", "UserId", "CreationTime", "LastModifiedTime", "Text"
 ) 
-VALUES (-3, 1, 1, '2024-10-14 15:23:44.223+02', '2024-10-14 15:23:44.223+02', 'Turistin komentar.');
+VALUES (1, 1, '2024-10-14 15:23:44.223+02', '2024-10-14 15:23:44.223+02', 'Turistin komentar.');

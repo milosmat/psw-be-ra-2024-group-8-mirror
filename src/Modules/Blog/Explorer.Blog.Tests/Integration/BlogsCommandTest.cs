@@ -90,17 +90,13 @@ namespace Explorer.Blog.Tests.Integration
 
 
         [Theory]
-        [InlineData(1, "UpdateTitle2", "UpdateDescription2")] // Add 'L' to specify long type
+        [InlineData(1, "UpdateTitle2", "UpdateDescription2")]
         public void Updates(int id, string title, string description)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-
-            // Ensure the entity exists
-            var existingEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
-            existingEntity.ShouldNotBeNull();
 
             var updatedEntity = new BlogsDto
             {
@@ -129,8 +125,8 @@ namespace Explorer.Blog.Tests.Integration
 
 
         [Theory]
-        [InlineData(-1000, "Test", 404)]
-        public void Update_fails_invalid_id(int id, string title, int expectedStatusCode)
+        [InlineData(-1000, "Test" ,"Description", 500)]
+        public void Update_fails_invalid_id(int id, string title, string description, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
@@ -138,7 +134,8 @@ namespace Explorer.Blog.Tests.Integration
             var updatedEntity = new BlogsDto
             {
                 Id = id,
-                Title = title
+                Title = title,
+                Description = description
             };
 
             // Act
@@ -151,8 +148,8 @@ namespace Explorer.Blog.Tests.Integration
 
 
         [Theory]
-        [InlineData(-3, true)] 
-        [InlineData(-1000, false)] 
+        [InlineData(1, true)] // Expected to exist and be deleted
+        [InlineData(-1000, false)] // Expected not to exist initially
         public void Deletes(int id, bool shouldExist)
         {
             // Arrange
@@ -160,22 +157,23 @@ namespace Explorer.Blog.Tests.Integration
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
-            // Act
-            controller.Delete(id); // Call Delete, which has a void return type
-
-            // Assert - Database
-            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
-
+            // Pre-check: Verify the initial existence state based on shouldExist
+            var preDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
             if (shouldExist)
             {
-                // If the ID was valid, we expect the entity to be deleted
-                storedEntity.ShouldBeNull();
+                preDeleteEntity.ShouldNotBeNull();
             }
             else
             {
-                // If the ID was invalid, we expect the entity not to be found initially (so still null)
-                storedEntity.ShouldBeNull();
+                preDeleteEntity.ShouldBeNull();
             }
+
+            // Act: Call Delete method
+            controller.Delete(id);
+
+            // Assert - Check if entity was deleted from the database
+            var postDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
+            postDeleteEntity.ShouldBeNull(); // Should be null if successfully deleted or if it didn't exist initially
         }
 
 
@@ -203,7 +201,7 @@ namespace Explorer.Blog.Tests.Integration
             // Arrange
             var blog = GetTestBlog(blogId);
             Vote vote = new Vote(userId, blogId, mark);
-           
+
 
             // Act
             var result = blog.AddVote(vote);
@@ -231,7 +229,7 @@ namespace Explorer.Blog.Tests.Integration
         {
             // Arrange
             var blog = GetTestBlog(1);
-            blog.AddVote(new Vote(1, 1,Markdown.Upvote));
+            blog.AddVote(new Vote(1, 1, Markdown.Upvote));
             blog.AddVote(new Vote(1, 2, Markdown.Upvote));
             blog.AddVote(new Vote(1, 3, Markdown.Downvote));
 

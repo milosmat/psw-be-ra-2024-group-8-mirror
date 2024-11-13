@@ -277,6 +277,7 @@ namespace Explorer.Tours.Core.UseCases.Author
 
         public Result<PagedResult<TourReviewDto>> GetPagedReviews(int tourId, int page, int pageSize)
         {
+
             //var tour = CrudRepository.Get(tourId, t => t.TourReviews);
             Tour tour = tourRepository.Get(tourId);
             if (tour == null)
@@ -285,6 +286,16 @@ namespace Explorer.Tours.Core.UseCases.Author
 
             var reviewDtos = tour.TourReviews.Select(r => _mapper.Map<TourReviewDto>(r)).ToList();
             
+
+            /*var tour = CrudRepository.Get(tourId, t => t.TourReviews);
+            ;
+            if (tour == null)
+                return Result.Fail("Tour not found.");*/
+            //var reviews = _tourReviewRepository.GetPaged(page, pageSize).Results.FindAll(r => r.Tour.Id == tourId);
+            //tour.TourReviews.ForEach(r => _tourReviewRepository.Get(r.Id, tr => tr.Personn));
+            //var reviewDtos = tour.TourReviews.Select(r => _mapper.Map<TourReviewDto>(r)).ToList();
+            //reviewDtos.ForEach(r => r.Tour = _mapper.Map<TourDTO>(tour));
+
             var pagedResult = new PagedResult<TourReviewDto>(reviewDtos, tour.TourReviews.Count);
 
             return Result.Ok(pagedResult);
@@ -476,6 +487,29 @@ namespace Explorer.Tours.Core.UseCases.Author
 
 
         }
+
+        public Result<List<TourDTO>> GetAllTours()
+        {  
+            try
+            {
+                var tours = CrudRepository.GetPaged(1, int.MaxValue);
+                var publishedTours = tours.Results.Where(t => t.Status == TourStatus.PUBLISHED).ToList();
+                foreach (var tour in publishedTours)
+                {
+                    var checkpoint = _tourCheckpointRepository.Get(tour.Id);
+                    tour.AddCheckpoint(checkpoint);
+
+                }
+                var tourDtos = _mapper.Map<List<TourDTO>>(publishedTours);
+                return Result.Ok(tourDtos);
+            }           
+            catch (Exception e)
+            {
+                return Result.Fail("Error retrieving all tours").WithError(e.Message);
+            }
+        }
+
+
     }
 
 

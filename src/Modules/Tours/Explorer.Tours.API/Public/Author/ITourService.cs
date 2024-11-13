@@ -44,6 +44,7 @@ namespace Explorer.Tours.API.Public.Author
       
         Result ArchiveTour(int tourId);
         Result PublishTour(int tourId);
+        Result<List<TourDTO>> GetAllTours();
 
     }
 }

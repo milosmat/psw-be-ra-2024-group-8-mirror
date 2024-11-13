@@ -308,5 +308,28 @@ namespace Explorer.Tours.Core.UseCases.Author
                 return Result.Fail(FailureCode.InvalidArgument).WithError(e.Message);
             }
         }
+
+        public Result<List<TourDTO>> GetAllTours()
+        {  
+            try
+            {
+                var tours = CrudRepository.GetPaged(1, int.MaxValue);
+                var publishedTours = tours.Results.Where(t => t.Status == TourStatus.PUBLISHED).ToList();
+                foreach (var tour in publishedTours)
+                {
+                    var checkpoint = _tourCheckpointRepository.Get(tour.Id);
+                    tour.AddCheckpoint(checkpoint);
+
+                }
+                var tourDtos = _mapper.Map<List<TourDTO>>(publishedTours);
+                return Result.Ok(tourDtos);
+            }           
+            catch (Exception e)
+            {
+                return Result.Fail("Error retrieving all tours").WithError(e.Message);
+            }
+        }
+
+
     }
 }

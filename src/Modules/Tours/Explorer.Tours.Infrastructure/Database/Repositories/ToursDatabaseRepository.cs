@@ -22,7 +22,7 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
         public new Tour? Get(long id)
         {
             return DbContext.Tours.Where(t => t.Id == id)
-                .Include(t => t.TourCheckpoints).Include(t => t.Equipments).FirstOrDefault();
+                .Include(t => t.TourCheckpoints).Include(t => t.Equipments).Include(t => t.TourReviews).ThenInclude(t => t.Personn).FirstOrDefault();
         }
         public new PagedResult<Tour> GetPaged(int page, int pageSize)
         {

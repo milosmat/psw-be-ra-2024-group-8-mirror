@@ -277,11 +277,14 @@ namespace Explorer.Tours.Core.UseCases.Author
 
         public Result<PagedResult<TourReviewDto>> GetPagedReviews(int tourId, int page, int pageSize)
         {
-            var tour = CrudRepository.Get(tourId, t => t.TourReviews);
+            //var tour = CrudRepository.Get(tourId, t => t.TourReviews);
+            Tour tour = tourRepository.Get(tourId);
             if (tour == null)
                 return Result.Fail("Tour not found.");
             //var reviews = _tourReviewRepository.GetPaged(page, pageSize).Results.FindAll(r => r.Tour.Id == tourId);
+
             var reviewDtos = tour.TourReviews.Select(r => _mapper.Map<TourReviewDto>(r)).ToList();
+            
             var pagedResult = new PagedResult<TourReviewDto>(reviewDtos, tour.TourReviews.Count);
 
             return Result.Ok(pagedResult);

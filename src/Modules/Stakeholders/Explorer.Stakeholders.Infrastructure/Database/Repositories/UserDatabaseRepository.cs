@@ -35,4 +35,9 @@ public class UserDatabaseRepository : IUserRepository
         if (person == null) throw new KeyNotFoundException("Not found.");
         return person.Id;
     }
+
+    public List<User> GetUsersByRole(UserRole role)
+    {
+        return _dbContext.Users.Where(u => u.Role == role).ToList();
+    }
 }

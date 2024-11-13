@@ -54,4 +54,20 @@ public class AuthenticationService : IAuthenticationService
             // There is a subtle issue here. Can you find it?
         }
     }
+
+    public List<UserDto> GetAllTourists()
+    {
+        var tourists = _userRepository.GetUsersByRole(UserRole.Tourist);
+
+        // Mapiramo User objekte u UserDto objekte
+        return tourists.Select(user => new UserDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Password = user.Password,
+            Role = (int)user.Role,
+            IsActive = user.IsActive
+        }).ToList();
+    }
+
 }

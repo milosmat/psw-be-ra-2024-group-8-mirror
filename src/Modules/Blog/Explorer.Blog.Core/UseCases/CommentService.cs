@@ -92,5 +92,21 @@ namespace Explorer.Blog.Core.UseCases
 
             return new PagedResult<CommentDto>(commentDtos, totalCount);
         }
+
+        public CommentDto GetById(long commentId, long blogId)
+        {
+            var blog = _blogRepository.GetBlogWithComments(blogId);
+            if (blog == null)
+            {
+                throw new KeyNotFoundException($"Blog with ID {blogId} not found");
+            }
+
+            var comment = blog.Comments.FirstOrDefault(c => c.Id == commentId);
+            if (comment == null)
+            {
+                throw new KeyNotFoundException($"Comment with ID {commentId} not found");
+            }
+            return _mapper.Map<CommentDto>(comment);
+        }
     }
 }  

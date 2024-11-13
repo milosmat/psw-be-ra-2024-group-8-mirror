@@ -14,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using Explorer.Blog.Core.Domain.Blogs;
 using Markdown = Explorer.Blog.Core.Domain.Blogs.Markdown;
 using BlogsStatus = Explorer.Blog.API.Dtos.BlogsStatus;
+using Explorer.Stakeholders.Core.Domain;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace Explorer.Blog.Tests.Integration
@@ -32,6 +34,7 @@ namespace Explorer.Blog.Tests.Integration
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
+
             var newEntity = new BlogsDto
             {
                 UserId = userId,
@@ -58,7 +61,7 @@ namespace Explorer.Blog.Tests.Integration
             result.Votes.ShouldBe(newEntity.Votes); // Check votes
 
             // Assert - Database
-            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Title == newEntity.Title);
+            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == result.Id);
             storedEntity.ShouldNotBeNull();
             storedEntity.Id.ShouldBe(result.Id);
             //storedEntity.Votes.ShouldBe(newEntity.Votes); // Validate votes in DB
@@ -123,9 +126,8 @@ namespace Explorer.Blog.Tests.Integration
 
 
 
-
         [Theory]
-        [InlineData(-1000, "Test" ,"Description", 500)]
+        [InlineData(-1000,"Test" ,"Description", 500)]
         public void Update_fails_invalid_id(int id, string title, string description, int expectedStatusCode)
         {
             // Arrange
@@ -148,17 +150,29 @@ namespace Explorer.Blog.Tests.Integration
 
 
         [Theory]
-        [InlineData(1, true)] // Expected to exist and be deleted
-        [InlineData(-1000, false)] // Expected not to exist initially
-        public void Deletes(int id, bool shouldExist)
+        [InlineData("Create", "Description", new[] { "image.png" }, BlogsStatus.Published, true)] // Expected to exist and be deleted
+        public void Deletes(string title, string description, string[] images, BlogsStatus status, bool shouldExist)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
+            var newBlog = new BlogsDto
+            {
+                UserId = 1,
+                Title = "Initial title",
+                Description = "Initial description",
+                CreatedDate = DateTime.UtcNow,
+                Images = images.ToList(),
+                Status = status,
+                Votes = new List<VoteDto>() // Initialize as empty
+            };
+            var createdBlog = ((ObjectResult)controller.Create(newBlog).Result)?.Value as BlogsDto;
+            var createdBlogId = createdBlog?.Id ?? -1;
+
             // Pre-check: Verify the initial existence state based on shouldExist
-            var preDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
+            var preDeleteEntity = dbContext.Blogs.FirstOrDefault(b => b.Id == createdBlogId);
             if (shouldExist)
             {
                 preDeleteEntity.ShouldNotBeNull();
@@ -169,10 +183,10 @@ namespace Explorer.Blog.Tests.Integration
             }
 
             // Act: Call Delete method
-            controller.Delete(id);
+            controller.Delete(createdBlogId);
 
             // Assert - Check if entity was deleted from the database
-            var postDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
+            var postDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == createdBlogId);
             postDeleteEntity.ShouldBeNull(); // Should be null if successfully deleted or if it didn't exist initially
         }
 

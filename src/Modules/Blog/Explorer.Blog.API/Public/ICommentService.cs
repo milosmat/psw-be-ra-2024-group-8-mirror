@@ -16,5 +16,6 @@ namespace Explorer.Blog.API.Public
         
         CommentDto Update(long blogId, CommentDto comment);
         void Delete(long blogId, long commentId);
+        CommentDto GetById(long id, long blogId);
     }
 }

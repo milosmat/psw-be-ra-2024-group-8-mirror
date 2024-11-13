@@ -98,6 +98,10 @@ namespace Explorer.API.Controllers.Author
                 return Ok(result);
 
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
                 // Return a 500 error for unexpected issues

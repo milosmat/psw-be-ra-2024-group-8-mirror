@@ -33,28 +33,68 @@ namespace Explorer.API.Controllers.Tourist
         [HttpPost]
         public ActionResult<CommentDto> Create([FromRoute] long blogId, [FromBody] CommentDto comment)
         {
-            var createdComment = _commentService.Create(blogId, comment);
-            return CreatedAtAction(nameof(Create), new { blogId, commentId = createdComment.Id }, createdComment);
+            try
+            {
+                var createdComment = _commentService.Create(blogId, comment);
+                return CreatedAtAction(nameof(Create), new { blogId, commentId = createdComment.Id }, createdComment);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
+
 
         [Authorize(Policy = "touristPolicy")]
         [HttpPut("{id:int}")]
         public ActionResult<CommentDto> Update([FromRoute] long blogId, long id, [FromBody] CommentDto updatedComment)
         {
-            if (id != updatedComment.Id)
+            try
             {
-                return BadRequest("Comment ID mismatch.");
+                // Provera da li komentar postoji
+                var existingComment = _commentService.GetById(id, blogId);
+                if (existingComment == null)
+                {
+                    return NotFound($"Comment with ID {id} not found.");
+                }
+
+                // Ako postoji, izvršava ažuriranje
+                var result = _commentService.Update(blogId, updatedComment);
+                return Ok(result);
             }
-            var result = _commentService.Update(blogId, updatedComment);
-            return Ok(result);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         [Authorize(Policy = "touristPolicy")]
         [HttpDelete("{id:int}")]
-        public ActionResult Delete([FromRoute] long blogId, int id)
+        public ActionResult Delete([FromRoute] long blogId, long id)
         {
-            _commentService.Delete(blogId, id);
-            return NoContent();
+            try
+            {
+                _commentService.Delete(blogId, id);
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+
         }
     }
 }

@@ -13,6 +13,7 @@ public class StakeholdersContext : DbContext
     public DbSet<Club> Clubs { get; set; }
     public DbSet<AppRating> AppRatings { get; set; }
     public DbSet<Problem> Problems { get; set; }
+    public DbSet<Followers> Followerss { get; set; }
 
 
 
@@ -30,6 +31,7 @@ public class StakeholdersContext : DbContext
         ConfigureStakeholder(modelBuilder);
 
         modelBuilder.Entity<Problem>().ToTable("Problems");
+        modelBuilder.Entity<Followers>().ToTable("Followerss");
 
     }
     

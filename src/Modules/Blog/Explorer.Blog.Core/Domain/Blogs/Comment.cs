@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Explorer.BuildingBlocks.Core.Domain;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Explorer.Blog.Core.Domain.Blogs
 {
@@ -22,14 +23,16 @@ namespace Explorer.Blog.Core.Domain.Blogs
         public Comment(int userId, string text)
         {
            // if(blogId<=0) throw new ArgumentException("Blog ID must be positive.", nameof(blogId));
-            if (userId <= 0) throw new ArgumentException("User ID must be positive.", nameof(userId));
-            if (string.IsNullOrWhiteSpace(text)) throw new ArgumentException("Comment text cannot be empty.", nameof(text));
+           if (userId <= 0) throw new ArgumentException("User ID must be positive.", nameof(userId));
+           if (string.IsNullOrWhiteSpace(text)) throw new ArgumentException("Comment text cannot be empty.", nameof(text));
 
             UserId = userId;
             CreationTime = DateTime.Now;
             LastModifiedTime = CreationTime;
             Text = text;
         }
+
+       
 
         public void InitializeComment()
         {

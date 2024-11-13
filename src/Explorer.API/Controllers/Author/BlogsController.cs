@@ -94,10 +94,6 @@ namespace Explorer.API.Controllers.Author
         {
             try
             {
-                //if(_blogsService.Get(blog.Id) == null)
-                //{
-                    //return NotFound("The blog with the specified ID was not found.");
-                //}
                 BlogsDto result = _blogsService.Update(blog);
                 return Ok(result);
 

@@ -33,8 +33,19 @@ namespace Explorer.API.Controllers.Author
         [HttpPost]
         public ActionResult<CommentDto> Create([FromRoute]long blogId,[FromBody] CommentDto comment)
         {
-            var createdComment = _commentService.Create(blogId, comment);
-            return CreatedAtAction(nameof(Create), new { blogId, commentId = createdComment.Id }, createdComment);
+            try
+            {
+                var createdComment = _commentService.Create(blogId, comment);
+                return CreatedAtAction(nameof(Create), new { blogId, commentId = createdComment.Id }, createdComment);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [Authorize(Policy = "authorPolicy")]
@@ -45,16 +56,36 @@ namespace Explorer.API.Controllers.Author
             {
                 return BadRequest("Comment ID mismatch.");
             }
-            var result = _commentService.Update(blogId, updatedComment);
-            return Ok(result);
+            try
+            {
+                var result = _commentService.Update(blogId, updatedComment);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+           
         }
 
         [Authorize(Policy = "authorPolicy")]
         [HttpDelete("{id:int}")]
         public ActionResult Delete([FromRoute]long blogId,int id)
         {
-            _commentService.Delete(blogId, id);
-            return NoContent();
+            try
+            {
+                _commentService.Delete(blogId, id);
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            
         }
     }
 }

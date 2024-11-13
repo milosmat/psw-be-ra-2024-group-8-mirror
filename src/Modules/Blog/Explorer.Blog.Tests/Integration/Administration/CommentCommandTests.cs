@@ -26,16 +26,16 @@ namespace Explorer.Blog.Tests.Integration.Administration
         public CommentsCommandTests(BlogTestFactory factory) : base(factory) { }
 
         [Theory]
-        [InlineData(1, "Test comment", 1)] // User 1, Blog 1, Comment content
-        public void Creates(int userId, string content, int blogId)
+        [InlineData(1L, "Test comment", 1L)] // User 1, Blog 1, Comment content
+        public void Creates(long userId, string content, long blogId)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
+           
             var newComment = new CommentDto
             {
-                Id = 0,
                 UserId = userId,
                 Text = content,
                 BlogId = blogId,
@@ -45,7 +45,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
             // Act
             var result = ((ObjectResult)controller.Create(blogId, newComment).Result)?.Value as CommentDto;
-
+            var createdCommentId = result?.Id ?? 0; 
             // Assert - Response
             result.ShouldNotBeNull();
             result.Id.ShouldNotBe(0);
@@ -61,9 +61,9 @@ namespace Explorer.Blog.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(0, "Test comment", 400)] // Invalid userId returns 400 Bad Request
-        [InlineData(-1, "Test comment", 400)] // Invalid userId returns 400 Bad Request
-        public void Create_fails_invalid_data(int? userId, string content, int expectedStatusCode)
+        [InlineData(null, "Test comment", 400)] //Null userId
+        [InlineData(1L, "", 400)] // Empty comment text
+        public void Create_fails_invalid_data(long? userId, string content, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
@@ -85,32 +85,47 @@ namespace Explorer.Blog.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(2, "Updated comment content", 1, 1)]
-        public void Updates(int id, string content, int blogId, int userId)
+        [InlineData("Updated comment content", 1L, 1L)]
+        public void Updates(string content, long blogId, long userId)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
+            var newComment = new CommentDto
+            {
+                UserId = userId,
+                Text = "Initial comment content",
+                BlogId = blogId,
+                CreationTime = DateTime.UtcNow,
+                LastModifiedTime = DateTime.UtcNow,
+            };
+
+            var createdComment = ((ObjectResult)controller.Create(blogId, newComment).Result)?.Value as CommentDto;
+            var createdCommentId = createdComment?.Id ?? -1;
+
+
             var updatedComment = new CommentDto
             {
-                Id = id,
+                Id = createdCommentId,
                 Text = content,
                 BlogId = blogId,
-                UserId = userId
+                UserId = userId,
+                CreationTime = createdComment.CreationTime,
+                LastModifiedTime = DateTime.UtcNow
             };
 
             // Act
-            var result = ((ObjectResult)controller.Update(blogId, id, updatedComment).Result)?.Value as CommentDto;
+            var result = ((ObjectResult)controller.Update(blogId, createdCommentId, updatedComment).Result)?.Value as CommentDto;
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(id);
+            result.Id.ShouldBe(createdCommentId);
             result.Text.ShouldBe(updatedComment.Text);
 
             // Assert - Database
-            var storedEntity = dbContext.Comments.FirstOrDefault(i => i.Id == id);
+            var storedEntity = dbContext.Comments.FirstOrDefault(i => i.Id == createdCommentId);
             storedEntity.ShouldNotBeNull();
             storedEntity.Text.ShouldBe(content);
         }
@@ -139,15 +154,66 @@ namespace Explorer.Blog.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(1, true)]
-        public void Deletes(int id, bool shouldExist)
+        [InlineData(1L, 1L, "", 400)] //Empty text comment
+        public void Update_fails_invalid_content(long blogId, long userId, string content, int expectedStatusCode)
+        {
+            //Arrange
+            using var scope = Factory.Services.CreateScope();
+            var controller = CreateController(scope);
+            var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
+
+            var newComment = new CommentDto
+            {
+                UserId = userId,
+                BlogId = blogId,
+                Text =  "Initial text",
+                CreationTime = DateTime.UtcNow,
+                LastModifiedTime = DateTime.UtcNow,
+            };
+
+            var createdComment = ((ObjectResult)controller.Create(blogId, newComment).Result)?.Value as CommentDto;
+            var createdCommentId = createdComment?.Id ?? -1;
+
+            var updatedComment = new CommentDto
+            {
+                Id = createdCommentId,
+                UserId = userId,
+                BlogId = blogId,
+                CreationTime = createdComment.CreationTime,
+                LastModifiedTime = DateTime.UtcNow,
+                Text = content
+            };
+
+            //Act
+            var result = (ObjectResult)controller.Update(1, updatedComment.Id, updatedComment).Result;
+             
+            //Assert
+            result.ShouldNotBeNull();
+            result.StatusCode.ShouldBe(expectedStatusCode);
+
+        }
+
+        [Theory]
+        [InlineData(true)]
+        public void Deletes( bool shouldExist)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
-            var preDeleteEntity = dbContext.Comments.FirstOrDefault(i => i.Id == id);
+            var comment = new CommentDto
+            {
+                UserId = 1,
+                Text = "Test comment for delete.",
+                CreationTime = DateTime.UtcNow,
+                LastModifiedTime = DateTime.UtcNow,
+                BlogId = 1
+            };
+            var createdComment = ((ObjectResult)controller.Create(1, comment).Result)?.Value as CommentDto;
+            var createdCommentId = createdComment?.Id ?? -1;
+
+            var preDeleteEntity = dbContext.Comments.FirstOrDefault(c => c.Id == createdCommentId);
             if (shouldExist)
             {
                 preDeleteEntity.ShouldNotBeNull();
@@ -157,19 +223,21 @@ namespace Explorer.Blog.Tests.Integration.Administration
                 preDeleteEntity.ShouldBeNull();
             }
 
-            // Act: Call Delete method
-            controller.Delete(1, id);
+
+
+            controller.Delete(1, createdCommentId); 
+
 
             // Assert - Check if entity was deleted from the database
-            var postDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
+            var postDeleteEntity = dbContext.Comments.FirstOrDefault(i => i.Id == createdCommentId);
             postDeleteEntity.ShouldBeNull(); // Should be null if successfully deleted or if it didn't exist initially
 
 
         }
 
         [Theory]
-        [InlineData(-1000, 404)] // Invalid comment ID
-        public void Delete_fails_invalid_id(int id, int expectedStatusCode)
+        [InlineData(-1000L, 404)] // Invalid comment ID
+        public void Delete_fails_invalid_id(long id, int expectedStatusCode)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();

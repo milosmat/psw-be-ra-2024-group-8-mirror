@@ -1,17 +1,12 @@
 ﻿using Explorer.API.Controllers.Author;
 using Explorer.Tours.API.Dtos;
+using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.Core.Domain;
 using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
-using Explorer.Tours.API.Public.Administration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Explorer.Tours.Tests.Integration.Author
 {
@@ -84,6 +79,7 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Name = "Izmenjena Tura",
                 Description = "Izmenjen opis nove ture.",
                 Weight = "6kg",
+                Status = (int)Core.Domain.TourStatus.DRAFT,
                 Tags = new[] { "avantura", "priroda", "izmenjeno" },
                 Price = 150.00m
             };
@@ -125,7 +121,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
 
-            var result = (OkResult)controller.Delete(1); 
+            var result = (OkResult)controller.Delete(1);
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
@@ -148,11 +144,18 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.StatusCode.ShouldBe(404);
         }
 
+        /*private static TourController CreateController(IServiceScope scope)
+        {
+            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>())
+            {
+                ControllerContext = BuildContext("-1")
+            };
+        }*/
         private static TourController CreateController(IServiceScope scope)
         {
-            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>(), scope.ServiceProvider.GetRequiredService<IEquipmentService>())
+            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>(), scope.ServiceProvider.GetRequiredService<IEquipmentService>(), scope.ServiceProvider.GetRequiredService<ITourCheckpointService>())
             {
-                ControllerContext = BuildContext("-1") 
+                ControllerContext = BuildContext("-1")
             };
         }
     }

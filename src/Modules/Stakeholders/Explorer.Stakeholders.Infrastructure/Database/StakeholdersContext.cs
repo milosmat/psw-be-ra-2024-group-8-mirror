@@ -13,6 +13,9 @@ public class StakeholdersContext : DbContext
     public DbSet<Club> Clubs { get; set; }
     public DbSet<AppRating> AppRatings { get; set; }
     public DbSet<Problem> Problems { get; set; }
+    public DbSet<Followers> Followerss { get; set; }
+    public DbSet<Message> Messages { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
 
 
@@ -30,6 +33,18 @@ public class StakeholdersContext : DbContext
         ConfigureStakeholder(modelBuilder);
 
         modelBuilder.Entity<Problem>().ToTable("Problems");
+        modelBuilder.Entity<Followers>().ToTable("Followerss");
+        modelBuilder.Entity<Message>().ToTable("Messages");
+        modelBuilder.Entity<Notification>().ToTable("Notifications");
+
+        modelBuilder.Entity<Notification>()
+            .HasOne(n => n.Message)    
+            .WithMany()                
+            .HasForeignKey(n => n.MessageId) 
+            .OnDelete(DeleteBehavior.Cascade); 
+
+        modelBuilder.Entity<Notification>()
+            .HasIndex(n => n.FollowerId);  
 
     }
     

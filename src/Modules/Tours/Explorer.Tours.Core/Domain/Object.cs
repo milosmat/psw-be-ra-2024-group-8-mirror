@@ -14,9 +14,10 @@ namespace Explorer.Tours.Core.Domain
         public string Description { get; init; }
         public string Image { get; init; }
         public ObjectCategory Category { get; init; }
+        public double Latitude { get; init; }
+        public double Longitude { get; init; }
 
-
-        public Object(string name, string description, string image, ObjectCategory category)
+        public Object(string name, string description, string image, ObjectCategory category, double latitude, double longitude)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
     //        if (string.IsNullOrWhiteSpace(category) ||
@@ -28,6 +29,8 @@ namespace Explorer.Tours.Core.Domain
             Description = description;
             Image = image;
             Category = category;
+            Latitude = latitude;
+            Longitude = longitude;
         }
     }
 }

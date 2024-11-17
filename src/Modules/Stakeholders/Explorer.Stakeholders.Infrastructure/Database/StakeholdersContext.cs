@@ -1,5 +1,7 @@
-﻿using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.TourProblems;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
 
@@ -13,9 +15,12 @@ public class StakeholdersContext : DbContext
     public DbSet<Club> Clubs { get; set; }
     public DbSet<AppRating> AppRatings { get; set; }
     public DbSet<Problem> Problems { get; set; }
+    public DbSet<TourProblem> TourProblems { get; set; }
+    public DbSet<ProblemComment> ProblemComments { get; set; }
     public DbSet<Followers> Followerss { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+
 
 
 
@@ -45,6 +50,15 @@ public class StakeholdersContext : DbContext
 
         modelBuilder.Entity<Notification>()
             .HasIndex(n => n.FollowerId);  
+
+        modelBuilder.Entity<TourProblem>().ToTable("TourProblems");
+        modelBuilder.Entity<ProblemComment>().ToTable("ProblemComments");
+
+        modelBuilder.Entity<TourProblem>()
+            .HasMany(sc => sc.ProblemComments)  // Povezivanje sa kolekcijom stavki
+            .WithOne() // Svaka stavka pripada jednom shopping cart-u
+            .HasForeignKey("TourProblemId")  // Spoljni ključ
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
     

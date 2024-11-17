@@ -22,15 +22,15 @@ public class Tour : Entity
     public List<TravelTime> TravelTimes { get; init; }
     public List<Equipment> Equipments { get; init; }
     public List<TourCheckpoint> TourCheckpoints { get; init; }
+    public long AuthorId { get; private set; }
 
-        
 
-        // Tour review
-        public List<TourReview> TourReviews { get; private set; } = new List<TourReview>();
+    // Tour review
+    public List<TourReview> TourReviews { get; private set; } = new List<TourReview>();
 
         public Tour() { }
 
-        public Tour(string name, string description, string weight, string[] tags, long lengthInKm, DateTime publishedDate, DateTime archivedDate)
+        public Tour(string name, string description, string weight, string[] tags, long lengthInKm, DateTime publishedDate, DateTime archivedDate, long authorId)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
             Name = name;
@@ -45,6 +45,7 @@ public class Tour : Entity
             TravelTimes = new List<TravelTime>();
             Equipments = new List<Equipment>();
             TourCheckpoints = new List<TourCheckpoint>();
+            AuthorId = authorId;
     }
 
         // Metode za upravljanje Equipments (vrednosni objekti)

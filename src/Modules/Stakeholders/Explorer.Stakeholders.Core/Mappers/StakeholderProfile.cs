@@ -1,6 +1,7 @@
 using AutoMapper;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.TourProblems;
 
 namespace Explorer.Stakeholders.Core.Mappers;
 
@@ -19,6 +20,21 @@ public class StakeholderProfile : Profile
     CreateMap<AppRatingDto, AppRating>().ReverseMap();
 
     CreateMap<ProblemDto, Problem>().ReverseMap();
+
+
+    CreateMap<TourProblemDto, TourProblem>()
+                .ForMember(dest => dest.ProblemComments, opt => opt.MapFrom(src => src.ProblemComments))
+                .ReverseMap();
+    CreateMap<TourProblemDto.ProblemCommentDto, ProblemComment>()
+        .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Text))
+        .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+        .ForMember(dest => dest.TourProblemId, opt => opt.MapFrom(src => src.TourProblemId))
+        .ForMember(dest => dest.CommentedAt, opt => opt.MapFrom(src => src.CommentedAt))
+        .ReverseMap();
+
+    CreateMap<UserDto, User>().ReverseMap();
+
+
         CreateMap<FollowersDto, Followers>().ReverseMap();
 
         CreateMap<MessageDto, Message>().ReverseMap();
@@ -26,5 +42,6 @@ public class StakeholderProfile : Profile
         CreateMap<NotificationDto, Notification>()
             .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message)) 
             .ReverseMap();
+
     }
 }

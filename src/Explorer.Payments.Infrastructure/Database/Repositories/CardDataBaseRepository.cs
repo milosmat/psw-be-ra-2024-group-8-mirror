@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Explorer.BuildingBlocks.Infrastructure.Database;
-using Explorer.Tours.Core.Domain.RepositoryInterfaces;
-using Explorer.Tours.Core.Domain;
+using Explorer.Payments.Core.Domain.RepositoryInterfaces;
+using Explorer.Payments.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorer.Tours.Infrastructure.Database.Repositories
+namespace Explorer.Payments.Infrastructure.Database.Repositories
 {
-    public class CardDataBaseRepository : CrudDatabaseRepository<ShoppingCart, ToursContext>, ICardRepository
+    public class CardDataBaseRepository : CrudDatabaseRepository<ShoppingCart, PaymentsContext>, ICardRepository
     {
-        public CardDataBaseRepository(ToursContext dbContext) : base(dbContext)
+        public CardDataBaseRepository(PaymentsContext dbContext) : base(dbContext)
         {
         }
 
@@ -37,6 +37,7 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
                 .Include(t => t.ShopingItems!)
                 .FirstOrDefault();
         }
+
 
     }
 }

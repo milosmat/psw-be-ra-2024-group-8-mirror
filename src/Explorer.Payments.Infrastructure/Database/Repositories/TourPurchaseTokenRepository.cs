@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Explorer.BuildingBlocks.Infrastructure.Database;
-using Explorer.Tours.Core.Domain.RepositoryInterfaces;
-using Explorer.Tours.Core.Domain;
+using Explorer.Payments.Core.Domain.RepositoryInterfaces;
+using Explorer.Payments.Core.Domain;
 using Microsoft.EntityFrameworkCore;
-using static Explorer.Tours.Core.Domain.TourPurchaseToken;
+using static Explorer.Payments.Core.Domain.TourPurchaseToken;
 
-namespace Explorer.Tours.Infrastructure.Database.Repositories
+namespace Explorer.Payments.Infrastructure.Database.Repositories
 {
-    public class TourPurchaseTokenRepository : CrudDatabaseRepository<TourPurchaseToken, ToursContext>, ITourPurchaseTokenRepository
+    public class TourPurchaseTokenRepository : CrudDatabaseRepository<TourPurchaseToken, PaymentsContext>, ITourPurchaseTokenRepository
     {
-        public TourPurchaseTokenRepository(ToursContext dbContext) : base(dbContext)
+        public TourPurchaseTokenRepository(PaymentsContext dbContext) : base(dbContext)
         {
         }
 
@@ -42,7 +42,6 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
         {
             return DbContext.Tokens.ToList();
         }
-
 
     }
 }

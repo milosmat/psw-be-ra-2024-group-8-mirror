@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.Payments.API.Dtos;
 using Explorer.Tours.API.Dtos;
 using FluentResults;
 
-namespace Explorer.Tours.API.Public.Tourist
+namespace Explorer.Payments.API.Public.Tourist
 {
     public interface ITourPurchaseTokenService
     {

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Explorer.Tours.API.Dtos;
-using Explorer.Tours.API.Public.Tourist;
-using Explorer.Tours.Core.Domain.RepositoryInterfaces;
-using Explorer.Tours.Core.Domain;
+using Explorer.Payments.API.Dtos;
+using Explorer.Payments.API.Public.Tourist;
+using Explorer.Payments.Core.Domain.RepositoryInterfaces;
+using Explorer.Payments.Core.Domain;
 using FluentResults;
-using static Explorer.Tours.API.Dtos.ShoppingCartDTO;
+using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
 
-namespace Explorer.Tours.Core.UseCases.Tourist
+namespace Explorer.Payments.Core.UseCases.Tourist
 {
     public class ShoppingCartService : IShoppingCartService
     {
@@ -96,7 +96,7 @@ namespace Explorer.Tours.Core.UseCases.Tourist
             return shoppingCartDto;
         }
 
-       
+
 
         public Result Checkout(long touristId)
         {

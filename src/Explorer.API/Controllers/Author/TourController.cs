@@ -32,7 +32,7 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
-        [HttpGet("equipments/{id:int}")]
+        [HttpGet("equipment/{id:int}")]
         public ActionResult<EquipmentDto> GetEquipment(int id)
         {
             var result = _equipmentService.Get(id);

@@ -5,13 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.Payments.API.Dtos;
+using Explorer.Payments.API.Public.Tourist;
+using Explorer.Payments.Core.Domain;
+using Explorer.Payments.Core.Domain.RepositoryInterfaces;
 using Explorer.Tours.API.Dtos;
-using Explorer.Tours.API.Public.Tourist;
 using Explorer.Tours.Core.Domain;
-using Explorer.Tours.Core.Domain.RepositoryInterfaces;
 using FluentResults;
 
-namespace Explorer.Tours.Core.UseCases.Tourist
+namespace Explorer.Payments.Core.UseCases.Tourist
 {
     public class TourPurchaseTokenService : CrudService<TourPurchaseTokenDTO, TourPurchaseToken>, ITourPurchaseTokenService
     {
@@ -53,6 +55,7 @@ namespace Explorer.Tours.Core.UseCases.Tourist
 
             return Result.Ok(tourDtos);
         }
+
 
 
     }

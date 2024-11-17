@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Explorer.BuildingBlocks.Core.Domain;
 
-namespace Explorer.Tours.Core.Domain
+namespace Explorer.Payments.Core.Domain
 {
     public class ShoppingCartItem : Entity
     {
+
         public long TourId { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
@@ -24,6 +25,5 @@ namespace Explorer.Tours.Core.Domain
 
         public decimal TotalPrice => Price;
     }
-
 }
 

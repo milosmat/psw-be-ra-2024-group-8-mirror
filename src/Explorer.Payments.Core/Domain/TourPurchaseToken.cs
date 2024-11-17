@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Explorer.BuildingBlocks.Core.Domain;
 
-namespace Explorer.Tours.Core.Domain
+namespace Explorer.Payments.Core.Domain
 {
     public class TourPurchaseToken : Entity
     {
@@ -57,6 +57,7 @@ namespace Explorer.Tours.Core.Domain
             Used,     // Token je iskorišćen i više nije važeći
             Expired   // Token je istekao i više ne može biti iskorišćen
         }
+
 
     }
 }

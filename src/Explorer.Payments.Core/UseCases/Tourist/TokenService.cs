@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Explorer.Tours.Core.UseCases.Tourist
+namespace Explorer.Payments.Core.UseCases.Tourist
 {
     public class TokenService
     {
@@ -43,5 +43,6 @@ namespace Explorer.Tours.Core.UseCases.Tourist
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

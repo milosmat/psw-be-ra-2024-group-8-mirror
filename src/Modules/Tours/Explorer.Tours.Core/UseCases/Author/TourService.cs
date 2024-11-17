@@ -492,7 +492,7 @@ namespace Explorer.Tours.Core.UseCases.Author
         {
             try
             {
-                var tours = CrudRepository.GetPaged(1, int.MaxValue);
+                var tours = tourRepository.GetPaged(1, int.MaxValue);
                 var publishedTours = tours.Results.Where(t => t.Status == TourStatus.PUBLISHED).ToList();
                 foreach (var tour in publishedTours)
                 {

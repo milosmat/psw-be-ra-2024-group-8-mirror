@@ -21,6 +21,7 @@ public class StakeholderProfile : Profile
 
     CreateMap<ProblemDto, Problem>().ReverseMap();
 
+
     CreateMap<TourProblemDto, TourProblem>()
                 .ForMember(dest => dest.ProblemComments, opt => opt.MapFrom(src => src.ProblemComments))
                 .ReverseMap();
@@ -32,6 +33,15 @@ public class StakeholderProfile : Profile
         .ReverseMap();
 
     CreateMap<UserDto, User>().ReverseMap();
+
+
+        CreateMap<FollowersDto, Followers>().ReverseMap();
+
+        CreateMap<MessageDto, Message>().ReverseMap();
+
+        CreateMap<NotificationDto, Notification>()
+            .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message)) 
+            .ReverseMap();
 
     }
 }

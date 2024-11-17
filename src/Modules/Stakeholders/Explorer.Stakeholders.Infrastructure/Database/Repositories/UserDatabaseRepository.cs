@@ -1,4 +1,4 @@
-﻿using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain;
 using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 
 namespace Explorer.Stakeholders.Infrastructure.Database.Repositories;
@@ -39,5 +39,9 @@ public class UserDatabaseRepository : IUserRepository
     public User GetUser(long userId)
     {
         return _dbContext.Users.FirstOrDefault(i => i.Id == userId);
+
+    public List<User> GetUsersByRole(UserRole role)
+    {
+        return _dbContext.Users.Where(u => u.Role == role).ToList();
     }
 }

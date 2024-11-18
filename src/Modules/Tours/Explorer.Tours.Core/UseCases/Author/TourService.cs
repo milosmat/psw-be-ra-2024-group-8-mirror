@@ -407,6 +407,15 @@ namespace Explorer.Tours.Core.UseCases.Author
             return tourTravelTime;
         }
 
+        public Result<DailyAgendaDTO> AddNewDailyAgenda(long tourId, DailyAgendaDTO dailyAgenda)
+        {
+            Tour tour = tourRepository.Get(tourId);
+            DailyAgenda newDailyAgenda = new DailyAgenda(dailyAgenda.Day, dailyAgenda.StartDestination,
+                dailyAgenda.BetweenDestinations, dailyAgenda.EndDestination, dailyAgenda.Description);
+            tour.AddNewDailyAgenda(newDailyAgenda);
+            CrudRepository.Update(tour);
+            return dailyAgenda;
+        }
 
         //NOVO
 

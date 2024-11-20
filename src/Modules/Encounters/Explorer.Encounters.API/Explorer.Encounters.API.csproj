@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Dodavanje reference na BuildingBlocks.Core -->
+		<ProjectReference Include="..\..\..\BuildingBlocks\Explorer.BuildingBlocks.Core\Explorer.BuildingBlocks.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Kreiranje direktorijuma "Internal" -->
+		<Folder Include="Internal\" />
+		<Folder Include="Dtos\" />
+		<Folder Include="Public\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Primer dodatnog paketa (ovo je opciono, zavisi od projekta) -->
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+	</ItemGroup>
+
+</Project>

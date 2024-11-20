@@ -49,6 +49,10 @@ public class ToursContext : DbContext
             v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
             v => JsonSerializer.Deserialize<List<TravelTime>>(v, (JsonSerializerOptions)null)
         );
+        modelBuilder.Entity<Tour>().Property(item => item.DailyAgendas).HasColumnType("jsonb").HasConversion(
+            v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+            v => JsonSerializer.Deserialize<List<DailyAgenda>>(v, (JsonSerializerOptions)null)
+        );
         modelBuilder.Entity<TourReview>().ToTable("TourReviews");
         //modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");

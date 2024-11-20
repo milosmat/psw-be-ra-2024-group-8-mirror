@@ -75,6 +75,13 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
             
         }
+        [HttpPost("{tourId:int}/addNewDailyAgenda")]
+        public ActionResult<TravelTimeDTO> AddNewDailyAgenda([FromBody] DailyAgendaDTO newDailyAgenda, long tourId)
+        {
+            var result = _tourService.AddNewDailyAgenda(tourId, newDailyAgenda);
+            return CreateResponse(result);
+
+        }
         [HttpPut("{id:int}")]
         public ActionResult<TourDTO> Update([FromBody] TourDTO tourDto)
         {

@@ -13,8 +13,9 @@ public class StakeholderProfile : Profile
         CreateMap<ClubDto, Club>().ReverseMap();
 
         CreateMap<MembershipRequestDto, MembershipRequest>().ReverseMap();
+           
 
-            CreateMap<AccountInformationDto, User>()
+        CreateMap<AccountInformationDto, User>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => Enum.Parse<UserRole>(src.Role)));
 
         CreateMap<User, AccountInformationDto>()

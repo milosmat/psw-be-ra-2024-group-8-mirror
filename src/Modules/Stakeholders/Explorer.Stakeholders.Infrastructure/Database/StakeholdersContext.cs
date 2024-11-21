@@ -35,24 +35,17 @@ public class StakeholdersContext : DbContext
 
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
         modelBuilder.Entity<Club>().ToTable("Clubs");
-        modelBuilder.Entity<MembershipRequest>().ToTable("MembershipRequests");
 
         modelBuilder.Entity<MembershipRequest>()
             .ToTable("MembershipRequests")
             .Property(r => r.Id)
             .ValueGeneratedOnAdd();
 
-        modelBuilder.Entity<Club>()
-            .HasMany(c => c.MembershipRequests)
-            .WithOne()
-            .HasForeignKey(mr => mr.ClubId);
-
-        modelBuilder.Entity<MembershipRequest>()
-            .HasOne(r => r.Club)
-            .WithMany(c => c.MembershipRequests)
-            .HasForeignKey(r => r.ClubId)
-            .OnDelete(DeleteBehavior.Cascade);
-
+       modelBuilder.Entity<MembershipRequest>()
+           .HasOne<Club>() //svaki Memship request pripada jednom klubu
+           .WithMany(c => c.MembershipRequests) //Club moze imati vise memship request-ova
+           .HasForeignKey(mr => mr.ClubId) //povezani preko stranog kljuca ClubId u tabeli MembershipRequests
+           .OnDelete(DeleteBehavior.Cascade); //pravilo kaskadnog brisanja
 
         ConfigureStakeholder(modelBuilder);
 

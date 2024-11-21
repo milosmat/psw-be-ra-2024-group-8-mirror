@@ -10,15 +10,11 @@ namespace Explorer.Blog.Core.Domain.Blogs
 {
     public class Comment : Entity
     {
-        public long Id { get; set; }
         public long BlogId { get; set; }    
         public int UserId { get; set; }
         public DateTime CreationTime { get; private set; }
         public DateTime LastModifiedTime { get; private set; }
         public string Text { get; private set; }
-
-        public Blogg Blog { get; set; }
-
 
         public Comment(int userId, string text)
         {

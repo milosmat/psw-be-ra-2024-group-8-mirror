@@ -11,6 +11,8 @@ namespace Explorer.Tours.Core.Domain
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
+        public MapLocation() { }
+
         public MapLocation(double latitude, double longitude)
         {
             Latitude = latitude;

@@ -11,7 +11,10 @@ namespace Explorer.Encounters.Core.Mappers
         public EncountersProfile()
         {
             // Mapiranje Encounter i EncounterDTO
-            CreateMap<Encounter, EncounterDTO>().ReverseMap();
+            CreateMap<EncounterDTO, Encounter>()
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => new MapLocation(src.Location.Latitude, src.Location.Longitude)))
+            .ReverseMap();
+
 
             // Ako postoje dodatni entiteti vezani za Encounter (npr. EncounterDetails), dodajte ovde:
             /*
@@ -25,7 +28,7 @@ namespace Explorer.Encounters.Core.Mappers
             CreateMap<Domain.EncounterType, string>().ConvertUsing(src => src.ToString());
             CreateMap<string, Domain.EncounterType>().ConvertUsing(src => Enum.Parse<Domain.EncounterType>(src));
 
-            CreateMap<MapLocationDto, MapLocation>()
+            CreateMap<MapLocationDTO, MapLocation>()
                 .ConstructUsing(src => new MapLocation(src.Latitude, src.Longitude))
                 .ReverseMap();
         }

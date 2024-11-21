@@ -11,7 +11,7 @@ namespace Explorer.Encounters.API.Dtos
         public long Id { get; set; } // Unique identifier for the encounter
         public string Name { get; set; } // Name of the encounter
         public string Description { get; set; } // Description of what the user needs to do
-        public MapLocationDto Location { get; set; } // Location of the encounter
+        public MapLocationDTO Location { get; set; } // Location of the encounter
         public int XP { get; set; } // Experience points rewarded
         public EncounterStatus Status { get; set; } // Enum representing the status of the encounter
         public EncounterType Type { get; set; } // Enum representing the type of the encounter
@@ -19,7 +19,7 @@ namespace Explorer.Encounters.API.Dtos
         public DateTime? ArchivedDate { get; set; } // Date when the encounter was archived
         public long AuthorId { get; set; } // ID of the administrator who created the encounter
 
-        public class MapLocationDto
+        public class MapLocationDTO
         {
             public double Latitude { get; set; }
             public double Longitude { get; set; }

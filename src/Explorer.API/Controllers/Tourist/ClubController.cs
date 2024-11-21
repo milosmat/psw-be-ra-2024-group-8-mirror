@@ -1,4 +1,5 @@
-﻿using Explorer.BuildingBlocks.Core.UseCases;
+﻿using Explorer.Blog.API.Dtos;
+using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
 using Microsoft.AspNetCore.Authorization;
@@ -17,8 +18,7 @@ public class ClubController : BaseApiController
     {
         _clubService = clubService;
     }
-
-
+    
     [HttpGet]
     public ActionResult<PagedResult<ClubDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
     {
@@ -117,7 +117,7 @@ public class ClubController : BaseApiController
 
         return Ok($"Club with ID {id} has been successfully deleted.");
     }
-
+   
 }
 
 

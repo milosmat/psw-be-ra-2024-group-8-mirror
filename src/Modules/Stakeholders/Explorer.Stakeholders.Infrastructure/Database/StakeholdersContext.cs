@@ -26,7 +26,7 @@ public class StakeholdersContext : DbContext
 
 
 
-    public StakeholdersContext(DbContextOptions<StakeholdersContext> options) : base(options) { }
+    public StakeholdersContext(DbContextOptions<StakeholdersContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,7 +38,7 @@ public class StakeholdersContext : DbContext
         modelBuilder.Entity<MembershipRequest>().ToTable("MembershipRequests");
 
         modelBuilder.Entity<Club>()
-            .HasMany(c => c.Requests)
+            .HasMany(c => c.MembershipRequests)
             .WithOne()
             .HasForeignKey(mr => mr.ClubId);
 
@@ -49,7 +49,7 @@ public class StakeholdersContext : DbContext
 
         modelBuilder.Entity<MembershipRequest>()
             .HasOne(r => r.Club)
-            .WithMany(c => c.Requests)
+            .WithMany(c => c.MembershipRequests)
             .HasForeignKey(r => r.ClubId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -62,13 +62,13 @@ public class StakeholdersContext : DbContext
         modelBuilder.Entity<Notification>().ToTable("Notifications");
 
         modelBuilder.Entity<Notification>()
-            .HasOne(n => n.Message)
-            .WithMany()
-            .HasForeignKey(n => n.MessageId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(n => n.Message)    
+            .WithMany()                
+            .HasForeignKey(n => n.MessageId) 
+            .OnDelete(DeleteBehavior.Cascade); 
 
         modelBuilder.Entity<Notification>()
-            .HasIndex(n => n.FollowerId);
+            .HasIndex(n => n.FollowerId);  
 
         modelBuilder.Entity<TourProblem>().ToTable("TourProblems");
         modelBuilder.Entity<ProblemComment>().ToTable("ProblemComments");
@@ -80,7 +80,7 @@ public class StakeholdersContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
     }
-
+    
     private static void ConfigureStakeholder(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Person>()

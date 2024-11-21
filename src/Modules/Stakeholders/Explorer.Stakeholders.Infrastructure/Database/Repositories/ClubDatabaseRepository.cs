@@ -7,6 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Explorer.BuildingBlocks.Infrastructure.Database;
+using Explorer.Stakeholders.Core.Domain.Clubs;
+using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Explorer.Stakeholders.Infrastructure.Database.Repositories
 {
@@ -17,7 +22,7 @@ namespace Explorer.Stakeholders.Infrastructure.Database.Repositories
         public new Club? Get(int id)
         {
             return DbContext.Clubs.Where(t => t.Id == id)
-            .Include(t => t.Requests!).FirstOrDefault();
+                .Include(t => t.MembershipRequests!).FirstOrDefault();
         }
 
         public Club Update(Club aggregateRoot)
@@ -26,6 +31,13 @@ namespace Explorer.Stakeholders.Infrastructure.Database.Repositories
             DbContext.Clubs.Update(aggregateRoot);
             DbContext.SaveChanges();
             return aggregateRoot;
+        }
+
+        public Club GetClubWithMembershipRequests(long clubId)
+        {
+            return DbContext.Clubs
+                .Include(c => c.MembershipRequests)  // Eager load membership request
+                .FirstOrDefault(c => c.Id == clubId);
         }
     }
 }

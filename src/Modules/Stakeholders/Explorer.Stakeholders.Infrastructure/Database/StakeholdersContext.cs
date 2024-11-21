@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
+using Explorer.Stakeholders.Core.Domain.Clubs;
 
 namespace Explorer.Stakeholders.Infrastructure.Database;
 
@@ -13,6 +14,7 @@ public class StakeholdersContext : DbContext
     public DbSet<Person> People { get; set; }
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Club> Clubs { get; set; }
+    public DbSet<MembershipRequest> Requests { get; set; }
     public DbSet<AppRating> AppRatings { get; set; }
     public DbSet<Problem> Problems { get; set; }
     public DbSet<TourProblem> TourProblems { get; set; }
@@ -33,6 +35,18 @@ public class StakeholdersContext : DbContext
 
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
         modelBuilder.Entity<Club>().ToTable("Clubs");
+        modelBuilder.Entity<MembershipRequest>().ToTable("MembershipRequests");
+
+        modelBuilder.Entity<MembershipRequest>()
+            .ToTable("MembershipRequests")
+            .Property(r => r.Id)
+            .ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<MembershipRequest>()
+            .HasOne(r => r.Club)
+            .WithMany(c => c.Requests)
+            .HasForeignKey(r => r.ClubId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
         ConfigureStakeholder(modelBuilder);

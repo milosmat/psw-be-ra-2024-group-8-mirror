@@ -8,9 +8,9 @@ namespace Explorer.Stakeholders.API.Dtos;
 
 public class ClubDto
 {
-    public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public string Photo { get; set; }
     public int OwnerId { get; set; }
+    public List<MembershipRequestDto> Requests { get; set; } = new List<MembershipRequestDto>();
 }

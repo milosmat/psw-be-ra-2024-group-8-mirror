@@ -37,6 +37,7 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
                 throw new ArgumentNullException(nameof(newMembershipRequest));
             }
 
+            newMembershipRequest.Status = MemRequestStatus.Pending;
             newMembershipRequest.SetClubId(this.Id);
             MembershipRequests.Add(newMembershipRequest);
         }
@@ -50,6 +51,18 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
             }
 
             MembershipRequests.RemoveAll(mr => mr.Id == membershipRequestId);
+        }
+
+        public MembershipRequest UpdateMembershipRequest(MembershipRequest updatedMembershipRequest)
+        {
+            var requestToUpdate = MembershipRequests.FirstOrDefault(mr => mr.Id == updatedMembershipRequest.Id);
+            if (requestToUpdate == null)
+            {
+                throw new KeyNotFoundException("Membership request to update not found.");
+            }
+
+            requestToUpdate.Status = updatedMembershipRequest.Status;
+            return requestToUpdate;
         }
     }
 }

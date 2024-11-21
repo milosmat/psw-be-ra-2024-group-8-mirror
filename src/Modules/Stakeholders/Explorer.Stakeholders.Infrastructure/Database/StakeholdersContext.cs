@@ -47,6 +47,10 @@ public class StakeholdersContext : DbContext
            .HasForeignKey(mr => mr.ClubId) //povezani preko stranog kljuca ClubId u tabeli MembershipRequests
            .OnDelete(DeleteBehavior.Cascade); //pravilo kaskadnog brisanja
 
+       modelBuilder.Entity<MembershipRequest>()
+           .HasIndex(mr => new { mr.SenderId, mr.ClubId }) //ogranicenje da jedan turista moze da posalje jedan aktivni zahtjev za clanstvo u odredjenom klubu
+           .IsUnique();
+
         ConfigureStakeholder(modelBuilder);
 
         modelBuilder.Entity<Problem>().ToTable("Problems");

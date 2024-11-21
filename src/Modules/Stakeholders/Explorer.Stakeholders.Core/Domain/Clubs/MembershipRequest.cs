@@ -11,9 +11,9 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
     public class MembershipRequest : Entity
     {
         public int SenderId { get; set; }
-        public int FollowerId { get; private set; }
+        public int FollowerId { get; set; }
         
-        public MemRequestStatus Status { get; private set; }
+        public MemRequestStatus Status { get; set; }
         public long ClubId { get; set; }
 
 

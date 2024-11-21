@@ -63,5 +63,48 @@ namespace Explorer.Stakeholders.Core.UseCases
 
         }
 
+        public MembershipRequestDto Update(long clubId, MembershipRequestDto updatedMembershipRequestDto)
+        {
+            var club = _clubRepository.GetClubWithMembershipRequests(clubId);
+            if (club == null)
+            {
+                throw new KeyNotFoundException($"Club with ID {clubId} not found.");
+            }
+
+            var updatedMemRequest = club.UpdateMembershipRequest(_mapper.Map<MembershipRequest>(updatedMembershipRequestDto));
+            _clubRepository.Update(club);
+            return _mapper.Map<MembershipRequestDto>(updatedMemRequest);
+        }
+
+        public void Delete(long membershipRequestId, long clubId)
+        {
+            var club = _clubRepository.GetClubWithMembershipRequests(clubId);
+            if (club == null)
+            {
+                throw new KeyNotFoundException($"Club with ID {clubId} not found.");
+            }
+            club.DeleteMembershipRequest(membershipRequestId);
+            _clubRepository.Update(club);
+        }
+
+        public MembershipRequestDto GetById(long membershipRequestId, long clubId)
+        {
+            var club = _clubRepository.GetClubWithMembershipRequests(clubId);
+            if (club == null)
+            {
+                throw new KeyNotFoundException($"Club with ID {clubId} not found.");
+            }
+
+            var memRequest = club.MembershipRequests.FirstOrDefault(mr => mr.Id == membershipRequestId);
+            if (memRequest == null)
+            {
+                throw new KeyNotFoundException($"Membership request with ID {membershipRequestId} not found.");
+            }
+
+            return _mapper.Map<MembershipRequestDto>(memRequest);
+
+        }
+
+
     }
 }

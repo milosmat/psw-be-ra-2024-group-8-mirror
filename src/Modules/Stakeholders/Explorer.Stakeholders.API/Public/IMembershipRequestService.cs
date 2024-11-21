@@ -12,6 +12,9 @@ namespace Explorer.Stakeholders.API.Public
     {
         PagedResult<MembershipRequestDto> GetPagedByClub(long clubId, int page, int pageSize);
         MembershipRequestDto Create(long clubId, MembershipRequestDto newMembershipRequest);
+        MembershipRequestDto Update(long clubId, MembershipRequestDto updatedMembershipRequest);
+        void Delete(long membershipRequestId, long clubId);
+        MembershipRequestDto GetById(long membershipRequestId, long clubId);
 
     }
 }

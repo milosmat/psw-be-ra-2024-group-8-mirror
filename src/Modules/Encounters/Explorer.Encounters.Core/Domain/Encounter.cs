@@ -1,4 +1,5 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
+using Explorer.Tours.Core.Domain;
 using FluentResults;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Explorer.Encounters.Core.Domain
     {
         public string Name { get; init; }
         public string Description { get; init; }
-        public string Location { get; init; }
+        public MapLocation Location { get; init; }
         public int XP { get; private set; }
         public EncounterStatus Status { get; private set; }
         public EncounterType Type { get; init; }
@@ -21,7 +22,7 @@ namespace Explorer.Encounters.Core.Domain
 
         public Encounter() { }
 
-        public Encounter(string name, string description, string location, int xp, EncounterType type, long authorId)
+        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, long authorId)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
             if (xp < 0) throw new ArgumentException("XP cannot be negative.");
@@ -38,7 +39,7 @@ namespace Explorer.Encounters.Core.Domain
         // Methods to manage Encounter lifecycle
         public Result Publish()
         {
-            if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Description) || string.IsNullOrWhiteSpace(Location))
+            if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Description) || Location==null)
                 return Result.Fail("Encounter must have a valid name, description, and location to be published.");
 
             Status = EncounterStatus.ACTIVE;

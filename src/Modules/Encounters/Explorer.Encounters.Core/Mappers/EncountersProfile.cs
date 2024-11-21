@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Explorer.Encounters.API.Dtos;
 using Explorer.Encounters.Core.Domain;
+using Explorer.Tours.Core.Domain;
+using static Explorer.Encounters.API.Dtos.EncounterDTO;
 
 namespace Explorer.Encounters.Core.Mappers
 {
@@ -22,6 +24,10 @@ namespace Explorer.Encounters.Core.Mappers
 
             CreateMap<Domain.EncounterType, string>().ConvertUsing(src => src.ToString());
             CreateMap<string, Domain.EncounterType>().ConvertUsing(src => Enum.Parse<Domain.EncounterType>(src));
+
+            CreateMap<MapLocationDto, MapLocation>()
+                .ConstructUsing(src => new MapLocation(src.Latitude, src.Longitude))
+                .ReverseMap();
         }
     }
 }

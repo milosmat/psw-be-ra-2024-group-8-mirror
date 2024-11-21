@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
+using Explorer.Stakeholders.Core.Domain.Clubs;
 
 namespace Explorer.Stakeholders.Infrastructure.Database;
 
@@ -13,6 +14,7 @@ public class StakeholdersContext : DbContext
     public DbSet<Person> People { get; set; }
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Club> Clubs { get; set; }
+    public DbSet<MembershipRequest> MembershipRequests { get; set; }
     public DbSet<AppRating> AppRatings { get; set; }
     public DbSet<Problem> Problems { get; set; }
     public DbSet<TourProblem> TourProblems { get; set; }
@@ -24,7 +26,7 @@ public class StakeholdersContext : DbContext
 
 
 
-    public StakeholdersContext(DbContextOptions<StakeholdersContext> options) : base(options) {}
+    public StakeholdersContext(DbContextOptions<StakeholdersContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,6 +35,23 @@ public class StakeholdersContext : DbContext
 
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
         modelBuilder.Entity<Club>().ToTable("Clubs");
+        modelBuilder.Entity<MembershipRequest>().ToTable("MembershipRequests");
+
+        modelBuilder.Entity<Club>()
+            .HasMany(c => c.Requests)
+            .WithOne()
+            .HasForeignKey(mr => mr.ClubId);
+
+        modelBuilder.Entity<MembershipRequest>()
+            .ToTable("MembershipRequests")
+            .Property(r => r.Id)
+            .ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<MembershipRequest>()
+            .HasOne(r => r.Club)
+            .WithMany(c => c.Requests)
+            .HasForeignKey(r => r.ClubId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
         ConfigureStakeholder(modelBuilder);
@@ -43,13 +62,13 @@ public class StakeholdersContext : DbContext
         modelBuilder.Entity<Notification>().ToTable("Notifications");
 
         modelBuilder.Entity<Notification>()
-            .HasOne(n => n.Message)    
-            .WithMany()                
-            .HasForeignKey(n => n.MessageId) 
-            .OnDelete(DeleteBehavior.Cascade); 
+            .HasOne(n => n.Message)
+            .WithMany()
+            .HasForeignKey(n => n.MessageId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Notification>()
-            .HasIndex(n => n.FollowerId);  
+            .HasIndex(n => n.FollowerId);
 
         modelBuilder.Entity<TourProblem>().ToTable("TourProblems");
         modelBuilder.Entity<ProblemComment>().ToTable("ProblemComments");
@@ -61,7 +80,7 @@ public class StakeholdersContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
     }
-    
+
     private static void ConfigureStakeholder(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Person>()

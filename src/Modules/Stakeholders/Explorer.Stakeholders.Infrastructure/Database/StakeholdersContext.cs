@@ -37,15 +37,15 @@ public class StakeholdersContext : DbContext
         modelBuilder.Entity<Club>().ToTable("Clubs");
         modelBuilder.Entity<MembershipRequest>().ToTable("MembershipRequests");
 
-        modelBuilder.Entity<MembershipRequest>()
-            .ToTable("MembershipRequests")
-            .Property(r => r.Id)
-            .ValueGeneratedOnAdd();
-
         modelBuilder.Entity<Club>()
             .HasMany(c => c.MembershipRequests)
             .WithOne()
             .HasForeignKey(mr => mr.ClubId);
+
+        modelBuilder.Entity<MembershipRequest>()
+            .ToTable("MembershipRequests")
+            .Property(r => r.Id)
+            .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<MembershipRequest>()
             .HasOne(r => r.Club)

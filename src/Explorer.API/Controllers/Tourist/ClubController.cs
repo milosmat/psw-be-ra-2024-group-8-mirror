@@ -18,7 +18,6 @@ public class ClubController : BaseApiController
     {
         _clubService = clubService;
     }
-
     
     [HttpGet]
     public ActionResult<PagedResult<ClubDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
@@ -39,7 +38,7 @@ public class ClubController : BaseApiController
             return StatusCode(500, $"An error occurred while fetching data: {ex.Message}");
         }
     }
-    /*
+    
     [HttpGet("{id:int}")]
     public ActionResult<ClubDto> GetById(int id)
     {
@@ -117,7 +116,8 @@ public class ClubController : BaseApiController
         _clubService.Delete(id);
 
         return Ok($"Club with ID {id} has been successfully deleted.");
-    }*/
+    }
    
 }
+
 

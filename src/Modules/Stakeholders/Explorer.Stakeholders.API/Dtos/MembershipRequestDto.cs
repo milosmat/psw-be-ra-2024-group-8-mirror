@@ -10,9 +10,9 @@ namespace Explorer.Stakeholders.API.Dtos
     {
         public long Id { get; set; }
         public int SenderId { get; set; }
-        public int FollowerId { get; set;}
+        public int FollowerId { get; set; }
         public Status Status { get; set; }
-        public long ClubId {get; set; }
+        public long ClubId { get; set; }
 
     }
 
@@ -23,5 +23,6 @@ namespace Explorer.Stakeholders.API.Dtos
         Accepted,
         Rejected,
         Invited
+
     }
 }

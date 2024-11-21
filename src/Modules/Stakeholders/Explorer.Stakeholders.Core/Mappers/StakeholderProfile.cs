@@ -10,9 +10,10 @@ public class StakeholderProfile : Profile
 {
     public StakeholderProfile()
     {
-        CreateMap<ClubDto, Club>().ReverseMap();
 
-        CreateMap<MembershipRequestDto, MembershipRequest>().ReverseMap();
+        CreateMap<ClubDto, Club>().ReverseMap();
+        CreateMap<MembershipRequestDto,MembershipRequest>().ReverseMap();
+
 
             CreateMap<AccountInformationDto, User>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => Enum.Parse<UserRole>(src.Role)));

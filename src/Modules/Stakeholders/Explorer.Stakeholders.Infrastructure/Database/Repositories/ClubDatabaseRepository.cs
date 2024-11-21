@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Explorer.BuildingBlocks.Infrastructure.Database;
+using Explorer.Stakeholders.Core.Domain.Clubs;
+using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,17 +12,12 @@ using Explorer.Stakeholders.Core.Domain.Clubs;
 using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Explorer.Stakeholders.Infrastructure.Database.Repositories
 {
-    public class ClubDatabaseRepository: CrudDatabaseRepository<Club, StakeholdersContext>, IClubRepository
+    public class ClubDatabaseRepository : CrudDatabaseRepository<Club, StakeholdersContext>, IClubRepository
     {
-        public ClubDatabaseRepository(StakeholdersContext dbContext) : base(dbContext)
-        {
-            if (dbContext == null)
-            {
-                throw new ArgumentNullException(nameof(dbContext), "StakeholdersContext is not resolved in DI.");
-            }
-        }
+        public ClubDatabaseRepository(StakeholdersContext dbContex) : base(dbContex) { }
 
         public new Club? Get(int id)
         {

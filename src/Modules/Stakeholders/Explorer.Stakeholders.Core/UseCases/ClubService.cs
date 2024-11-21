@@ -3,6 +3,8 @@ using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
 using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.Clubs;
+using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +20,7 @@ public class ClubService : BaseService<ClubDto, Club>, IClubService
     public IClubRepository _clubRepository { get; set; }
     public IMapper _mapper { get; set; }
 
-    public ClubService(IClubRepository clubRepository, IMapper mapper): base(mapper)
+    public ClubService(IClubRepository clubRepository, IMapper mapper) : base(mapper)
     {
         _clubRepository = clubRepository;
         _mapper = mapper;

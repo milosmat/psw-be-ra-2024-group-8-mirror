@@ -14,7 +14,7 @@ public class StakeholdersContext : DbContext
     public DbSet<Person> People { get; set; }
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Club> Clubs { get; set; }
-    public DbSet<MembershipRequest> Requests { get; set; }
+    public DbSet<MembershipRequest> MembershipRequests { get; set; }
     public DbSet<AppRating> AppRatings { get; set; }
     public DbSet<Problem> Problems { get; set; }
     public DbSet<TourProblem> TourProblems { get; set; }
@@ -42,9 +42,14 @@ public class StakeholdersContext : DbContext
             .Property(r => r.Id)
             .ValueGeneratedOnAdd();
 
+        modelBuilder.Entity<Club>()
+            .HasMany(c => c.MembershipRequests)
+            .WithOne()
+            .HasForeignKey(mr => mr.ClubId);
+
         modelBuilder.Entity<MembershipRequest>()
             .HasOne(r => r.Club)
-            .WithMany(c => c.Requests)
+            .WithMany(c => c.MembershipRequests)
             .HasForeignKey(r => r.ClubId)
             .OnDelete(DeleteBehavior.Cascade);
 

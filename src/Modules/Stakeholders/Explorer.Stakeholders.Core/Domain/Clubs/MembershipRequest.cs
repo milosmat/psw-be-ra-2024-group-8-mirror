@@ -9,8 +9,8 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
 {
     public class MembershipRequest: Entity
     {
-        public int SenderId { get; private set; }
-        public int FollowerId { get; private set; }
+        public int SenderId { get; set; }
+        public int FollowerId { get; set; }
         
         public Status Status { get; private set; }
         public long ClubId { get; set; }
@@ -21,9 +21,18 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
         public MembershipRequest() { }
         public MembershipRequest(int senderId, int followerId, Status status)
         {
+            if (senderId <= 0) throw new ArgumentException("Sender ID must be positive.", nameof(senderId));
+            if (followerId <= 0) throw new ArgumentException("Follower ID must be positive.", nameof(followerId));
+
+
             SenderId = senderId;
             FollowerId = followerId;
             Status = status;
+        }
+
+        internal void SetClubId(long clubId)
+        {
+            ClubId = clubId;
         }
     }
     
@@ -34,7 +43,7 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
         Pending,
         Accepted,
         Rejected,
-        Invated
+        Invited
     }
 }
 

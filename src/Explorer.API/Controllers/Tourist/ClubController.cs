@@ -18,7 +18,6 @@ public class ClubController : BaseApiController
     {
         _clubService = clubService;
     }
-
     
     [HttpGet]
     public ActionResult<PagedResult<ClubDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
@@ -120,4 +119,5 @@ public class ClubController : BaseApiController
     }
    
 }
+
 

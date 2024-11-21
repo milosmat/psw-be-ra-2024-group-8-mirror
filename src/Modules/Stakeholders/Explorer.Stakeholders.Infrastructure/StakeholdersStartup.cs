@@ -3,6 +3,7 @@ using Explorer.BuildingBlocks.Infrastructure.Database;
 using Explorer.Stakeholders.API.Public;
 using Explorer.Stakeholders.API.Public.Administration;
 using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.Clubs;
 using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 using Explorer.Stakeholders.Core.Mappers;
 using Explorer.Stakeholders.Core.UseCases;
@@ -34,7 +35,6 @@ public static class StakeholdersStartup
         services.AddScoped<ITokenGenerator, JwtGenerator>();
         services.AddScoped<IEditAccountService, EditAccountService>();
         services.AddScoped<IClubRepository, ClubDatabaseRepository>();
-
         services.AddScoped<IClubService, ClubService>();
         services.AddScoped<IMembershipRequestService, MembershipRequestService>();
         services.AddScoped<IAppRatingService, AppRatingService>();

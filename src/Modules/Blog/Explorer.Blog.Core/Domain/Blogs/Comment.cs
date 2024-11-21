@@ -28,7 +28,6 @@ namespace Explorer.Blog.Core.Domain.Blogs
             Text = text;
         }
 
-       
 
         public void InitializeComment()
         {

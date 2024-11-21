@@ -1,4 +1,5 @@
 ﻿using System;
+﻿using Explorer.BuildingBlocks.Core.Domain;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using Explorer.BuildingBlocks.Core.Domain;
 
 namespace Explorer.Stakeholders.Core.Domain.Clubs
 {
-    public class MembershipRequest: Entity
+    public class MembershipRequest : Entity
     {
         public int SenderId { get; set; }
         public int FollowerId { get; private set; }
@@ -21,8 +22,7 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
         {
             if (senderId <= 0) throw new ArgumentException("Sender ID must be positive.", nameof(senderId));
             if (followerId <= 0) throw new ArgumentException("Follower ID must be positive.", nameof(followerId));
-
-
+            
             SenderId = senderId;
             FollowerId = followerId;
             Status = status;
@@ -44,4 +44,5 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
         Invited
     }
 }
+
 

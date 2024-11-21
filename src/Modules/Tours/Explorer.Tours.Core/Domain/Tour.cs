@@ -20,6 +20,7 @@ public class Tour : Entity
     public DateTime PublishedDate { get; private set; }
     public DateTime ArchivedDate {  get; init; }
     public List<TravelTime> TravelTimes { get; init; }
+    public List<DailyAgenda> DailyAgendas { get; init; }
     public List<Equipment> Equipments { get; init; }
     public List<TourCheckpoint> TourCheckpoints { get; init; }
     public long AuthorId { get; private set; }
@@ -43,6 +44,7 @@ public class Tour : Entity
             PublishedDate = publishedDate;
             ArchivedDate = archivedDate;
             TravelTimes = new List<TravelTime>();
+            DailyAgendas = new List<DailyAgenda>();
             Equipments = new List<Equipment>();
             TourCheckpoints = new List<TourCheckpoint>();
             AuthorId = authorId;
@@ -136,6 +138,12 @@ public class Tour : Entity
     {
         TravelTimes.Add(travelTime);
         return travelTime;
+    }
+
+    public DailyAgenda AddNewDailyAgenda(DailyAgenda agenda)
+    {
+        DailyAgendas.Add(agenda);
+        return agenda;
     }
 }
 

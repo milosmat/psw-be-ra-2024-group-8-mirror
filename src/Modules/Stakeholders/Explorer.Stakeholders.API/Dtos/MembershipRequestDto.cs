@@ -23,5 +23,6 @@ namespace Explorer.Stakeholders.API.Dtos
         Accepted,
         Rejected,
         Invited
+
     }
 }

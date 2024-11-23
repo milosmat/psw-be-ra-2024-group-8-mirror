@@ -37,7 +37,6 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
                 throw new ArgumentNullException(nameof(newMembershipRequest));
             }
 
-            newMembershipRequest.Status = MemRequestStatus.Pending;
             newMembershipRequest.SetClubId(this.Id);
             MembershipRequests.Add(newMembershipRequest);
         }

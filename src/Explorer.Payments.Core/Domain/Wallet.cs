@@ -25,18 +25,18 @@ namespace Explorer.Payments.Core.Domain
 
 
         //Metode za upravljanje Transaction
-        public Result AddTransaction(long administratorId, long adventureCoins, String description) {
+        public Result AddTransaction(long administratorId, long adventureCoins, String description, long walletId) {
             
             if (adventureCoins < 0)
                 return Result.Fail("AdventureCoins lover then 0");
 
-            Transactions.Add(new Transaction(adventureCoins, description, DateTime.Now, administratorId));
+            Transactions.Add(new Transaction(adventureCoins, description, DateTime.Now, administratorId, walletId));
             this.AdventureCoins += adventureCoins;
 
 
             return Result.Ok();
         }
-        public Result SubtractTransaction(long administratorId, long adventureCoins, String description)
+        public Result SubtractTransaction(long administratorId, long adventureCoins, String description, long walletId)
         {
             if (adventureCoins < 0)
                 return Result.Fail("AdventureCoins lover then 0");
@@ -44,7 +44,7 @@ namespace Explorer.Payments.Core.Domain
             if ((this.AdventureCoins - adventureCoins) < 0)
                 return Result.Fail("The tourist does not have enough Adventure Coins for this transaction");
 
-            Transactions.Add(new Transaction(adventureCoins, description, DateTime.Now, administratorId));
+            Transactions.Add(new Transaction(adventureCoins, description, DateTime.Now, administratorId, walletId));
 
             this.AdventureCoins -= adventureCoins;
 

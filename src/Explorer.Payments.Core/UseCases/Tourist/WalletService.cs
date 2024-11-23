@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Transaction = Explorer.Payments.Core.Domain.Transaction;
 
 namespace Explorer.Payments.Core.UseCases.Tourist
 {
@@ -19,12 +20,14 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         private readonly ICrudRepository<Wallet> _walletRepository;
         private readonly ICrudRepository<Transaction> _transactionRepository;
         private readonly IWalletRepository walletRepository;
+        private readonly ITransactionRepository transactionRepository;
         private readonly IMapper _mapper;
-        public WalletService(ICrudRepository<Wallet> crudRepository, IMapper mapper, IWalletRepository walletRepository) : base(crudRepository, mapper)
+        public WalletService(ICrudRepository<Wallet> crudRepository, IMapper mapper, IWalletRepository walletRepository, ITransactionRepository transactionRepository) : base(crudRepository, mapper)
         {
             _mapper = mapper;
             _walletRepository = crudRepository;
             this.walletRepository = walletRepository;
+            this.transactionRepository = transactionRepository;
         }
 
         public Result<WalletDTO> Get(int id)
@@ -32,6 +35,8 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             try
             {
                 var walletResult = walletRepository.Get(id);
+                List<Transaction>? transactionResult = transactionRepository.GetTransactions(id); // TO DO proveriti preko cijeg ID se ovo trazi
+
 
                 if (walletResult == null)
                 {
@@ -41,17 +46,26 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 WalletDTO walletDTO = new WalletDTO
                 {
                     Id = (int)walletResult.Id,
-                    TouristId = (long) walletResult.TouristId,
-                    AdventureCoins = walletResult.AdventureCoins,                   
-                    Transactions = walletResult.Transactions.Select(t => new WalletDTO.TransactionItemsDTO
-                    {
-                        AdministratorId = t.AdministratorId,
-                        Amount = t.Amount,
-                        Description = t.Description,
-                        TransactionTime = t.TransactionTime
-
-                    }).ToList()
+                    TouristId = (long)walletResult.TouristId,
+                    AdventureCoins = walletResult.AdventureCoins,
+                    Transactions = new List<Transaction>() // Inicijalizacija prazne liste
                 };
+
+
+                if (transactionResult != null)
+                {
+                    foreach (var t in transactionResult)
+                    {
+                        walletDTO.Transactions.Add(new Transaction
+                        (
+                            t.Amount,
+                            t.Description,
+                            t.TransactionTime,
+                            t.AdministratorId,
+                            t.WalletId
+                        ));
+                    }
+                }
 
                 return walletDTO;
 

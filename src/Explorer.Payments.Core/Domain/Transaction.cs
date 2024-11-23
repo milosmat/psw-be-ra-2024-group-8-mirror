@@ -13,13 +13,15 @@ namespace Explorer.Payments.Core.Domain
         public String Description { get; set; } //Poruka koja prati transakciju
         public DateTime TransactionTime { get; set; }
         public long AdministratorId { get; set; } //Administrator koji vrsi transakciju
+        public long WalletId {  get; set; }
 
-        public Transaction(long amount, string description, DateTime transactionTime, long administratorId)
+        public Transaction(long amount, string description, DateTime transactionTime, long administratorId, long walletId)
         {
             Amount = amount;
             Description = description;
             TransactionTime = transactionTime;
             AdministratorId = administratorId;
+            WalletId = walletId;
         }
     }
 }

@@ -46,9 +46,12 @@ public static class PaymentsStartup
 
         services.AddScoped(typeof(ICrudRepository<Wallet>), typeof(CrudDatabaseRepository<Wallet, PaymentsContext>));
 
+        services.AddScoped(typeof(ICrudRepository<Transaction>), typeof(CrudDatabaseRepository<Transaction,PaymentsContext>));
+
         services.AddScoped<ICardRepository, CardDataBaseRepository>();
         services.AddScoped<ITourPurchaseTokenRepository, TourPurchaseTokenRepository>();
         services.AddScoped<IWalletRepository, WalletDataBaseRepository>();
+        services.AddScoped<ITransactionRepository, TransactionDataBaseRepository>();
 
         services.AddDbContext<PaymentsContext>(opt =>
             opt.UseNpgsql(DbConnectionStringBuilder.Build("payments"),

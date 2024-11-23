@@ -10,7 +10,7 @@ namespace Explorer.Stakeholders.API.Dtos
     {
         public long Id { get; set; }
         public int SenderId { get; set; }
-        public int FollowerId { get; set;}
+        public int OwnerId { get; set;}
         public MemRequestStatus Status { get; set; }
         public long ClubId {get; set; }
 

@@ -16,5 +16,7 @@ namespace Explorer.Stakeholders.API.Public
         void Delete(long membershipRequestId, long clubId);
         MembershipRequestDto GetById(long membershipRequestId, long clubId);
 
+        bool IsTouristInvited(long clubId, long touristId);
+
     }
 }

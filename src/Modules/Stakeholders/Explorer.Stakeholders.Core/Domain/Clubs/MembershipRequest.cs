@@ -11,20 +11,20 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
     public class MembershipRequest : Entity
     {
         public int SenderId { get; set; }
-        public int FollowerId { get; set; }
+        public int OwnerId { get; set; }
         
         public MemRequestStatus Status { get; set; }
         public long ClubId { get; set; }
 
 
         public MembershipRequest() { }
-        public MembershipRequest(int senderId, int followerId, MemRequestStatus status)
+        public MembershipRequest(int senderId, int ownerId, MemRequestStatus status)
         {
             if (senderId <= 0) throw new ArgumentException("Sender ID must be positive.", nameof(senderId));
-            if (followerId <= 0) throw new ArgumentException("Follower ID must be positive.", nameof(followerId));
+            if (ownerId <= 0) throw new ArgumentException("Follower ID must be positive.", nameof(ownerId));
             
             SenderId = senderId;
-            FollowerId = followerId;
+            OwnerId = ownerId;
             Status = status;
         }
 

@@ -76,7 +76,7 @@ namespace Explorer.Stakeholders.Core.UseCases
             return _mapper.Map<MembershipRequestDto>(updatedMemRequest);
         }
 
-        public void Delete(long membershipRequestId, long clubId)
+        public void Delete(long clubId, long membershipRequestId)
         {
             var club = _clubRepository.GetClubWithMembershipRequests(clubId);
             if (club == null)
@@ -103,6 +103,20 @@ namespace Explorer.Stakeholders.Core.UseCases
 
             return _mapper.Map<MembershipRequestDto>(memRequest);
 
+        }
+
+        public bool IsTouristInvited(long clubId, long touristId)
+        {
+            // Proveravamo da li postoji zahtev sa statusom "Invited"
+            var club = _clubRepository.Get(clubId);
+            var request = _clubRepository.GetClubWithMembershipRequests(clubId).MembershipRequests
+                .FirstOrDefault(r =>
+                    r.ClubId == clubId &&
+                    r.OwnerId == club.OwnerId &&
+                    r.SenderId == touristId &&
+                    r.Status == Domain.Clubs.MemRequestStatus.Invited); // Status je "Invited"
+
+            return request != null; // Ako postoji, vraćamo true, inače false
         }
 
 

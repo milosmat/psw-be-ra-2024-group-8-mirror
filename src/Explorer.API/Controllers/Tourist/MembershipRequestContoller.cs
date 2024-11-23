@@ -90,5 +90,26 @@ namespace Explorer.API.Controllers.Tourist
             }
 
         }
+
+        [HttpGet("is-tourist-invited/{touristId}")]
+        public ActionResult<bool> IsTouristInvited([FromRoute] long clubId, [FromRoute] long touristId)
+        {
+            try
+            {
+                // Pozivamo servis da proverimo da li postoji zahtev za člana sa statusom "Invited"
+                var isInvited = _membershipRequestService.IsTouristInvited(clubId, touristId);
+
+                return Ok(isInvited); // Vraća true/false
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message); // Ako postoji neki problem, vratiti NotFound
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); // Generalni greške
+            }
+        }
+
     }
 }

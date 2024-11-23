@@ -16,6 +16,10 @@ public class PaymentsContext : DbContext
 
     public DbSet<TourPurchaseToken> Tokens { get; set; }
 
+    public DbSet<Wallet> Wallets { get; set; }
+
+    public DbSet<Transaction> Transactions { get; set; }
+
     public PaymentsContext(DbContextOptions<PaymentsContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,6 +29,8 @@ public class PaymentsContext : DbContext
         modelBuilder.Entity<ShoppingCart>().ToTable("ShoppingCart");
         modelBuilder.Entity<ShoppingCartItem>().ToTable("ShoppingCartItems"); // Konfiguracija tabele za ShoppingCartItem
         modelBuilder.Entity<TourPurchaseToken>().ToTable("Tokens");
+        modelBuilder.Entity<Wallet>().ToTable("Wallets");
+        modelBuilder.Entity<Transaction>().ToTable("Transaction");
 
         modelBuilder.Entity<ShoppingCart>()
        .Property(sc => sc.ShopItemsCapacity)

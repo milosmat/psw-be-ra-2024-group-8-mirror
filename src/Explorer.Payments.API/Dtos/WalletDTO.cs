@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
+
+namespace Explorer.Payments.API.Dtos
+{
+    public class WalletDTO
+    {
+        public int Id { get; set; }
+        public long TouristId { get; set; }
+        public long AdventureCoins {  get; set; }
+      // TO DO staviti Transaction model i to
+        public List<TransactionItemsDTO>? Transactions { get; set; }
+
+        public class TransactionItemsDTO
+        {
+            public long Amount { get; set; }
+            public String Description { get; set; } 
+            public DateTime TransactionTime { get; set; }
+            public long AdministratorId { get; set; }
+        }
+
+    }
+}

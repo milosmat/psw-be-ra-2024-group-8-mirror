@@ -27,6 +27,9 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
             return DbContext.Transactions.Where(t => t.WalletId == id).ToList();
         }
 
-       
+        public List<Transaction> GetTransactions(int id)
+        {
+            return DbContext.Transactions.Where(t => t.WalletId == id).ToList();
+        }
     }
 }

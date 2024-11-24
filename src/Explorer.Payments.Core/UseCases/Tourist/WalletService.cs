@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Explorer.Payments.API.Dtos.WalletDTO;
 using Transaction = Explorer.Payments.Core.Domain.Transaction;
 
 namespace Explorer.Payments.Core.UseCases.Tourist
@@ -36,11 +37,25 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             {
                 var walletResult = walletRepository.Get(id);
                 List<Transaction>? transactionResult = transactionRepository.GetTransactions(id); // TO DO proveriti preko cijeg ID se ovo trazi
-
+                List<TransactionItemsDTO>? tranactionList = new List<TransactionItemsDTO>();
 
                 if (walletResult == null)
                 {
                     return null;
+                }
+                
+                if (transactionResult != null)
+                {
+                    foreach (var t in transactionResult)
+                    {
+                        TransactionItemsDTO transactionItemsDTO = new TransactionItemsDTO(
+                            t.Amount,
+                            t.Description,
+                            t.TransactionTime,
+                            t.WalletId
+                            );
+                        tranactionList.Add( transactionItemsDTO );
+                    }
                 }
 
                 WalletDTO walletDTO = new WalletDTO
@@ -48,24 +63,8 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                     Id = (int)walletResult.Id,
                     TouristId = (long)walletResult.TouristId,
                     AdventureCoins = walletResult.AdventureCoins,
-                    Transactions = new List<Transaction>() // Inicijalizacija prazne liste
+                    Transactions = tranactionList
                 };
-
-
-                if (transactionResult != null)
-                {
-                    foreach (var t in transactionResult)
-                    {
-                        walletDTO.Transactions.Add(new Transaction
-                        (
-                            t.Amount,
-                            t.Description,
-                            t.TransactionTime,
-                            t.AdministratorId,
-                            t.WalletId
-                        ));
-                    }
-                }
 
                 return walletDTO;
 

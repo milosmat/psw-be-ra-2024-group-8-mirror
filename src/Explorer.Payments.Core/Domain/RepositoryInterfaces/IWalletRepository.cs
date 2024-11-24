@@ -9,6 +9,6 @@ namespace Explorer.Payments.Core.Domain.RepositoryInterfaces
 {
     public interface IWalletRepository : ICrudRepository<Wallet>
     {
-
+        Wallet GetWallet(int id);
     }
 }

@@ -1,11 +1,6 @@
 ﻿using Explorer.BuildingBlocks.Infrastructure.Database;
 using Explorer.Payments.Core.Domain;
 using Explorer.Payments.Core.Domain.RepositoryInterfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Explorer.Payments.Infrastructure.Database.Repositories
 {
@@ -17,7 +12,24 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
 
         public new Wallet? Get(int id)
         {
-            return DbContext.Wallets.Where(t=> t.Id == id).FirstOrDefault();
+            return DbContext.Wallets.Where(t => t.Id == id).FirstOrDefault();
+        }
+
+        public Wallet GetWallet(int id)
+        {
+            Wallet? wallet = DbContext.Wallets.Where(t => t.Id == id).FirstOrDefault();
+
+            if (wallet == null)
+            {
+                return null;
+            }
+
+            List<Transaction>? transactions = DbContext.Transactions.Where(t => t.WalletId == id).ToList();
+
+            wallet.Transactions = transactions;
+
+
+            return wallet;
         }
     }
 }

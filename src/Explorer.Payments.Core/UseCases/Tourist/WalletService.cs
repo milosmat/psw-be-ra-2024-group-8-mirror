@@ -35,8 +35,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         {
             try
             {
-                var walletResult = walletRepository.Get(id);
-                List<Transaction>? transactionResult = transactionRepository.GetTransactions(id); // TO DO proveriti preko cijeg ID se ovo trazi
+                var walletResult = walletRepository.GetWallet(id);
                 List<TransactionItemsDTO>? tranactionList = new List<TransactionItemsDTO>();
 
                 if (walletResult == null)
@@ -44,15 +43,15 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                     return null;
                 }
                 
-                if (transactionResult != null)
+                if (walletResult.Transactions != null)
                 {
-                    foreach (var t in transactionResult)
+                    foreach (var t in walletResult.Transactions)
                     {
                         TransactionItemsDTO transactionItemsDTO = new TransactionItemsDTO(
                             t.Amount,
                             t.Description,
                             t.TransactionTime,
-                            t.WalletId
+                            t.AdministratorId
                             );
                         tranactionList.Add( transactionItemsDTO );
                     }
@@ -73,11 +72,22 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 return Result.Fail(FailureCode.NotFound).WithError(e.Message);
             }
         }
+       
         /*
-        Result Delete(int id);
-        Result<WalletDTO> Update(WalletDTO walletDTO);
-        Result<WalletDTO> Create(WalletDTO walletDTO);
+        public Result<WalletDTO> AddTransaction(int idWallet,int idAdministrator, long adventureCoins, String description)
+        {
+            try
+            {
+                var walletResult = this.Get(idWallet);
 
-        */
+
+                return null;
+
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(FailureCode.Internal).WithError(e.Message);
+            }
+        }*/
     }
 }

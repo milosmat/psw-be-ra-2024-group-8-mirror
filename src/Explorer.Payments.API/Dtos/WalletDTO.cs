@@ -22,13 +22,15 @@ namespace Explorer.Payments.API.Dtos
             public String Description { get; set; } 
             public DateTime TransactionTime { get; set; }
             public long AdministratorId { get; set; }
+            public long WalletID { get; set; }
 
-            public TransactionItemsDTO(long amount, string description, DateTime transactionTime, long administratorId)
+            public TransactionItemsDTO(long amount, string description, DateTime transactionTime, long administratorId, long walletID)
             {
                 Amount = amount;
                 Description = description;
                 TransactionTime = transactionTime;
                 AdministratorId = administratorId;
+                WalletID = walletID;
             }
         }
 

@@ -18,6 +18,7 @@ public class AuthenticationService : IAuthenticationService
         _tokenGenerator = tokenGenerator;
         _userRepository = userRepository;
         _personRepository = personRepository;
+       
     }
 
     public Result<AuthenticationTokensDto> Login(CredentialsDto credentials)

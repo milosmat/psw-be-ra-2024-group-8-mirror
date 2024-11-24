@@ -22,6 +22,12 @@ namespace Explorer.Payments.Core.Domain
             AdventureCoins = 0;
             Transactions = null;
         }
+        public Wallet(long touristId, long advantureCoins, List<Transaction> transactions)
+        {
+            TouristId = touristId;
+            AdventureCoins = advantureCoins;
+            Transactions = transactions;
+        }
 
 
         //Metode za upravljanje Transaction
@@ -30,7 +36,7 @@ namespace Explorer.Payments.Core.Domain
             if (adventureCoins < 0)
                 return Result.Fail("AdventureCoins lover then 0");
 
-            Transactions.Add(new Transaction(adventureCoins, description, DateTime.Now, administratorId, walletId));
+            Transactions.Add(new Transaction(adventureCoins, description, DateTime.UtcNow, administratorId, walletId));
             this.AdventureCoins += adventureCoins;
 
 
@@ -44,7 +50,7 @@ namespace Explorer.Payments.Core.Domain
             if ((this.AdventureCoins - adventureCoins) < 0)
                 return Result.Fail("The tourist does not have enough Adventure Coins for this transaction");
 
-            Transactions.Add(new Transaction(adventureCoins, description, DateTime.Now, administratorId, walletId));
+            Transactions.Add(new Transaction(adventureCoins, description, DateTime.UtcNow, administratorId, walletId));
 
             this.AdventureCoins -= adventureCoins;
 

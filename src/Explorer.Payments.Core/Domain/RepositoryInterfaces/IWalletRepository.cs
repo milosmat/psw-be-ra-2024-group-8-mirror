@@ -10,5 +10,6 @@ namespace Explorer.Payments.Core.Domain.RepositoryInterfaces
     public interface IWalletRepository : ICrudRepository<Wallet>
     {
         Wallet GetWallet(int id);
+        Wallet UpdateWallet(Wallet wallet);
     }
 }

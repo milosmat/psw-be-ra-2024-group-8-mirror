@@ -1,6 +1,7 @@
 ﻿using Explorer.BuildingBlocks.Infrastructure.Database;
 using Explorer.Payments.Core.Domain;
 using Explorer.Payments.Core.Domain.RepositoryInterfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Explorer.Payments.Infrastructure.Database.Repositories
 {
@@ -30,6 +31,15 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
 
 
             return wallet;
+        }
+
+        public Wallet UpdateWallet(Wallet aggregateRoot)
+        {
+            DbContext.Entry(aggregateRoot).State = EntityState.Modified;
+            DbContext.Wallets.Update(aggregateRoot);
+            DbContext.SaveChanges();
+
+            return aggregateRoot;
         }
     }
 }

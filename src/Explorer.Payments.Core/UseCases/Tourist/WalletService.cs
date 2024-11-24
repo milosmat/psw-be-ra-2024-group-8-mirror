@@ -4,6 +4,8 @@ using Explorer.Payments.API.Dtos;
 using Explorer.Payments.API.Public.Tourist;
 using Explorer.Payments.Core.Domain;
 using Explorer.Payments.Core.Domain.RepositoryInterfaces;
+using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 using Explorer.Tours.Core.Domain.RepositoryInterfaces;
 using FluentResults;
 using System;
@@ -22,13 +24,19 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         private readonly ICrudRepository<Transaction> _transactionRepository;
         private readonly IWalletRepository walletRepository;
         private readonly ITransactionRepository transactionRepository;
+        private readonly IMessageRepository messageRepository;
+        private readonly INotificationRepository notificationRepository;
         private readonly IMapper _mapper;
-        public WalletService(ICrudRepository<Wallet> crudRepository, IMapper mapper, IWalletRepository walletRepository, ITransactionRepository transactionRepository) : base(crudRepository, mapper)
+        public WalletService(ICrudRepository<Wallet> crudRepository, IMapper mapper, IWalletRepository walletRepository,
+            ITransactionRepository transactionRepository, INotificationRepository notificationRepository,
+            IMessageRepository messageRepository) : base(crudRepository, mapper)
         {
             _mapper = mapper;
             _walletRepository = crudRepository;
             this.walletRepository = walletRepository;
             this.transactionRepository = transactionRepository;
+            this.notificationRepository = notificationRepository;
+            this.messageRepository = messageRepository;
         }
 
         public Result<WalletDTO> Get(int id)
@@ -51,7 +59,8 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                             t.Amount,
                             t.Description,
                             t.TransactionTime,
-                            t.AdministratorId
+                            t.AdministratorId,
+                            t.WalletId
                             );
                         tranactionList.Add( transactionItemsDTO );
                     }
@@ -72,22 +81,110 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 return Result.Fail(FailureCode.NotFound).WithError(e.Message);
             }
         }
-       
-        /*
+        
         public Result<WalletDTO> AddTransaction(int idWallet,int idAdministrator, long adventureCoins, String description)
         {
             try
             {
-                var walletResult = this.Get(idWallet);
+                Wallet walletResult = walletRepository.GetWallet(idWallet);
 
+                walletResult.AddTransaction(idAdministrator, adventureCoins, description, idWallet);
 
-                return null;
+                walletRepository.UpdateWallet(walletResult);
+
+                Wallet resultWallet = walletRepository.GetWallet(idWallet);
+
+                List<TransactionItemsDTO>? tranactionList = new List<TransactionItemsDTO>();
+
+                if (resultWallet.Transactions != null)
+                {
+                    foreach (var t in walletResult.Transactions)
+                    {
+                        TransactionItemsDTO transactionItemsDTO = new TransactionItemsDTO(
+                            t.Amount,
+                            t.Description,
+                            t.TransactionTime,
+                            t.AdministratorId,
+                            t.WalletId
+                            );
+                        tranactionList.Add(transactionItemsDTO);
+                    }
+                }
+
+                WalletDTO walletDTO = new WalletDTO
+                {
+                    Id = (int)resultWallet.Id,
+                    TouristId = (long)resultWallet.TouristId,
+                    AdventureCoins = resultWallet.AdventureCoins,
+                    Transactions = tranactionList
+                };
+
+                //Slanje notifikacije turisti
+                var message = new Message(idAdministrator, description,null,null);
+                messageRepository.Create(message);
+                var notification = new Notification(idAdministrator, (int)resultWallet.TouristId, message.Id);
+                notificationRepository.Create(notification);
+
+                return Result.Ok(walletDTO);
 
             }
             catch (Exception e)
             {
                 return Result.Fail(FailureCode.Internal).WithError(e.Message);
             }
-        }*/
+        }
+
+
+        public Result<WalletDTO> SubtractTransaction(int idWallet, int idAdministrator, long adventureCoins, String description)
+        {
+            try
+            {
+                Wallet walletResult = walletRepository.GetWallet(idWallet);
+
+                walletResult.SubtractTransaction(idAdministrator, adventureCoins, description, idWallet);
+
+                walletRepository.UpdateWallet(walletResult);
+
+                Wallet resultWallet = walletRepository.GetWallet(idWallet);
+
+                List<TransactionItemsDTO>? tranactionList = new List<TransactionItemsDTO>();
+
+                if (resultWallet.Transactions != null)
+                {
+                    foreach (var t in walletResult.Transactions)
+                    {
+                        TransactionItemsDTO transactionItemsDTO = new TransactionItemsDTO(
+                            t.Amount,
+                            t.Description,
+                            t.TransactionTime,
+                            t.AdministratorId,
+                            t.WalletId
+                            );
+                        tranactionList.Add(transactionItemsDTO);
+                    }
+                }
+
+                WalletDTO walletDTO = new WalletDTO
+                {
+                    Id = (int)resultWallet.Id,
+                    TouristId = (long)resultWallet.TouristId,
+                    AdventureCoins = resultWallet.AdventureCoins,
+                    Transactions = tranactionList
+                };
+
+                //Slanje notifikacije turisti
+                var message = new Message(idAdministrator, description, null, null);
+                messageRepository.Create(message);
+                var notification = new Notification(idAdministrator, (int)resultWallet.TouristId, message.Id);
+                notificationRepository.Create(notification);
+
+                return Result.Ok(walletDTO);
+
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(FailureCode.Internal).WithError(e.Message);
+            }
+        }
     }
 }

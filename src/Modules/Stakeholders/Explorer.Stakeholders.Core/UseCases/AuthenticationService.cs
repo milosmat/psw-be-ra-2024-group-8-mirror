@@ -38,6 +38,14 @@ public class AuthenticationService : IAuthenticationService
         return _tokenGenerator.GenerateAccessToken(user, personId);
     }
 
+    public long GetUserId(string username) {
+
+        var user = _userRepository.GetActiveByName(username);
+       
+        return user.Id;
+
+    }
+
     public Result<AuthenticationTokensDto> RegisterTourist(AccountRegistrationDto account)
     {
         if(_userRepository.Exists(account.Username)) return Result.Fail(FailureCode.NonUniqueUsername);
@@ -71,4 +79,5 @@ public class AuthenticationService : IAuthenticationService
         }).ToList();
     }
 
+   
 }

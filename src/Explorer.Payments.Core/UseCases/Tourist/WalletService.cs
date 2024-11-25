@@ -186,5 +186,21 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 return Result.Fail(FailureCode.Internal).WithError(e.Message);
             }
         }
+
+        public Result CreateWallet(long idTourist)
+        {
+            try
+            {
+                Wallet newWallet = new Wallet(idTourist, 0, null);
+                walletRepository.Create(newWallet);
+
+
+                return Result.Ok();
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(FailureCode.Internal).WithError(e.Message);
+            }
+        }
     }
 }

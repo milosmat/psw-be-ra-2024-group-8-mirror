@@ -13,10 +13,10 @@ namespace Explorer.Encounters.Infrastructure.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Postavljanje podrazumevanog šema za bazu
-            modelBuilder.HasDefaultSchema("Encounters");
+            modelBuilder.HasDefaultSchema("encounters");
 
             // Konfiguracija za Encounter entitet
-            modelBuilder.Entity<Encounter>().ToTable("Encounters")
+            modelBuilder.Entity<Encounter>().ToTable("encounters")
                 .Property(e => e.Status)
                 .HasConversion(
                     v => v.ToString(),
@@ -36,6 +36,11 @@ namespace Explorer.Encounters.Infrastructure.Database
             modelBuilder.Entity<Encounter>()
                 .Property(e => e.ArchivedDate)
                 .HasColumnType("timestamp with time zone");
+
+            modelBuilder.Entity<Encounter>()
+                .OwnsOne(tp => tp.Location);
+            base.OnModelCreating(modelBuilder);
+
 
             base.OnModelCreating(modelBuilder);
         }

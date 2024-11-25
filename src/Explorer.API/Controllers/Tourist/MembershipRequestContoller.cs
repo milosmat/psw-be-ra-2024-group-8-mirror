@@ -1,7 +1,9 @@
-﻿using Explorer.Blog.API.Dtos;
+﻿using Azure.Core;
+using Explorer.Blog.API.Dtos;
 using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
+using Explorer.Stakeholders.Core.Domain.Clubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +25,7 @@ namespace Explorer.API.Controllers.Tourist
             var result = _membershipRequestService.GetPagedByClub(clubId, page, pageSize);
             if (result == null || !result.Results.Any())
             {
-                return NotFound("No membership request found for the specified club.");
+                return Ok(new { results = new List<MembershipRequest>() });  // Vraća prazan niz umesto 404
             }
 
             return Ok(result);

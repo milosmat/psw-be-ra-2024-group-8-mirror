@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Explorer.Encounters.API.Controllers
 {
-    [Authorize(Policy = "administratorPolicy")]
+
     [Route("api/administrator/encounters")]
     public class EncounterController : BaseApiController
     {

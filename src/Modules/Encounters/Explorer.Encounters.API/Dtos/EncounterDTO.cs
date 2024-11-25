@@ -26,4 +26,5 @@ namespace Explorer.Encounters.API.Dtos
         }
 
     }
+
 }

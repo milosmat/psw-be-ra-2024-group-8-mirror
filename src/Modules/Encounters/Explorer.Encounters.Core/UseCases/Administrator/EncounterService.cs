@@ -41,6 +41,7 @@ namespace Explorer.Encounters.Core.UseCases.Administrator
         public new Result<EncounterDTO> Create(EncounterDTO encounterDto)
         {
             var encounter = _mapper.Map<Encounter>(encounterDto);
+            encounter.SetPublishedDateNow();
             var createdEncounter = _encounterRepository.Create(encounter);
 
             if (createdEncounter == null)

@@ -1,15 +1,18 @@
-﻿using Explorer.BuildingBlocks.Core.UseCases;
+﻿using Explorer.API.Controllers;
+using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Encounters.API.Dtos;
 using Explorer.Encounters.API.Public.Administrator;
+using Explorer.Encounters.Core.Domain;
 using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace Explorer.Encounters.API.Controllers
 {
-    [ApiController]
+    [Authorize(Policy = "administratorPolicy")]
     [Route("api/administrator/encounters")]
-    public class EncounterController : ControllerBase
+    public class EncounterController : BaseApiController
     {
         private readonly IEncounterService _encounterService;
 
@@ -38,6 +41,20 @@ namespace Explorer.Encounters.API.Controllers
         [HttpPost]
         public ActionResult<EncounterDTO> Create([FromBody] EncounterDTO encounterDto)
         {
+            Console.WriteLine($"Mapped DTO: {encounterDto}");
+
+            // Validacija za Status
+            if (!Enum.TryParse<EncounterStatus>(encounterDto.Status, true, out var status))
+            {
+                return BadRequest($"Invalid status: {encounterDto.Status}");
+            }
+
+            // Validacija za Type
+            if (!Enum.TryParse<EncounterType>(encounterDto.Type, true, out var type))
+            {
+                return BadRequest($"Invalid type: {encounterDto.Type}");
+            }
+
             var result = _encounterService.Create(encounterDto);
             if (result.IsSuccess)
             {
@@ -45,6 +62,7 @@ namespace Explorer.Encounters.API.Controllers
             }
             return BadRequest(result.Errors);
         }
+
 
         // PUT: api/administrator/encounters/{id}
         [HttpPut("{id:int}")]

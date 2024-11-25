@@ -45,7 +45,10 @@ namespace Explorer.Encounters.Core.Domain
             PublishedDate = DateTime.UtcNow;
             return Result.Ok();
         }
-
+        public void SetPublishedDateNow()
+        {
+            PublishedDate = DateTime.UtcNow;
+        }
         public void Archive()
         {
             Status = EncounterStatus.ARCHIVED;

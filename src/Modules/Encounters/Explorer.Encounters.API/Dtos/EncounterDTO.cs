@@ -13,24 +13,11 @@ namespace Explorer.Encounters.API.Dtos
         public string Description { get; set; } // Description of what the user needs to do
         public string Location { get; set; } // Location of the encounter
         public int XP { get; set; } // Experience points rewarded
-        public EncounterStatus Status { get; set; } // Enum representing the status of the encounter
-        public EncounterType Type { get; set; } // Enum representing the type of the encounter
+        public string Status { get; set; } // Accepts string (DRAFT, ACTIVE, ARCHIVED)
+        public string Type { get; set; } // Accepts string (SOCIAL, LOCATION, MISC)
         public DateTime? PublishedDate { get; set; } // Date when the encounter was published
         public DateTime? ArchivedDate { get; set; } // Date when the encounter was archived
         public long AuthorId { get; set; } // ID of the administrator who created the encounter
     }
 
-    public enum EncounterStatus
-    {
-        DRAFT,
-        ACTIVE,
-        ARCHIVED
-    }
-
-    public enum EncounterType
-    {
-        SOCIAL,
-        LOCATION,
-        MISC
-    }
 }

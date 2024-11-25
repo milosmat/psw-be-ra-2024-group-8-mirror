@@ -1,4 +1,5 @@
-﻿using Explorer.BuildingBlocks.Core.UseCases;
+﻿using Explorer.Blog.API.Dtos;
+using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
 using Microsoft.AspNetCore.Authorization;
@@ -17,70 +18,106 @@ public class ClubController : BaseApiController
     {
         _clubService = clubService;
     }
-
+    
     [HttpGet]
     public ActionResult<PagedResult<ClubDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
     {
-        var result = _clubService.GetPaged(page, pageSize);
-        return CreateResponse(result);
+        try
+        {
+            var result = _clubService.GetPaged(page, pageSize);
+
+            if (result == null || result.Results.Count == 0)
+            {
+                return NotFound("No clubs found for the specified page.");
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while fetching data: {ex.Message}");
+        }
     }
-
-    [HttpGet("{id}")]
-
+    
+    [HttpGet("{id:int}")]
     public ActionResult<ClubDto> GetById(int id)
     {
-        var result = _clubService.Get(id);
-        return CreateResponse(result);
+        try
+        {
+            var result = _clubService.Get(id);
+
+            if (result != null)
+            {
+                return Ok(result); 
+            }
+            else
+            {
+                return NotFound($"Club with ID {id} not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
+
 
     [HttpPost]
     public ActionResult<ClubDto> Create([FromBody] ClubDto clubDto)
     {
-        var currentUserId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
-        clubDto.OwnerId = currentUserId;
+        try
+        {
+            ClubDto result = _clubService.Create(clubDto);
 
-        var result = _clubService.Create(clubDto);
-        return CreateResponse(result);
+            if (result != null)
+            {
+                return Ok(result);// CreatedAtAction(nameof(Create), new { name = result.Name }, result);
+            }
+            else
+            {
+                return BadRequest("The club could not be created due to invalid data.");
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
+
     }
 
     [HttpPut("{id:int}")]
     public ActionResult<ClubDto> Update([FromBody] ClubDto clubDto)
     {
-        var currentUserId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
-
-        if (clubDto.OwnerId != currentUserId)
+        try
         {
-            return Forbid("You are not the owner of this club.");
-        }
+            ClubDto result = _clubService.Update(clubDto);
+            return Ok(result);
 
-        var result = _clubService.Update(clubDto);
-        return CreateResponse(result);
+        }
+        catch (Exception ex)
+        {
+            // Return a 500 error for unexpected issues
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
 
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
 
     public ActionResult Delete(int id)
     {
-        var currentUser = int.Parse(User.Claims.First(c => c.Type == "id").Value);
+        var club = _clubService.Get(id);
 
-        var result = _clubService.Get(id);
-
-        if (result.IsFailed)
+        if (club == null)
         {
-            return NotFound(result.Errors?.FirstOrDefault()?.Message);
+            return NotFound($"Club with ID {id} not found.");
         }
 
-        var existingClub = result.Value;
+        _clubService.Delete(id);
 
-        if (existingClub.OwnerId != currentUser)
-        {
-            return Forbid();
-        }
-
-        var DeleteResult = _clubService.Delete(id);
-        return CreateResponse(DeleteResult);
+        return Ok($"Club with ID {id} has been successfully deleted.");
     }
-
+   
 }
+
 

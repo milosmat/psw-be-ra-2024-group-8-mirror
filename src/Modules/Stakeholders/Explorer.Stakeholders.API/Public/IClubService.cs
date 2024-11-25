@@ -11,10 +11,10 @@ namespace Explorer.Stakeholders.API.Public;
 
 public interface IClubService
 {
-    Result<ClubDto> Get(int id);
-    Result<ClubDto> Create(ClubDto clubDto);
-    Result<ClubDto> Update(ClubDto clubDto);
-    Result Delete(int id);
-    Result<PagedResult<ClubDto>> GetPaged(int page, int pageSize);
+    ClubDto Get(int id);
+    ClubDto Create(ClubDto clubDto);
+    ClubDto Update(ClubDto clubDto);
+    void Delete(int id);
+    PagedResult<ClubDto> GetPaged(int page, int pageSize);
 
 }

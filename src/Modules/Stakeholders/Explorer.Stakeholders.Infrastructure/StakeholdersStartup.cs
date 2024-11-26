@@ -1,5 +1,8 @@
 using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.BuildingBlocks.Infrastructure.Database;
+using Explorer.Payments.Core.Domain;
+using Explorer.Payments.Core.Domain.RepositoryInterfaces;
+using Explorer.Payments.Infrastructure.Database.Repositories;
 using Explorer.Stakeholders.API.Public;
 using Explorer.Stakeholders.API.Public.Administration;
 using Explorer.Stakeholders.Core.Domain;
@@ -65,7 +68,11 @@ public static class StakeholdersStartup
         services.AddScoped<INotificationRepository, NotificationRepository>();
         
         services.AddScoped<IMessageRepository, MessageRepository>();
+        
+        services.AddScoped(typeof(ICrudRepository<Wallet>), typeof(CrudDatabaseRepository<Wallet, StakeholdersContext>));
 
+        services.AddScoped<IWalletRepository, WalletDataBaseRepository>();
+        
         services.AddDbContext<StakeholdersContext>(opt =>
             opt.UseNpgsql(DbConnectionStringBuilder.Build("stakeholders"),
                 x => x.MigrationsHistoryTable("__EFMigrationsHistory", "stakeholders")));

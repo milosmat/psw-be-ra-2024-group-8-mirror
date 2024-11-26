@@ -25,5 +25,13 @@ public class PaymentsProfile : Profile
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.TourPrice))
             .ReverseMap();
 
+        CreateMap<WalletDTO.TransactionItemsDTO, Transaction>()
+            .ForMember(dest=> dest.AdministratorId, otp => otp.MapFrom(src=> src.AdministratorId))
+            .ForMember(dest=> dest.TransactionTime, otp => otp.MapFrom(src=> src.TransactionTime))
+            .ForMember(dest=> dest.Amount, otp=> otp.MapFrom(src=> src.Amount))
+            .ForMember(dest=> dest.Description, otp=>otp.MapFrom(src=> src.Description))
+            .ReverseMap();
+
+
     }
 }

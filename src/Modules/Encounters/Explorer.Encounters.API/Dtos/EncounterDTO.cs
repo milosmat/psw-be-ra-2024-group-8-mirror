@@ -18,7 +18,7 @@ namespace Explorer.Encounters.API.Dtos
         public DateTime? PublishedDate { get; set; } // Date when the encounter was published
         public DateTime? ArchivedDate { get; set; } // Date when the encounter was archived
         public long AuthorId { get; set; } // ID of the administrator who created the encounter
-
+        public string? Image {  get; set; }
         public class MapLocationDTO
         {
             public double Latitude { get; set; }

@@ -17,13 +17,14 @@ namespace Explorer.Encounters.Core.Domain
         public EncounterType Type { get; init; }
         public DateTime PublishedDate { get; private set; }
         public DateTime ArchivedDate { get; private set; }
-
         public long AuthorId { get; private set; }
+        public string? Image { get; private set; }
 
         public Encounter() { }
 
-        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, long authorId)
+        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, long authorId, string? image = null)
         {
+            // Validate name and xp as required
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
             if (xp < 0) throw new ArgumentException("XP cannot be negative.");
 
@@ -34,6 +35,9 @@ namespace Explorer.Encounters.Core.Domain
             Type = type;
             Status = EncounterStatus.DRAFT;
             AuthorId = authorId;
+
+            // Samo za hidden location, u suprotnom ce biti null
+            Image = image;
         }
 
         // Methods to manage Encounter lifecycle

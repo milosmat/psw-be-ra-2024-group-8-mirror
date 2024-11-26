@@ -47,18 +47,6 @@ namespace Explorer.Blog.Core.Domain.Blogs
             newComment.SetBlogId(this.Id);
             Comments.Add(newComment);
         }
-        public void RemoveComment(long commentId)
-        {
-            var comment = Comments.FirstOrDefault(c => c.Id == commentId);
-            if(comment != null)
-            {
-                Comments.Remove(comment);
-            }
-            else
-            {
-                throw new KeyNotFoundException($"Comment with ID {commentId} not found");
-            }
-        }
         public void UpdateComment(Comment updatedComment)
         {
             var comment = Comments.FirstOrDefault(c => c.Id == updatedComment.Id);  

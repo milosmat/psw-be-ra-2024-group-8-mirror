@@ -417,6 +417,7 @@ namespace Explorer.Tours.Core.UseCases.Author
             return dailyAgenda;
         }
 
+
         //NOVO
 
 

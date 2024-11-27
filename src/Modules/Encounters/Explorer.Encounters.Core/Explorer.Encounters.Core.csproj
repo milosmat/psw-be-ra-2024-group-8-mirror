@@ -12,6 +12,7 @@
 
 	<ItemGroup>
 		<!-- Referenciranje API projekta -->
+		<ProjectReference Include="..\..\Stakeholders\Explorer.Stakeholders.Core\Explorer.Stakeholders.Core.csproj" />
 		<ProjectReference Include="..\Explorer.Encounters.API\Explorer.Encounters.API.csproj" />
 	</ItemGroup>
 

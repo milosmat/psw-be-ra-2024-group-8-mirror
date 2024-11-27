@@ -15,6 +15,7 @@ namespace Explorer.Encounters.API.Controllers
     public class EncounterController : BaseApiController
     {
         private readonly IEncounterService _encounterService;
+        
 
         public EncounterController(IEncounterService encounterService)
         {

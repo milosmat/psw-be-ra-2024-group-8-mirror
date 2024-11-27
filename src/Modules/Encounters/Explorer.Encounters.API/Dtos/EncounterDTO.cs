@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Explorer.Stakeholders.Core.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,7 @@ namespace Explorer.Encounters.API.Dtos
         public DateTime? ArchivedDate { get; set; } // Date when the encounter was archived
         public long AuthorId { get; set; } // ID of the administrator who created the encounter
         public string? Image {  get; set; }
+        public List<long>? UsersWhoCompletedId {  get; set; }
         public class MapLocationDTO
         {
             public double Latitude { get; set; }

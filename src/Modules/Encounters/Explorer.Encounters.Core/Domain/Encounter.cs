@@ -1,4 +1,5 @@
 ﻿using Explorer.BuildingBlocks.Core.Domain;
+using Explorer.Stakeholders.Core.Domain;
 using Explorer.Tours.Core.Domain;
 using FluentResults;
 using System;
@@ -19,10 +20,11 @@ namespace Explorer.Encounters.Core.Domain
         public DateTime ArchivedDate { get; private set; }
         public long AuthorId { get; private set; }
         public string? Image { get; private set; }
+        public List<long>? UsersWhoCompletedId { get; private set; }
 
         public Encounter() { }
 
-        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, long authorId, string? image = null)
+        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, string? image = null)
         {
             // Validate name and xp as required
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
@@ -38,6 +40,7 @@ namespace Explorer.Encounters.Core.Domain
 
             // Samo za hidden location, u suprotnom ce biti null
             Image = image;
+            UsersWhoCompletedId = users;
         }
 
         // Methods to manage Encounter lifecycle

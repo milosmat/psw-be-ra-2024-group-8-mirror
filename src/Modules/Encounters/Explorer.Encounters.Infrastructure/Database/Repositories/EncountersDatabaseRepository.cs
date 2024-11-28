@@ -21,6 +21,11 @@ namespace Explorer.Encounters.Infrastructure.Database.Repositories
                 .FirstOrDefault(); // Include relationships if necessary
         }
 
+        public IEnumerable<Encounter> GetAll()
+        {
+            return DbContext.Encounters.ToList(); // Dohvata sve izazove iz baze
+        }
+
         public new PagedResult<Encounter> GetPaged(int page, int pageSize)
         {
             var task = DbContext.Encounters.GetPagedById(page, pageSize);

@@ -21,5 +21,7 @@ namespace Explorer.Encounters.API.Public.Tourist
         // Dohvata listu završenih izazova za turistu
         Result<IEnumerable<EncounterDTO>> GetCompletedEncounters(long touristId);
         Result<TouristProfileDTO> GetTouristByUsername(string username);
+
+        Result<IEnumerable<TouristProfileDTO>> GetAll();
     }
 }

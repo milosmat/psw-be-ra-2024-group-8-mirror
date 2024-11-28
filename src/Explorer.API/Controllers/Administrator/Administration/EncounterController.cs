@@ -64,7 +64,6 @@ namespace Explorer.Encounters.API.Controllers
             return BadRequest(result.Errors);
         }
 
-
         // PUT: api/administrator/encounters/{id}
         [HttpPut("{id:int}")]
         public ActionResult<EncounterDTO> Update(int id, [FromBody] EncounterDTO encounterDto)
@@ -125,5 +124,20 @@ namespace Explorer.Encounters.API.Controllers
 
             return Ok(result.Value);
         }
+
+        // POST: api/administrator/encounters/check-tourists-in-encounters
+        [HttpPost("check-tourists-in-encounters")]
+        public ActionResult CheckTouristsInEncounters()
+        {
+            var result = _encounterService.CheckTouristsInEncounters();
+
+            if (result.IsFailed)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok("Processed encounters successfully.");
+        }
+
     }
 }

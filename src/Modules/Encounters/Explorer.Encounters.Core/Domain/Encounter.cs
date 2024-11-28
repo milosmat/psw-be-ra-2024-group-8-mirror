@@ -22,11 +22,14 @@ namespace Explorer.Encounters.Core.Domain
         public string? Image { get; private set; }
         public List<long>? UsersWhoCompletedId { get; private set; }
 
+        // Dodata polja za Social Encounter
+        public int? RequiredParticipants { get; private set; } = 0;
+        public int? Radius { get; private set; } = 0;
+
         public Encounter() { }
 
-        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, string? image = null)
+        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, List<long>? users, long authorId, string? image = null, int? requiredParticipants = null, int? radius = null)
         {
-            // Validate name and xp as required
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
             if (xp < 0) throw new ArgumentException("XP cannot be negative.");
 
@@ -37,10 +40,22 @@ namespace Explorer.Encounters.Core.Domain
             Type = type;
             Status = EncounterStatus.DRAFT;
             AuthorId = authorId;
-
-            // Samo za hidden location, u suprotnom ce biti null
             Image = image;
             UsersWhoCompletedId = users;
+            RequiredParticipants = requiredParticipants ?? 0;
+            Radius = radius ?? 0;
+        }
+
+        public void SetSocialEncounterData(int requiredParticipants, int radius)
+        {
+            if (Type != EncounterType.SOCIAL)
+                throw new InvalidOperationException("This encounter is not of type SOCIAL.");
+
+            if (requiredParticipants <= 0) throw new ArgumentException("Required participants must be greater than 0.");
+            if (radius <= 0) throw new ArgumentException("Radius must be greater than 0.");
+
+            RequiredParticipants = requiredParticipants;
+            Radius = radius;
         }
 
         // Methods to manage Encounter lifecycle
@@ -71,6 +86,15 @@ namespace Explorer.Encounters.Core.Domain
             XP = newXP;
             return Result.Ok();
         }
+
+        public void AddUserToCompleted(long userId)
+        {
+            if (UsersWhoCompletedId == null)
+                UsersWhoCompletedId = new List<long>();
+
+            if (!UsersWhoCompletedId.Contains(userId))
+                UsersWhoCompletedId.Add(userId);
+        }
     }
 
     public enum EncounterStatus
@@ -86,4 +110,6 @@ namespace Explorer.Encounters.Core.Domain
         LOCATION,
         MISC
     }
+
+
 }

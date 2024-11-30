@@ -18,8 +18,8 @@ public class ToursContext : DbContext
     public DbSet<TourReview> TourReviews { get; set; }
 
     public DbSet<Object> Objects { get; set; }
+    public DbSet<TourSale> TourSales { get; set; }
 
-   
 
 
     public DbSet<TouristPosition> TouristPositions { get; set; }
@@ -58,7 +58,7 @@ public class ToursContext : DbContext
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
         modelBuilder.Entity<TourExecution>().ToTable("TourExecution");
-
+        modelBuilder.Entity<TourSale>().ToTable("TourSales");
         modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
         modelBuilder.Entity<VisitedCheckpoint>().ToTable("VisitedCheckpoints");
 

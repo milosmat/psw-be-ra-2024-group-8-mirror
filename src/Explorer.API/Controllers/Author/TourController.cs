@@ -14,7 +14,7 @@ namespace Explorer.API.Controllers.Author
        private readonly ITourService _tourService;
        
        private readonly IEquipmentService _equipmentService;
-        private readonly ITourCheckpointService _tourCheckpointService;
+       private readonly ITourCheckpointService _tourCheckpointService;
         
 
         public TourController(ITourService tourService, IEquipmentService equipmentService, ITourCheckpointService checkpointService)
@@ -50,6 +50,13 @@ namespace Explorer.API.Controllers.Author
         public ActionResult<TourDTO> GetById(int id)
         {
             var result = _tourService.Get(id);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("toursByAuthorId/{authorId:int}")]
+        public ActionResult<PagedResult<TourDTO>> GetPublishToursByAuthorId(int authorId)
+        {
+            var result = _tourService.GetToursByAuthorId(authorId);
             return CreateResponse(result);
         }
 

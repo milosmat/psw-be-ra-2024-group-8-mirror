@@ -14,6 +14,7 @@ public class PaymentsProfile : Profile
     public PaymentsProfile() {
 
         CreateMap<TourPurchaseTokenDTO, TourPurchaseToken>().ReverseMap();
+        CreateMap<CouponDTO,Coupon>().ReverseMap();
 
         CreateMap<ShoppingCartDTO, ShoppingCart>()
                  .ForMember(dest => dest.ShopingItems, opt => opt.MapFrom(src => src.ShopingItems))

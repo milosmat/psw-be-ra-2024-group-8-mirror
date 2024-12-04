@@ -43,7 +43,7 @@ public static class ToursStartup
         services.AddScoped<IObjectService, ObjectService>();
         services.AddScoped<ITouristPositionService, TouristPositionService>();
         services.AddScoped<ITourExecutionService, TourExecutionService>();
-     
+        services.AddScoped<IBundleService, BundleService>();
 
     }
 
@@ -65,7 +65,10 @@ public static class ToursStartup
 
         services.AddScoped(typeof(ITourRepository), typeof(ToursDatabaseRepository));
 
-       
+        services.AddScoped(typeof(ICrudRepository<Bundle>), typeof(CrudDatabaseRepository<Bundle, ToursContext>));
+        services.AddScoped(typeof(ICrudRepository<BundleTour>), typeof(CrudDatabaseRepository<BundleTour, ToursContext>));
+        services.AddScoped<IBundleRepository, BundlesDatabaseRepository>();
+
 
 
 

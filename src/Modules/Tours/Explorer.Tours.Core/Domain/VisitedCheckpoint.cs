@@ -18,6 +18,7 @@ namespace Explorer.Tours.Core.Domain
             VisitTime = visitTime;
             Secret = secret;
         }
+        public VisitedCheckpoint() { }
         
     }
 }

@@ -13,5 +13,7 @@ public interface IBundleRepository : ICrudRepository<Bundle>
     List<Bundle> GetAllBundles();
     Bundle Create(Bundle newBundle);
 
+    List<BundleTour> GetAllByBundleId(int bundleId);
+
 
 }

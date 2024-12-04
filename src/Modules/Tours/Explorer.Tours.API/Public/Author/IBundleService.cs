@@ -27,6 +27,9 @@ public interface IBundleService
     Result DeleteTour(int id);
     Result Delete(int id);
 
+    Result<List<BundleTourDTO>> GetAllTours(int bundleId);
+
+
 
 }
 

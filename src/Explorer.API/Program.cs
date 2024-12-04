@@ -1,4 +1,6 @@
 using Explorer.API.Startup;
+using Explorer.Encounters.Infrastructure.Database;
+using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,15 @@ app.UseAuthorization();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Seed podataka za TouristProfiles
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<EncountersContext>();
+    var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+
+    context.SeedData(userRepository);
+}
 
 app.Run();
 

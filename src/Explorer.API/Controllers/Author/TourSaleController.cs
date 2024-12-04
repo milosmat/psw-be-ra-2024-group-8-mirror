@@ -30,17 +30,7 @@ namespace Explorer.API.Controllers.Author
                     if (!sale.Active && sale.StartDate.Date <= DateTime.Today)
                     {
                         sale.Active = true;
-                        _tourSaleService.Update(sale);
-                        foreach (var tourId in sale.Tours)
-                        {
-                            var result = _tourService.Get(tourId);
-                            if (result.IsSuccess)
-                            {
-                                var tour = result.Value;
-                                tour.Price = tour.Price.Value * (100 - (decimal)sale.Discount) / 100;
-                                _tourService.Update(tour);
-                            }
-                        }
+                        _tourSaleService.Update(sale);                   
                     }
                 }
                 return Ok("Sales successfully activated.");
@@ -59,16 +49,6 @@ namespace Explorer.API.Controllers.Author
                     {
                         sale.Active = false;
                         _tourSaleService.Update(sale);
-                        foreach (var tourId in sale.Tours)
-                        {
-                            var result = _tourService.Get(tourId);
-                            if (result.IsSuccess)
-                            {
-                                var tour = result.Value;
-                                tour.Price = tour.Price.Value * 100 / (100 - (decimal)sale.Discount);
-                                _tourService.Update(tour);
-                            }
-                        }
                     }
                 }
                 return Ok("Sales successfully activated.");

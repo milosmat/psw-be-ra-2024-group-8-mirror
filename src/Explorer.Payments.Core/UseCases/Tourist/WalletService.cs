@@ -202,5 +202,10 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 return Result.Fail(FailureCode.Internal).WithError(e.Message);
             }
         }
+
+        public Result<WalletDTO> GetWalletByTouristId(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

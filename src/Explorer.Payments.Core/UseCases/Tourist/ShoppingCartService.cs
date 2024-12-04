@@ -9,6 +9,7 @@ using Explorer.Payments.Core.Domain.RepositoryInterfaces;
 using Explorer.Payments.Core.Domain;
 using FluentResults;
 using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
+using Explorer.BuildingBlocks.Core.UseCases;
 
 namespace Explorer.Payments.Core.UseCases.Tourist
 {
@@ -16,16 +17,20 @@ namespace Explorer.Payments.Core.UseCases.Tourist
     {
         private readonly ICardRepository _cardRepository;
         private readonly ITourPurchaseTokenService _tokenService;
+        private readonly IWalletRepository _walletRepository;
+        private readonly IWalletService _walletService;
 
         public ShoppingCartService(ICardRepository cardRepository)
         {
             _cardRepository = cardRepository;
         }
 
-        public ShoppingCartService(ICardRepository cardRepository, ITourPurchaseTokenService tokenService)
+        public ShoppingCartService(ICardRepository cardRepository, ITourPurchaseTokenService tokenService, IWalletRepository walletRepository, IWalletService walletService)
         {
             _cardRepository = cardRepository;
             _tokenService = tokenService;
+            _walletRepository = walletRepository;
+            _walletService = walletService;
         }
 
 
@@ -110,6 +115,11 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             // Kreiraj instancu TokenService
             var tokenService = new TokenService();
 
+            decimal sum = 0;
+            String description = "You have bought a tour: ";
+            var wallet = _walletRepository.GetWalletByTouristId((int)touristId);
+
+
             foreach (var item in shoppingCart.ShopingItems)
             {
                 // Kreiraj TourPurchaseTokenDTO
@@ -122,6 +132,8 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                     ExpiredDate = DateTime.UtcNow.AddYears(1)
                 };
 
+                sum += item.Price;
+                description += item.Name +" ";
                 // Generiši JWT token
                 var jwtToken = tokenService.GenerateTourPurchaseToken(touristId, item.TourId);  // Poziv za generisanje JWT tokena
 
@@ -132,9 +144,24 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 _tokenService.Create(tokenDto);
             }
 
+            if(wallet.AdventureCoins < sum)
+            {
+                return Result.Fail(FailureCode.Forbidden);
+            }
+
+            
+            _walletService.SubtractTransaction((int)wallet.Id, 0, (long)sum, description);
+
+
+
             shoppingCart.ShopingItems.Clear();
             //_cardRepository.Update(shoppingCart);
             _cardRepository.Delete(shoppingCart.Id);
+
+
+
+
+
 
             return Result.Ok();
         }

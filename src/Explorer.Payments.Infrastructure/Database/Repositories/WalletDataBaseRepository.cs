@@ -33,6 +33,15 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
             return wallet;
         }
 
+        public Wallet GetWalletByTouristId(int tourisId)
+        {
+            Wallet? wallet =DbContext.Wallets.Where(w=> w.TouristId == tourisId).FirstOrDefault();
+
+            return wallet;
+        }
+
+  
+
         public Wallet UpdateWallet(Wallet aggregateRoot)
         {
             DbContext.Entry(aggregateRoot).State = EntityState.Modified;

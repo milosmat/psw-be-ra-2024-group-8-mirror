@@ -11,5 +11,6 @@ namespace Explorer.Payments.Core.Domain.RepositoryInterfaces
     {
         Wallet GetWallet(int id);
         Wallet UpdateWallet(Wallet wallet);
+        Wallet GetWalletByTouristId(int touristID);
     }
 }

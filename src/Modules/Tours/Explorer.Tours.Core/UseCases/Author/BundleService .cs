@@ -191,6 +191,26 @@ public class BundleService : CrudService<BundleDTO, Bundle>, IBundleService
         return _mapper.Map<BundleDTO>(_bundleRepository.Get(id));
     }
 
+    public Result<List<BundleTourDTO>> GetAllTours(int bundleId)
+    {
+        // Dohvati sve ture vezane za paket
+        var bundleTours = _bundleRepository.GetAllByBundleId(bundleId); // Pretpostavljamo da postoji odgovarajući repozitorijum
+
+        if (bundleTours == null || !bundleTours.Any())
+        {
+            return Result.Fail("No tours found for the provided bundle.");
+        }
+
+        var bundleTourDtos = bundleTours.Select(tour => new BundleTourDTO
+        {
+            TourId = tour.TourId,
+            Name = tour.Name,
+            Price = tour.Price,
+            BundleId = tour.BundleId
+        }).ToList();
+
+        return Result.Ok(bundleTourDtos);
+    }
 
 
 

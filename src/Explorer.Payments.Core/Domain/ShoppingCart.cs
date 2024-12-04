@@ -11,16 +11,19 @@ namespace Explorer.Payments.Core.Domain
     {
         public long TouristId { get; private set; }
         public List<ShoppingCartItem> ShopingItems { get; private set; }
+        public List<ShoppingCartBundle>? ShopingBundles { get; private set; }
+
 
         private decimal TotalPrice;
 
         public int? ShopItemsCapacity { get; set; }
-
+        public int? ShopBundlesCapacity { get; set; }
 
         public ShoppingCart(long touristId)
         {
             TouristId = touristId;
             ShopingItems = new List<ShoppingCartItem>();
+            ShopingBundles = new List<ShoppingCartBundle>();
             TotalPrice = 0;
         }
 
@@ -39,10 +42,23 @@ namespace Explorer.Payments.Core.Domain
                 UpdateTotalPrice();
             }
         }
+        public void AddBundle(ShoppingCartBundle item)
+        {
+            ShopingBundles.Add(item);
+            UpdateTotalPrice();
+        }
+
+        public void RemoveBundle(ShoppingCartBundle item)
+        {
+            if (ShopingBundles.Remove(item))
+            {
+                UpdateTotalPrice();
+            }
+        }
 
         private void UpdateTotalPrice()
         {
-            TotalPrice = ShopingItems.Sum(item => item.TotalPrice);
+            TotalPrice = ShopingItems.Sum(item => item.TotalPrice) + ShopingBundles.Sum(bundle => bundle.Price);
         }
 
     }

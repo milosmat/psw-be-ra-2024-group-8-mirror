@@ -18,8 +18,10 @@ public class TourProblem : Entity
     public DateTime ReportedAt { get; private set; }
     public bool Resolved { get; private set; }
     public List<ProblemComment> ProblemComments { get; private set; }
+    public DateTime? ResolvingDue { get; private set; }
+    public bool Closed { get; private set; }
 
-    public TourProblem(long touristId, int tourId, long authorId, string category, string priority, string description, DateTime reportedAt, bool resolved)
+    public TourProblem(long touristId, int tourId, long authorId, string category, string priority, string description, DateTime reportedAt, bool resolved, DateTime? resolvingDue, bool closed)
     {
         if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Invalid Description.");
         TouristId = touristId;
@@ -31,6 +33,8 @@ public class TourProblem : Entity
         ReportedAt = reportedAt;
         Resolved = resolved;
         ProblemComments = new List<ProblemComment>();
+        ResolvingDue = resolvingDue;
+        Closed = closed;
     }
 
     public void AddComment(ProblemComment newC)

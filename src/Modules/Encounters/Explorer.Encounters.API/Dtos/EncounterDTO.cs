@@ -22,6 +22,7 @@ namespace Explorer.Encounters.API.Dtos
         public string? Image {  get; set; }
         public List<long>? UsersWhoCompletedId {  get; set; }
         public bool IsReviewed { get; set; }
+        public bool? IsRequired { get; set; }
         public class MapLocationDTO
         {
             public double Latitude { get; set; }

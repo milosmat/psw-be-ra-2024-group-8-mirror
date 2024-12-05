@@ -15,5 +15,10 @@ namespace Explorer.Payments.API.Public.Tourist
         void RemoveTourFromCart(long touristId, long tourId);
         ShoppingCartDTO GetShoppingCart(long touristId);
         Result Checkout(long touristId);
+
+        ShoppingCartDTO Update(ShoppingCartDTO updatedShoppingCart);
+
+
+
     }
 }

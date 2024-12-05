@@ -10,7 +10,7 @@ namespace Explorer.Payments.Core.Domain
     public class ShoppingCart : Entity
     {
         public long TouristId { get; private set; }
-        public List<ShoppingCartItem> ShopingItems { get; private set; }
+        public List<ShoppingCartItem> ShopingItems { get;  set; }
 
         private decimal TotalPrice;
 
@@ -38,6 +38,18 @@ namespace Explorer.Payments.Core.Domain
             {
                 UpdateTotalPrice();
             }
+        }
+
+        public void UpdateItem(ShoppingCartItem itemToUpdate)
+        {
+            var existingItem = ShopingItems.FirstOrDefault(item => item.TourId == itemToUpdate.TourId);
+            if (existingItem == null)
+            {
+                throw new KeyNotFoundException("Item not found.");
+            }
+
+            ShopingItems.FirstOrDefault(item => item.TourId == itemToUpdate.TourId).Price = itemToUpdate.Price;
+
         }
 
         private void UpdateTotalPrice()

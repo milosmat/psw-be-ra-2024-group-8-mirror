@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
 
 namespace Explorer.Payments.Core.UseCases.Tourist
 {
@@ -53,5 +54,55 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         {
             return _mapper.Map<CouponDTO>(_couponRepository.Get(id));
         }
+
+        public List<ShoppingCartItemDTO> ApplyCouponOnCartItems(string code, List<ShoppingCartItemDTO> cartItems)
+        {
+            //pronadjemo kupon na osnovu koda
+            var coupons = _mapper.Map<List<CouponDTO>>(_couponRepository.GetCouponsByCode(code));
+            if (coupons == null || !coupons.Any())
+            {
+                throw new ArgumentException("Invalid coupon code.");
+            }
+
+            if (coupons.Count == 1 && !coupons.First().TourId.HasValue)
+            {
+                // Prvo nalazimo najskuplju stavku u korpi
+                var mostExpensiveItem = cartItems.OrderByDescending(item => item.TourPrice).FirstOrDefault();
+                if (mostExpensiveItem == null)
+                {
+                    throw new ArgumentException("There are not most expensive tour to load.");
+                }
+                ApplyDiscount(mostExpensiveItem, coupons.First().DiscountPercentage);
+
+            }
+            else
+            {
+                foreach (var cartItem in cartItems)
+                {
+                    if (coupons.Any(c => c.TourId == cartItem.TourId))
+                    {
+                        var applicableCoupon = coupons.First(c => c.TourId == cartItem.TourId);
+                        ApplyDiscount(cartItem, applicableCoupon.DiscountPercentage);
+                    }
+                }
+            }
+
+
+            return cartItems;
+        }
+
+        public void ApplyDiscount(ShoppingCartItemDTO cartItem, int discountPercentage)
+        {
+
+            if (discountPercentage < 0 || discountPercentage > 100)
+            {
+                throw new ArgumentOutOfRangeException(nameof(discountPercentage), "Discount percentage must be between 0 and 100.");
+            }
+
+            
+            decimal discountAmount = cartItem.TourPrice * discountPercentage / 100;
+            cartItem.TourPrice -= discountAmount;
+        }
+
     }
 }

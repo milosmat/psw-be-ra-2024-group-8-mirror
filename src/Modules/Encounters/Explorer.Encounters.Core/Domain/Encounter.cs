@@ -21,10 +21,8 @@ namespace Explorer.Encounters.Core.Domain
         public long AuthorId { get; private set; }
         public string? Image { get; private set; }
         public List<long>? UsersWhoCompletedId { get; private set; }
-        public bool? IsRequired { get; private set; }
         public bool IsReviewed { get; private set; }
-
-        public Encounter() { }
+        public bool? IsRequired { get; private set; }
 
         public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, bool isReviewed, string? image = null, bool? isRequired = false)
         {
@@ -43,6 +41,7 @@ namespace Explorer.Encounters.Core.Domain
             // Samo za hidden location, u suprotnom ce biti null
             Image = image;
             UsersWhoCompletedId = users;
+            IsReviewed = isReviewed;
             IsRequired = isRequired;
             IsReviewed = isReviewed;
         }

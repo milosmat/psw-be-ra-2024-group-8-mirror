@@ -14,5 +14,6 @@ namespace Explorer.Payments.Core.Domain.RepositoryInterfaces
         void Delete(long id);
         Coupon Update(Coupon updateCoupon);
         Coupon Get(int id);
+        List<Coupon> GetCouponsByCode(string code);
     }
 }

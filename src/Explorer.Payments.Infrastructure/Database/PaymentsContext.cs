@@ -18,6 +18,8 @@ public class PaymentsContext : DbContext
 
     public DbSet<Wallet> Wallets { get; set; }
 
+    public DbSet<Coupon> Coupons { get; set; }
+
     public DbSet<Transaction> Transactions { get; set; }
 
     public PaymentsContext(DbContextOptions<PaymentsContext> options) : base(options) { }
@@ -31,6 +33,8 @@ public class PaymentsContext : DbContext
         modelBuilder.Entity<TourPurchaseToken>().ToTable("Tokens");
         modelBuilder.Entity<Wallet>().ToTable("Wallets");
         modelBuilder.Entity<Transaction>().ToTable("Transaction");
+        modelBuilder.Entity<Coupon>().ToTable("Coupons");
+
 
         modelBuilder.Entity<ShoppingCart>()
        .Property(sc => sc.ShopItemsCapacity)

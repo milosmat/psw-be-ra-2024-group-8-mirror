@@ -19,5 +19,6 @@ namespace Explorer.Encounters.API.Public.Administrator
         Result Delete(int id);
         Result ArchiveEncounter(int id);
         Result PublishEncounter(int id);
+        Result MarkEncounterAsReviewed(int encounterId);
     }
 }

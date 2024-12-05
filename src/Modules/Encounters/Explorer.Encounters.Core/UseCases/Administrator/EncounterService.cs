@@ -121,5 +121,27 @@ namespace Explorer.Encounters.Core.UseCases.Administrator
 
             return Result.Ok(_mapper.Map<EncounterDTO>(encounter));
         }
+
+        public Result MarkEncounterAsReviewed(int encounterId)
+        {
+            // Dohvatanje Encounter-a iz baze
+            var encounter = _encounterRepository.Get(encounterId);
+            if (encounter == null)
+            {
+                return Result.Fail($"Encounter with ID {encounterId} not found.");
+            }
+
+            // Pozivanje metode za označavanje kao pregledan
+            var result = encounter.MarkAsReviewed();
+            if (result.IsFailed)
+            {
+                return result; // Ako već pregledan, vraća poruku o grešci
+            }
+
+            // Ažuriranje u bazi
+            _encounterRepository.Update(encounter);
+            return Result.Ok();
+        }
+
     }
 }

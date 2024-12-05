@@ -63,6 +63,35 @@ namespace Explorer.API.Controllers.Tourist.Shopping
             return Ok(new { message = "Checkout successful, tokens created." });
         }
 
+        [HttpPost("addboundle/{touristId}")]
+        public ActionResult AddBoundleToCart(long touristId, [FromBody] ShoppingBundleDto shoppingBoundleDto)
+        {
+            // Pozivate servis sa pravim turističkim ID i DTO podacima
+            _shoppingCartService.AddBoundleToCart(touristId, shoppingBoundleDto);
+
+            return Ok(new { message = "Pacage added to cart successfully" });
+        }
+
+        [HttpDelete("remove-bundle/{touristId}/{bundleId}")]
+        public ActionResult RemoveBundleFromCart(long touristId, long bundleId)
+        {
+            _shoppingCartService.RemoveBundleFromCart(touristId, bundleId);
+            return Ok(new { message = "Bundle removed from cart successfully" });
+        }
+
+        [HttpGet("prni/{touristId}")]
+        public IActionResult GetBundles(long touristId)
+        {
+            var result = _shoppingCartService.GetBundlesForTourist(touristId);
+
+            if (result.IsFailed)
+            {
+                return BadRequest(result.Errors.FirstOrDefault()?.Message);
+            }
+
+            return Ok(result.Value);
+        }
+
         [HttpPost("{touristId:int}/apply-coupon")]
         public ActionResult<ShoppingCartDTO> ApplyCoupon(int touristId, [FromQuery] string couponCode)
         {

@@ -35,6 +35,7 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
             return DbContext.ShoppingCard
                 .Where(t => t.TouristId == touristId)  // Traži po TouristId
                 .Include(t => t.ShopingItems!)
+                .Include(t => t.ShopingBundles!)
                 .FirstOrDefault();
         }
 

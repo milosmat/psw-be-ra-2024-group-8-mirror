@@ -22,5 +22,10 @@ namespace Explorer.Payments.API.Public.Tourist
 
 
 
+
+        ShoppingCartDTO Update(ShoppingCartDTO updatedShoppingCart);
+
+
+
     }
 }

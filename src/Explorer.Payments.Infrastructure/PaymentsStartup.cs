@@ -31,6 +31,7 @@ public static class PaymentsStartup
 
     private static void SetupCore(IServiceCollection services)
     {
+        services.AddScoped<ICardRepository, CardDataBaseRepository>();
         services.AddScoped<IShoppingCartService, ShoppingCartService>();
 
         services.AddScoped<ITourPurchaseTokenService, TourPurchaseTokenService>();

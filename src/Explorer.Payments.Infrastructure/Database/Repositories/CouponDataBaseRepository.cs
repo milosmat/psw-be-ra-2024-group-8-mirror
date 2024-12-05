@@ -29,6 +29,10 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
             return aggregateRoot;
         }
 
+        public List<Coupon> GetCouponsByCode(string code)
+        {
+            return DbContext.Coupons.Where(c => c.Code == code).ToList();
+        }
 
     }
 }

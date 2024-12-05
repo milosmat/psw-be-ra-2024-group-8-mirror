@@ -22,10 +22,11 @@ namespace Explorer.Encounters.Core.Domain
         public string? Image { get; private set; }
         public List<long>? UsersWhoCompletedId { get; private set; }
         public bool? IsRequired { get; private set; }
+        public bool IsReviewed { get; private set; }
 
         public Encounter() { }
 
-        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, string? image = null, bool? isRequired = false)
+        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, bool isReviewed, string? image = null, bool? isRequired = false)
         {
             // Validate name and xp as required
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
@@ -43,8 +44,19 @@ namespace Explorer.Encounters.Core.Domain
             Image = image;
             UsersWhoCompletedId = users;
             IsRequired = isRequired;
+            IsReviewed = isReviewed;
         }
 
+        public Result MarkAsReviewed()
+        {
+            if (IsReviewed)
+            {
+                return Result.Fail("Encounter is already reviewed.");
+            }
+
+            IsReviewed = true;
+            return Result.Ok();
+        }
         // Methods to manage Encounter lifecycle
         public Result Publish()
         {

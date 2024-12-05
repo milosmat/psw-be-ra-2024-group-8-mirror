@@ -3,6 +3,7 @@ using Explorer.Stakeholders.API.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Explorer.Stakeholders.API.Public;
 using Explorer.Stakeholders.Core.UseCases;
+using Explorer.Payments.API.Public.Tourist;
 
 namespace Explorer.API.Controllers.Tourist
 {
@@ -12,6 +13,7 @@ namespace Explorer.API.Controllers.Tourist
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IFollowersService _followersService;
+        private readonly IWalletService _walletService;
 
         public UserTouristController(IAuthenticationService authenticationService, IFollowersService followersService)
         {
@@ -60,6 +62,23 @@ namespace Explorer.API.Controllers.Tourist
 
             return Ok(result.Value); // Vraća 200 OK sa listom UserDto objekata koje korisnik prati
         }
+
+        [HttpGet("{username}")]
+        public ActionResult<UserDto> GetTouristProfile(string username)
+        {
+            // Dobavljanje korisnika na osnovu korisničkog imena
+          
+            var user = _authenticationService.GetUserByUsername(username);
+            //var id = _walletService.GetWalletIdByTouristId(user.Value.Id);
+            //var walet = _walletService.Get((int)id); // fali id Wallta
+            if (user == null)
+            {
+                return NotFound($"Tourist with username '{username}' not found.");
+            }
+
+            return Ok(user); // Vraća 200 OK sa UserDto objektom
+        }
+        
 
     }
 }

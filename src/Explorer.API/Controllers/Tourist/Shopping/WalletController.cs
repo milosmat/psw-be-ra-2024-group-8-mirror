@@ -8,7 +8,7 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace Explorer.API.Controllers.Tourist.Shopping
 {
-    [Authorize(Policy = "touristPolicy")]
+    //[Authorize(Policy = "touristPolicy")]
     [Route("api/tourist/wallet")]
     public class WalletController : BaseApiController
     {
@@ -24,6 +24,17 @@ namespace Explorer.API.Controllers.Tourist.Shopping
         {
             Console.WriteLine("ID koji sam prosledio od klijenta : " + id);
             var result = _walletService.Get(id);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("byTouristId/{touristId:int}")]
+        public ActionResult<WalletDTO> GetWalletByTouristId(int touristId)
+        {
+            Console.WriteLine("ID koji sam prosledio od klijenta : " + touristId);
+            long id = 0;
+            id = _walletService.GetWalletIdByTouristId(touristId);
+            
+            var result = _walletService.Get((int)id);
             return CreateResponse(result);
         }
 

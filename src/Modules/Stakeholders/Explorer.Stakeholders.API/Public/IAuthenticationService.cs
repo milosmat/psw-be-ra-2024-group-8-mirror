@@ -8,6 +8,6 @@ public interface IAuthenticationService
     Result<AuthenticationTokensDto> Login(CredentialsDto credentials);
     Result<AuthenticationTokensDto> RegisterTourist(AccountRegistrationDto account);
     List<UserDto> GetAllTourists();
-
+    Result<UserDto> GetUserByUsername(string username);
     long GetUserId(String username);
 }

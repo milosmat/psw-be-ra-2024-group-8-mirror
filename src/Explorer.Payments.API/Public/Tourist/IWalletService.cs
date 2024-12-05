@@ -14,7 +14,7 @@ namespace Explorer.Payments.API.Public.Tourist
        // Result<WalletDTO> SubtractTransaction (WalletDTO walletDTO);
         //Result<WalletDTO> GetTransaction (WalletDTO walletDTO);
         Result<WalletDTO> Get (int id);
-        Result <WalletDTO> GetWalletByTouristId( int id );
+        long GetWalletIdByTouristId( int id );
         Result Delete(int id);
         Result<WalletDTO> Update (WalletDTO walletDTO);
         Result CreateWallet (long idTourist);

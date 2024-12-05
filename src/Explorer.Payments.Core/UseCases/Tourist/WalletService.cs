@@ -203,9 +203,11 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             }
         }
 
-        public Result<WalletDTO> GetWalletByTouristId(int id)
+        public long GetWalletIdByTouristId(int id)
         {
-            throw new NotImplementedException();
+            Wallet wallet = walletRepository.GetWalletByTouristId(id);
+           
+            return wallet.Id;
         }
     }
 }

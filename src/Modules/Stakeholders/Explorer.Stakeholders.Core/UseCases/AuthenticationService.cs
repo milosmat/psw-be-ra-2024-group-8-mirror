@@ -46,6 +46,13 @@ public class AuthenticationService : IAuthenticationService
 
     }
 
+    public Result<UserDto> GetUserByUsername(string username)
+    {
+        var user = _userRepository.GetActiveByName(username);
+        UserDto userDto = new UserDto() { Id = user.Id, Username = user.Username, Password = user.Password, Role = (int)user.Role, IsActive = user.IsActive };
+        return userDto;
+    }
+
     public Result<AuthenticationTokensDto> RegisterTourist(AccountRegistrationDto account)
     {
         if(_userRepository.Exists(account.Username)) return Result.Fail(FailureCode.NonUniqueUsername);

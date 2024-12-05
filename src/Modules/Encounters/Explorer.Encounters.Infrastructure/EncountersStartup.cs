@@ -9,6 +9,8 @@ using Explorer.Encounters.Infrastructure.Database;
 using Explorer.Encounters.Infrastructure.Database.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Explorer.Encounters.API.Public.Tourist; // Dodato za ITouristProfileService
+using Explorer.Encounters.Core.UseCases.Tourist; // Dodato za TouristProfileService
 
 namespace Explorer.Encounters.Infrastructure
 {
@@ -29,6 +31,7 @@ namespace Explorer.Encounters.Infrastructure
         {
             // Register core services
             services.AddScoped<IEncounterService, EncounterService>();
+            services.AddScoped<ITouristProfileService, TouristProfileService>();
         }
 
         private static void SetupInfrastructure(IServiceCollection services)
@@ -36,6 +39,7 @@ namespace Explorer.Encounters.Infrastructure
             // Register repositories
             services.AddScoped(typeof(ICrudRepository<Encounter>), typeof(CrudDatabaseRepository<Encounter, EncountersContext>));
             services.AddScoped<IEncounterRepository, EncountersDatabaseRepository>();
+            services.AddScoped<ITouristProfileRepository, TouristProfileDatabaseRepository>();
 
             // Register DbContext
             services.AddDbContext<EncountersContext>(opt =>

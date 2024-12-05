@@ -18,6 +18,8 @@ namespace Explorer.Stakeholders.API.Dtos
         public DateTime ReportedAt { get; set; }
         public bool Resolved { get; set; }
         public List<ProblemCommentDto> ProblemComments { get; set; }
+        public DateTime? ResolvingDue { get; set; }
+        public bool Closed { get; set; }
 
         public class ProblemCommentDto
         {

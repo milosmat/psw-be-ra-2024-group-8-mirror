@@ -23,7 +23,6 @@ namespace Explorer.Encounters.API.Dtos
         public List<long>? UsersWhoCompletedId {  get; set; }
         public bool IsReviewed { get; set; }
         public bool? IsRequired { get; set; }
-        public bool IsReviewed { get; set; }
       
         public class MapLocationDTO
         {

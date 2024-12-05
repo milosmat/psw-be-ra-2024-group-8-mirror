@@ -43,4 +43,14 @@ public class BundlesDatabaseRepository : CrudDatabaseRepository<Bundle, ToursCon
             .FirstOrDefault();
     }
 
+    public List<BundleTour> GetAllByBundleId(int bundleId)
+    {
+        // Dohvati sve ture povezane sa datim paketom
+        var bundleTours = DbContext.BundleTours
+            .Where(tour => tour.BundleId == bundleId)
+            .ToList();
+
+        return bundleTours;
+    }
+
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
 
 namespace Explorer.Payments.API.Public.Tourist
 {
@@ -15,5 +16,6 @@ namespace Explorer.Payments.API.Public.Tourist
         void Delete(int id);
         CouponDTO Update(CouponDTO updateCoupon);
         CouponDTO Get(int id);
+        List<ShoppingCartItemDTO> ApplyCouponOnCartItems(string code, List<ShoppingCartItemDTO> cartItems);
     }
 }

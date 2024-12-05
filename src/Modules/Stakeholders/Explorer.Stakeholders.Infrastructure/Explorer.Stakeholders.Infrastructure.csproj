@@ -13,7 +13,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\Explorer.BuildingBlocks.Infrastructure\Explorer.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Explorer.Payments.Core\Explorer.Payments.Core.csproj" />
+    <ProjectReference Include="..\..\..\Explorer.Payments.Infrastructure\Explorer.Payments.Infrastructure.csproj" />
     <ProjectReference Include="..\Explorer.Stakeholders.Core\Explorer.Stakeholders.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 

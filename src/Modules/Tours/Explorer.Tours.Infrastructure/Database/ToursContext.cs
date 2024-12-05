@@ -18,13 +18,9 @@ public class ToursContext : DbContext
     public DbSet<TourReview> TourReviews { get; set; }
 
     public DbSet<Object> Objects { get; set; }
-
-    public DbSet<ShoppingCart> ShoppingCard { get; set; }
-
-    public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; } 
-
-    public DbSet<TourPurchaseToken> Tokens { get; set; }
-
+    public DbSet<TourSale> TourSales { get; set; }
+    public DbSet<Bundle> Bundles { get; set; }
+    public DbSet<BundleTour> BundleTours { get; set; }
 
     public DbSet<TouristPosition> TouristPositions { get; set; }
     public DbSet<VisitedCheckpoint> VisitedCheckpoints { get; set; }
@@ -53,30 +49,25 @@ public class ToursContext : DbContext
             v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
             v => JsonSerializer.Deserialize<List<TravelTime>>(v, (JsonSerializerOptions)null)
         );
+        modelBuilder.Entity<Tour>().Property(item => item.DailyAgendas).HasColumnType("jsonb").HasConversion(
+            v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+            v => JsonSerializer.Deserialize<List<DailyAgenda>>(v, (JsonSerializerOptions)null)
+        );
         modelBuilder.Entity<TourReview>().ToTable("TourReviews");
         //modelBuilder.Entity<Tour>().Property(item => item.TravelTimes).HasColumnType("jsonb");
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
         modelBuilder.Entity<TourExecution>().ToTable("TourExecution");
-
+        modelBuilder.Entity<TourSale>().ToTable("TourSales");
         modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
         modelBuilder.Entity<VisitedCheckpoint>().ToTable("VisitedCheckpoints");
 
-        modelBuilder.Entity<ShoppingCart>().ToTable("ShoppingCart");
-        modelBuilder.Entity<ShoppingCartItem>().ToTable("ShoppingCartItems"); // Konfiguracija tabele za ShoppingCartItem
-        modelBuilder.Entity<TourPurchaseToken>().ToTable("Tokens");
+        modelBuilder.Entity<Bundle>().ToTable("Bundles")
+              .HasMany(b => b.Tours)
+              .WithOne()
+              .HasForeignKey(bt => bt.BundleId);
 
-        modelBuilder.Entity<ShoppingCart>()
-       .Property(sc => sc.ShopItemsCapacity)
-       .HasColumnName("ShopingItems_Capacity")
-       .IsRequired(false);  // Omogućava null vrednost za ovu kolonu
-
-        // Povezivanje ShoppingCart i ShoppingCartItem
-        modelBuilder.Entity<ShoppingCart>()
-            .HasMany(sc => sc.ShopingItems)  // Povezivanje sa kolekcijom stavki
-            .WithOne() // Svaka stavka pripada jednom shopping cart-u
-            .HasForeignKey("ShoppingCartId")  // Spoljni ključ
-            .OnDelete(DeleteBehavior.Cascade);  // Ako se obriše korpa, brišu se i stavke
+        modelBuilder.Entity<BundleTour>().ToTable("BundleTours");
 
         modelBuilder.Entity<TouristPosition>()
         .OwnsOne(tp => tp.CurrentLocation);

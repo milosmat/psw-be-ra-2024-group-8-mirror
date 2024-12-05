@@ -18,6 +18,7 @@ public class AuthenticationService : IAuthenticationService
         _tokenGenerator = tokenGenerator;
         _userRepository = userRepository;
         _personRepository = personRepository;
+       
     }
 
     public Result<AuthenticationTokensDto> Login(CredentialsDto credentials)
@@ -35,6 +36,14 @@ public class AuthenticationService : IAuthenticationService
             personId = 0;
         }
         return _tokenGenerator.GenerateAccessToken(user, personId);
+    }
+
+    public long GetUserId(string username) {
+
+        var user = _userRepository.GetActiveByName(username);
+       
+        return user.Id;
+
     }
 
     public Result<AuthenticationTokensDto> RegisterTourist(AccountRegistrationDto account)
@@ -70,4 +79,5 @@ public class AuthenticationService : IAuthenticationService
         }).ToList();
     }
 
+   
 }

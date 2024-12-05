@@ -7,6 +7,8 @@ using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
 using Explorer.Stakeholders.Infrastructure.Database;
 using Explorer.Stakeholders.Core.Domain;
+using Explorer.Payments.Core.Domain.RepositoryInterfaces;
+using Explorer.Payments.API.Public.Tourist;
 
 namespace Explorer.Stakeholders.Tests.Integration.Authentication;
 
@@ -55,6 +57,6 @@ public class RegistrationTests : BaseStakeholdersIntegrationTest
 
     private static AuthenticationController CreateController(IServiceScope scope)
     {
-        return new AuthenticationController(scope.ServiceProvider.GetRequiredService<IAuthenticationService>());
+        return new AuthenticationController(scope.ServiceProvider.GetRequiredService<IAuthenticationService>(), scope.ServiceProvider.GetRequiredService<IWalletService>());
     }
 }

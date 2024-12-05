@@ -53,7 +53,7 @@ namespace Explorer.Tours.API.Public.Author
         //Result RemoveEquipmentId(int tourId, long equipmentId);
         Result<TourCheckpointDto> AddNewCheckpoint(long tourId, TourCheckpointDto tourCheckpoint);
         Result<TravelTimeDTO> AddNewTravelTime(long tourId, TravelTimeDTO travelTime);
-       
+        Result<DailyAgendaDTO> AddNewDailyAgenda(long tourId, DailyAgendaDTO dailyAgenda);
         Result PublishTour(int tourId);
         Result<List<TourDTO>> GetAllTours();
 
@@ -61,5 +61,7 @@ namespace Explorer.Tours.API.Public.Author
         //Result AddCheckpointId(int tourId, long checkpointId);
         //Result RemoveCheckpointId(int tourId, long checkpointId);
         //Result UpdateCheckpointIds(int id, long checkpointIds);
+
+        Result<List<TourDTO>> GetToursByAuthorId(int authorId);
     }
 }

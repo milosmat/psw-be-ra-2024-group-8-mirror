@@ -14,7 +14,7 @@ namespace Explorer.API.Controllers.Author
        private readonly ITourService _tourService;
        
        private readonly IEquipmentService _equipmentService;
-        private readonly ITourCheckpointService _tourCheckpointService;
+       private readonly ITourCheckpointService _tourCheckpointService;
         
 
         public TourController(ITourService tourService, IEquipmentService equipmentService, ITourCheckpointService checkpointService)
@@ -32,7 +32,7 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
-        [HttpGet("equipment/{id:int}")]
+        [HttpGet("equipments/{id:int}")]
         public ActionResult<EquipmentDto> GetEquipment(int id)
         {
             var result = _equipmentService.Get(id);
@@ -50,6 +50,13 @@ namespace Explorer.API.Controllers.Author
         public ActionResult<TourDTO> GetById(int id)
         {
             var result = _tourService.Get(id);
+            return CreateResponse(result);
+        }
+
+        [HttpGet("toursByAuthorId/{authorId:int}")]
+        public ActionResult<PagedResult<TourDTO>> GetPublishToursByAuthorId(int authorId)
+        {
+            var result = _tourService.GetToursByAuthorId(authorId);
             return CreateResponse(result);
         }
 
@@ -74,6 +81,13 @@ namespace Explorer.API.Controllers.Author
             var result = _tourService.AddNewTravelTime(tourId, newTravelTime);
             return CreateResponse(result);
             
+        }
+        [HttpPost("{tourId:int}/addNewDailyAgenda")]
+        public ActionResult<TravelTimeDTO> AddNewDailyAgenda([FromBody] DailyAgendaDTO newDailyAgenda, long tourId)
+        {
+            var result = _tourService.AddNewDailyAgenda(tourId, newDailyAgenda);
+            return CreateResponse(result);
+
         }
         [HttpPut("{id:int}")]
         public ActionResult<TourDTO> Update([FromBody] TourDTO tourDto)

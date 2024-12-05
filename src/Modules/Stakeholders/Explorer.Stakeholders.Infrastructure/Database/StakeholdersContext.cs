@@ -1,7 +1,10 @@
-﻿using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.TourProblems;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
+using Explorer.Stakeholders.Core.Domain.Clubs;
 
 namespace Explorer.Stakeholders.Infrastructure.Database;
 
@@ -11,11 +14,15 @@ public class StakeholdersContext : DbContext
     public DbSet<Person> People { get; set; }
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Club> Clubs { get; set; }
+    public DbSet<MembershipRequest> MembershipRequests { get; set; }
     public DbSet<AppRating> AppRatings { get; set; }
     public DbSet<Problem> Problems { get; set; }
+    public DbSet<TourProblem> TourProblems { get; set; }
+    public DbSet<ProblemComment> ProblemComments { get; set; }
     public DbSet<Followers> Followerss { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+
 
 
 
@@ -29,6 +36,20 @@ public class StakeholdersContext : DbContext
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
         modelBuilder.Entity<Club>().ToTable("Clubs");
 
+        modelBuilder.Entity<MembershipRequest>()
+            .ToTable("MembershipRequests")
+            .Property(r => r.Id)
+            .ValueGeneratedOnAdd();
+
+       modelBuilder.Entity<MembershipRequest>()
+           .HasOne<Club>() //svaki Memship request pripada jednom klubu
+           .WithMany(c => c.MembershipRequests) //Club moze imati vise memship request-ova
+           .HasForeignKey(mr => mr.ClubId) //povezani preko stranog kljuca ClubId u tabeli MembershipRequests
+           .OnDelete(DeleteBehavior.Cascade); //pravilo kaskadnog brisanja
+
+       modelBuilder.Entity<MembershipRequest>()
+           .HasIndex(mr => new { mr.SenderId, mr.ClubId }) //ogranicenje da jedan turista moze da posalje jedan aktivni zahtjev za clanstvo u odredjenom klubu
+           .IsUnique();
 
         ConfigureStakeholder(modelBuilder);
 
@@ -45,6 +66,15 @@ public class StakeholdersContext : DbContext
 
         modelBuilder.Entity<Notification>()
             .HasIndex(n => n.FollowerId);  
+
+        modelBuilder.Entity<TourProblem>().ToTable("TourProblems");
+        modelBuilder.Entity<ProblemComment>().ToTable("ProblemComments");
+
+        modelBuilder.Entity<TourProblem>()
+            .HasMany(sc => sc.ProblemComments)  // Povezivanje sa kolekcijom stavki
+            .WithOne() // Svaka stavka pripada jednom shopping cart-u
+            .HasForeignKey("TourProblemId")  // Spoljni ključ
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
     

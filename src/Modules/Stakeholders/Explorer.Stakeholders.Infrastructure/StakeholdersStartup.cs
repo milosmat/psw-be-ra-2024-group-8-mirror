@@ -1,8 +1,12 @@
 using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.BuildingBlocks.Infrastructure.Database;
+using Explorer.Payments.Core.Domain;
+using Explorer.Payments.Core.Domain.RepositoryInterfaces;
+using Explorer.Payments.Infrastructure.Database.Repositories;
 using Explorer.Stakeholders.API.Public;
 using Explorer.Stakeholders.API.Public.Administration;
 using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.Clubs;
 using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 using Explorer.Stakeholders.Core.Mappers;
 using Explorer.Stakeholders.Core.UseCases;
@@ -13,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
+using Explorer.Stakeholders.Core.Domain.Clubs;
 
 namespace Explorer.Stakeholders.Infrastructure;
 
@@ -32,9 +37,12 @@ public static class StakeholdersStartup
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITokenGenerator, JwtGenerator>();
         services.AddScoped<IEditAccountService, EditAccountService>();
+        services.AddScoped<IClubRepository, ClubDatabaseRepository>();
         services.AddScoped<IClubService, ClubService>();
+        services.AddScoped<IMembershipRequestService, MembershipRequestService>();
         services.AddScoped<IAppRatingService, AppRatingService>();
         services.AddScoped<IProblemService, ProblemService>();
+        services.AddScoped<ITourProblemService, TourProblemService>();
         services.AddScoped<IFollowersService, FollowersService>();
         services.AddScoped<INotificationService, NotificationService>();
     }
@@ -45,10 +53,11 @@ public static class StakeholdersStartup
         services.AddScoped(typeof(ICrudRepository<Person>), typeof(CrudDatabaseRepository<Person, StakeholdersContext>));
         services.AddScoped(typeof(ICrudRepository<Problem>), typeof(CrudDatabaseRepository<Problem, StakeholdersContext>));
         services.AddScoped<IUserRepository, UserDatabaseRepository>();
-
+        services.AddScoped<ITourProblemRepository, TourProblemDatabaseRepository>();
         services.AddScoped(typeof(ICrudRepository<Account>),typeof(CrudDatabaseRepository<Account,StakeholdersContext>));
 
         services.AddScoped(typeof(ICrudRepository<Club>), typeof(CrudDatabaseRepository<Club, StakeholdersContext>));
+        services.AddScoped(typeof(ICrudRepository<MembershipRequest>), typeof(CrudDatabaseRepository<MembershipRequest, StakeholdersContext>));
 
         services.AddScoped(typeof(ICrudRepository<AppRating>), typeof(CrudDatabaseRepository<AppRating, StakeholdersContext>));
 
@@ -59,7 +68,11 @@ public static class StakeholdersStartup
         services.AddScoped<INotificationRepository, NotificationRepository>();
         
         services.AddScoped<IMessageRepository, MessageRepository>();
+        
+        services.AddScoped(typeof(ICrudRepository<Wallet>), typeof(CrudDatabaseRepository<Wallet, StakeholdersContext>));
 
+        services.AddScoped<IWalletRepository, WalletDataBaseRepository>();
+        
         services.AddDbContext<StakeholdersContext>(opt =>
             opt.UseNpgsql(DbConnectionStringBuilder.Build("stakeholders"),
                 x => x.MigrationsHistoryTable("__EFMigrationsHistory", "stakeholders")));

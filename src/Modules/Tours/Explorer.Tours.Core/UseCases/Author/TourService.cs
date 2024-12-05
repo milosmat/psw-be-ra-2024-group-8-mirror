@@ -407,6 +407,15 @@ namespace Explorer.Tours.Core.UseCases.Author
             return tourTravelTime;
         }
 
+        public Result<DailyAgendaDTO> AddNewDailyAgenda(long tourId, DailyAgendaDTO dailyAgenda)
+        {
+            Tour tour = tourRepository.Get(tourId);
+            DailyAgenda newDailyAgenda = new DailyAgenda(dailyAgenda.Day, dailyAgenda.StartDestination,
+                dailyAgenda.BetweenDestinations, dailyAgenda.EndDestination, dailyAgenda.Description);
+            tour.AddNewDailyAgenda(newDailyAgenda);
+            CrudRepository.Update(tour);
+            return dailyAgenda;
+        }
 
         //NOVO
 
@@ -492,7 +501,7 @@ namespace Explorer.Tours.Core.UseCases.Author
         {
             try
             {
-                var tours = CrudRepository.GetPaged(1, int.MaxValue);
+                var tours = tourRepository.GetPaged(1, int.MaxValue);
                 var publishedTours = tours.Results.Where(t => t.Status == TourStatus.PUBLISHED).ToList();
                 foreach (var tour in publishedTours)
                 {
@@ -508,6 +517,38 @@ namespace Explorer.Tours.Core.UseCases.Author
                 return Result.Fail("Error retrieving all tours").WithError(e.Message);
             }
         }
+
+        public Result<List<TourDTO>> GetToursByAuthorId(int authorId)
+        {
+            try
+            {
+                // Dobavljanje svih tura iz repozitorijuma
+                var tours = tourRepository.GetPaged(1, int.MaxValue);
+
+                // Filtriranje tura na osnovu AuthorId i statusa (PUBLISHED)
+                var authorTours = tours.Results
+                    .Where(t => t.AuthorId == authorId && t.Status == TourStatus.PUBLISHED)
+                    .ToList();
+
+                // Dodavanje kontrolnih tačaka svakoj turi
+               // foreach (var tour in authorTours)
+                //{
+                  //  var checkpoint = _tourCheckpointRepository.Get(tour.Id);
+                   // tour.AddCheckpoint(checkpoint);
+                //}
+
+                // Mapiranje rezultata u DTO
+                var tourDtos = _mapper.Map<List<TourDTO>>(authorTours);
+
+                return Result.Ok(tourDtos);
+            }
+            catch (Exception e)
+            {
+                // Vraćanje greške ako nešto pođe po zlu
+                return Result.Fail($"Error retrieving tours for author with ID {authorId}").WithError(e.Message);
+            }
+        }
+
 
 
     }

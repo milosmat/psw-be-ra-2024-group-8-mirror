@@ -1,4 +1,4 @@
-﻿namespace Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
+namespace Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 
 public interface IUserRepository
 {
@@ -6,5 +6,7 @@ public interface IUserRepository
     User? GetActiveByName(string username);
     User Create(User user);
     long GetPersonId(long userId);
+    User GetUser(long userId);
     List<User> GetUsersByRole(UserRole role);
+
 }

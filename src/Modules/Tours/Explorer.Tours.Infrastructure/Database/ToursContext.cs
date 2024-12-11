@@ -18,9 +18,9 @@ public class ToursContext : DbContext
     public DbSet<TourReview> TourReviews { get; set; }
 
     public DbSet<Object> Objects { get; set; }
-
-   
-
+    public DbSet<TourSale> TourSales { get; set; }
+    public DbSet<Bundle> Bundles { get; set; }
+    public DbSet<BundleTour> BundleTours { get; set; }
 
     public DbSet<TouristPosition> TouristPositions { get; set; }
     public DbSet<VisitedCheckpoint> VisitedCheckpoints { get; set; }
@@ -58,11 +58,16 @@ public class ToursContext : DbContext
         modelBuilder.Entity<TourCheckpoint>().ToTable("TourCheckpoint");
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
         modelBuilder.Entity<TourExecution>().ToTable("TourExecution");
-
+        modelBuilder.Entity<TourSale>().ToTable("TourSales");
         modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
         modelBuilder.Entity<VisitedCheckpoint>().ToTable("VisitedCheckpoints");
 
-      
+        modelBuilder.Entity<Bundle>().ToTable("Bundles")
+              .HasMany(b => b.Tours)
+              .WithOne()
+              .HasForeignKey(bt => bt.BundleId);
+
+        modelBuilder.Entity<BundleTour>().ToTable("BundleTours");
 
         modelBuilder.Entity<TouristPosition>()
         .OwnsOne(tp => tp.CurrentLocation);

@@ -18,7 +18,14 @@ public class PaymentsContext : DbContext
 
     public DbSet<Wallet> Wallets { get; set; }
 
+    public DbSet<Coupon> Coupons { get; set; }
+
     public DbSet<Transaction> Transactions { get; set; }
+
+    public DbSet<ShoppingCartBundle> ShoppingCartBoundle { get; set; }
+    public DbSet<PaymentRecord> PaymentRecord { get; set; }
+
+
 
     public PaymentsContext(DbContextOptions<PaymentsContext> options) : base(options) { }
 
@@ -31,11 +38,22 @@ public class PaymentsContext : DbContext
         modelBuilder.Entity<TourPurchaseToken>().ToTable("Tokens");
         modelBuilder.Entity<Wallet>().ToTable("Wallets");
         modelBuilder.Entity<Transaction>().ToTable("Transaction");
+        modelBuilder.Entity<Coupon>().ToTable("Coupons");
+
+        modelBuilder.Entity<ShoppingCartBundle>().ToTable("ShoppingCartBundle");
+        modelBuilder.Entity<PaymentRecord>().ToTable("PaymentRecord");
+
+
 
         modelBuilder.Entity<ShoppingCart>()
        .Property(sc => sc.ShopItemsCapacity)
        .HasColumnName("ShopingItems_Capacity")
        .IsRequired(false);  // Omogućava null vrednost za ovu kolonu
+
+        modelBuilder.Entity<ShoppingCart>()
+      .Property(sc => sc.ShopBundlesCapacity)
+      .HasColumnName("ShopingBundles_Capacity")
+      .IsRequired(false);
 
         // Povezivanje ShoppingCart i ShoppingCartItem
         modelBuilder.Entity<ShoppingCart>()
@@ -43,6 +61,12 @@ public class PaymentsContext : DbContext
             .WithOne() // Svaka stavka pripada jednom shopping cart-u
             .HasForeignKey("ShoppingCartId")  // Spoljni ključ
             .OnDelete(DeleteBehavior.Cascade);  // Ako se obriše korpa, brišu se i stavke
+
+        modelBuilder.Entity<ShoppingCart>()
+          .HasMany(sc => sc.ShopingBundles)  // Povezivanje sa kolekcijom stavki
+          .WithOne() // Svaka stavka pripada jednom shopping cart-u
+          .HasForeignKey("ShoppingCartId")  // Spoljni ključ
+          .OnDelete(DeleteBehavior.Cascade);  // Ako se obriše korpa, brišu se i stavke
 
     }
 }

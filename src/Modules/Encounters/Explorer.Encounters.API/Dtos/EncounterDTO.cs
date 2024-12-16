@@ -21,8 +21,11 @@ namespace Explorer.Encounters.API.Dtos
         public long AuthorId { get; set; } // ID of the administrator who created the encounter
         public string? Image {  get; set; }
         public List<long>? UsersWhoCompletedId {  get; set; }
+        public int? RequiredParticipants { get;  set; } = 0;
+        public int? Radius { get;  set; } = 0;
         public bool IsReviewed { get; set; }
         public bool? IsRequired { get; set; }
+
         public class MapLocationDTO
         {
             public double Latitude { get; set; }

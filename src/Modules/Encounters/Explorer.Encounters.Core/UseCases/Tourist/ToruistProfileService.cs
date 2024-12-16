@@ -119,6 +119,20 @@ namespace Explorer.Encounters.Core.UseCases.Tourist
             return Result.Ok(touristDto);
         }
 
+
+        public Result<IEnumerable<TouristProfileDTO>> GetAll()
+        {
+            var tourists = _touristRepository.GetAll(); // Dohvatanje svih turista iz repozitorijuma
+
+            if (tourists == null || !tourists.Any())
+            {
+                return Result.Fail("No tourists found.");
+            }
+
+            var touristDtos = _mapper.Map<IEnumerable<TouristProfileDTO>>(tourists); // Mapiranje na DTO
+            return Result.Ok(touristDtos);
+        }
+
         public Result SyncCompletedEncounters(string username)
         {
             // Dohvati korisnika prema username-u

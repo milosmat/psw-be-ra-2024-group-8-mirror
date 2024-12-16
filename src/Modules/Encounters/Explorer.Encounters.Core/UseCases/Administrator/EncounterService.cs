@@ -275,8 +275,9 @@ namespace Explorer.Encounters.Core.UseCases.Administrator
                             {
                                 // Ako encounter nije završen, obeležavamo ga kao završen
                                 encounter.AddUserToCompleted(user.Id);
-                                _touristProfileService.CompleteEncounter(user.Id, encounter.Id);
-                                _touristProfileService.AddXPToTourist(user.Id, encounter.XP);
+                                Console.WriteLine($"Users completed: {string.Join(", ", encounter.UsersWhoCompletedId)}");
+                                _touristProfileService.CompleteEncounter(userProfile.Value.Id, encounter.Id);
+                                _touristProfileService.AddXPToTourist(userProfile.Value.Id, encounter.XP);
                             }
                         }
                     }

@@ -21,5 +21,7 @@ namespace Explorer.Encounters.API.Public.Administrator
         Result ArchiveEncounter(int id);
         Result PublishEncounter(int id);
         Result CheckTouristsInEncounters();
+        Result MarkEncounterAsReviewed(int encounterId);
+
     }
 }

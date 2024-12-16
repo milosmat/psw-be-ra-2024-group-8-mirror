@@ -21,7 +21,7 @@ namespace Explorer.Encounters.Core.Domain
         }
 
         public int XP { get; private set; }
-        public int Level => XP / 100; // Primer: Svakih 100 XP prelazak na novi nivo
+        public int Level => XP / 10; // Primer: Svakih 100 XP prelazak na novi nivo
         public List<long> CompletedEncountersIds { get; private set; }
 
         public void AddXP(int amount)

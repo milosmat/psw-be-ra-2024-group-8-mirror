@@ -7,18 +7,27 @@ using Explorer.Encounters.API.Public.Tourist;
 using FluentResults;
 using System.Collections.Generic;
 using System.Linq;
+using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 
 namespace Explorer.Encounters.Core.UseCases.Tourist
 {
     public class TouristProfileService : CrudService<TouristProfileDTO, TouristProfile>, ITouristProfileService
     {
         private readonly ITouristProfileRepository _touristRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IEncounterRepository _encounterRepository;
         private readonly IMapper _mapper;
 
-        public TouristProfileService(ITouristProfileRepository touristRepository, IMapper mapper)
+        public TouristProfileService(
+            ITouristProfileRepository touristRepository,
+            IUserRepository userRepository,
+            IEncounterRepository encounterRepository,
+            IMapper mapper)
             : base(touristRepository, mapper)
         {
             _touristRepository = touristRepository;
+            _userRepository = userRepository;
+            _encounterRepository = encounterRepository;
             _mapper = mapper;
         }
 
@@ -110,6 +119,7 @@ namespace Explorer.Encounters.Core.UseCases.Tourist
             return Result.Ok(touristDto);
         }
 
+
         public Result<IEnumerable<TouristProfileDTO>> GetAll()
         {
             var tourists = _touristRepository.GetAll(); // Dohvatanje svih turista iz repozitorijuma
@@ -122,5 +132,43 @@ namespace Explorer.Encounters.Core.UseCases.Tourist
             var touristDtos = _mapper.Map<IEnumerable<TouristProfileDTO>>(tourists); // Mapiranje na DTO
             return Result.Ok(touristDtos);
         }
+
+        public Result SyncCompletedEncounters(string username)
+        {
+            // Dohvati korisnika prema username-u
+            var user = _userRepository.GetActiveByName(username);
+            if (user == null)
+            {
+                return Result.Fail($"User with username '{username}' not found.");
+            }
+
+            // Proveri da li je korisnik turist
+            var tourist = _touristRepository.GetByUsername(username);
+            if (tourist == null)
+            {
+                return Result.Fail($"Tourist profile for user '{username}' not found.");
+            }
+
+            // Dohvati sve izazove iz baze
+            var allEncounters = _encounterRepository.GetAll();
+            foreach (var encounter in allEncounters)
+            {
+                // Proveri da li je ID korisnika u listi UsersWhoCompletedId
+                if (encounter.UsersWhoCompletedId != null && encounter.UsersWhoCompletedId.Contains(user.Id))
+                {
+                    // Ako izazov nije zabeležen kao završen kod turiste
+                    if (!tourist.IsEncounterCompleted(encounter.Id))
+                    {
+                        tourist.CompleteEncounter(encounter.Id); // Zabeleži izazov kao završen
+                        tourist.AddXP(encounter.XP); // Dodaj XP za izazov
+                    }
+                }
+            }
+
+            // Ažuriraj turistički profil u bazi
+            _touristRepository.Update(tourist);
+            return Result.Ok();
+        }
+
     }
 }

@@ -99,6 +99,15 @@ namespace Explorer.Encounters.API.Controllers
             return CreateResponse(result);
         }
 
+        // POST: api/administrator/encounters/{id}/mark-reviewed
+        [HttpPost("{id:int}/mark-reviewed")]
+        public ActionResult MarkAsReviewed(int id)
+        {
+            var result = _encounterService.MarkEncounterAsReviewed(id);
+            return CreateResponse(result);
+        }
+
+
         private ActionResult CreateResponse(Result result)
         {
             if (result.IsFailed)

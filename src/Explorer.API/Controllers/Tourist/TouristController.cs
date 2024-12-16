@@ -43,6 +43,14 @@ namespace Explorer.API.Controllers.Tourist
             return CreateResponse(result);
         }
 
+        [HttpPost("{username}/sync-completed-encounters")]
+        public ActionResult SyncCompletedEncounters(string username)
+        {
+            var result = _touristProfileService.SyncCompletedEncounters(username);
+            return CreateResponse(result);
+        }
+
+
         [HttpGet("level/{level:int}")]
         public ActionResult<IEnumerable<TouristProfileDTO>> GetTouristsByLevel(int level)
         {

@@ -23,5 +23,7 @@ namespace Explorer.Encounters.API.Public.Tourist
         Result<TouristProfileDTO> GetTouristByUsername(string username);
 
         Result<IEnumerable<TouristProfileDTO>> GetAll();
+
+        Result SyncCompletedEncounters(string username);
     }
 }

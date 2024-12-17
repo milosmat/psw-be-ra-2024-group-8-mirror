@@ -123,16 +123,12 @@ namespace Explorer.Encounters.Core.UseCases.Tourist
         {
             // Dohvati korisnika prema username-u
             var user = _userRepository.GetActiveByName(username);
-            if (user == null)
-            {
-                return Result.Fail($"User with username '{username}' not found.");
-            }
 
             // Proveri da li je korisnik turist
             var tourist = _touristRepository.GetByUsername(username);
-            if (tourist == null)
+            if (tourist == null || tourist.IsActive == false)
             {
-                return Result.Fail($"Tourist profile for user '{username}' not found.");
+                return Result.Fail($"Tourist profile for user '{username}' not found or tourist not active.");
             }
 
             // Dohvati sve izazove iz baze

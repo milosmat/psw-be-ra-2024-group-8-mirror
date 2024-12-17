@@ -23,9 +23,6 @@ namespace Explorer.Encounters.Core.Domain
         public List<long>? UsersWhoCompletedId { get; private set; }
         public bool IsReviewed { get; private set; }
         public bool? IsRequired { get; private set; }
-        public Encounter() { }
-
-        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, bool isReviewed, string? image = null)
 
         public Encounter() { }
 

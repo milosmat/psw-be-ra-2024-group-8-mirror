@@ -13,12 +13,12 @@ namespace Explorer.Encounters.API.Public.Administrator
     {
         // CRUD operacije za Encounter
         Result<PagedResult<EncounterDTO>> GetPaged(int page, int pageSize);
-        Result<EncounterDTO> GetById(int id);
+        Result<EncounterDTO> GetById(long id);
         Result<EncounterDTO> Create(EncounterDTO encounterDto);
         Result<EncounterDTO> Update(EncounterDTO encounterDto);
-        Result Delete(int id);
-        Result ArchiveEncounter(int id);
-        Result PublishEncounter(int id);
-        Result MarkEncounterAsReviewed(int encounterId);
+        Result Delete(long id);
+        Result ArchiveEncounter(long id);
+        Result PublishEncounter(long id);
+        Result MarkEncounterAsReviewed(long encounterId);
     }
 }

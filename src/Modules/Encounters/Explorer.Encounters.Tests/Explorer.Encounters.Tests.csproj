@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 		<!-- Referenca na API projekat -->
+		<ProjectReference Include="..\..\..\Explorer.Payments.Tests\Explorer.Payments.Tests.csproj" />
 		<ProjectReference Include="..\Explorer.Encounters.API\Explorer.Encounters.API.csproj" />
 		<!-- Referenca na BuildingBlocks.Tests -->
 		<ProjectReference Include="..\..\..\BuildingBlocks\Explorer.BuildingBlocks.Tests\Explorer.BuildingBlocks.Tests.csproj" />

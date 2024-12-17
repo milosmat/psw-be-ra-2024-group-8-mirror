@@ -68,7 +68,7 @@ namespace Explorer.Encounters.Core.UseCases.Administrator
                 : Result.Fail("Failed to update Encounter.");
         }
 
-        public new Result Delete(int id)
+        public new Result Delete(long id)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace Explorer.Encounters.Core.UseCases.Administrator
         }
 
         // Archive Encounter
-        public Result ArchiveEncounter(int encounterId)
+        public Result ArchiveEncounter(long encounterId)
         {
             var encounter = _encounterRepository.Get(encounterId);
             if (encounter == null)
@@ -95,7 +95,7 @@ namespace Explorer.Encounters.Core.UseCases.Administrator
         }
 
         // Publish Encounter
-        public Result PublishEncounter(int encounterId)
+        public Result PublishEncounter(long encounterId)
         {
             var encounter = _encounterRepository.Get(encounterId);
             if (encounter == null)
@@ -111,7 +111,7 @@ namespace Explorer.Encounters.Core.UseCases.Administrator
         }
 
         // Get Encounter By Id
-        public Result<EncounterDTO> GetById(int id)
+        public Result<EncounterDTO> GetById(long id)
         {
             var encounter = _encounterRepository.Get(id);
             if (encounter == null)
@@ -122,7 +122,7 @@ namespace Explorer.Encounters.Core.UseCases.Administrator
             return Result.Ok(_mapper.Map<EncounterDTO>(encounter));
         }
 
-        public Result MarkEncounterAsReviewed(int encounterId)
+        public Result MarkEncounterAsReviewed(long encounterId)
         {
             // Dohvatanje Encounter-a iz baze
             var encounter = _encounterRepository.Get(encounterId);

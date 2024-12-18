@@ -31,8 +31,8 @@ namespace Explorer.Encounters.API.Controllers
         }
 
         // GET: api/administrator/encounters/{id}
-        [HttpGet("{id:int}")]
-        public ActionResult<EncounterDTO> GetById(int id)
+        [HttpGet("{id:long}")]
+        public ActionResult<EncounterDTO> GetById(long id)
         {
             var result = _encounterService.GetById(id);
             return CreateResponse(result);
@@ -65,8 +65,8 @@ namespace Explorer.Encounters.API.Controllers
         }
 
         // PUT: api/administrator/encounters/{id}
-        [HttpPut("{id:int}")]
-        public ActionResult<EncounterDTO> Update(int id, [FromBody] EncounterDTO encounterDto)
+        [HttpPut("{id:long}")]
+        public ActionResult<EncounterDTO> Update(long id, [FromBody] EncounterDTO encounterDto)
         {
             if (id != encounterDto.Id)
                 return BadRequest("ID in URL does not match ID in body.");
@@ -76,32 +76,32 @@ namespace Explorer.Encounters.API.Controllers
         }
 
         // DELETE: api/administrator/encounters/{id}
-        [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        [HttpDelete("{id:long}")]
+        public ActionResult Delete(long id)
         {
             var result = _encounterService.Delete(id);
             return CreateResponse(result);
         }
 
         // POST: api/administrator/encounters/{id}/archive
-        [HttpPost("{id:int}/archive")]
-        public ActionResult ArchiveEncounter(int id)
+        [HttpPost("{id:long}/archive")]
+        public ActionResult ArchiveEncounter(long id)
         {
             var result = _encounterService.ArchiveEncounter(id);
             return CreateResponse(result);
         }
 
         // POST: api/administrator/encounters/{id}/publish
-        [HttpPost("{id:int}/publish")]
-        public ActionResult PublishEncounter(int id)
+        [HttpPost("{id:long}/publish")]
+        public ActionResult PublishEncounter(long id)
         {
             var result = _encounterService.PublishEncounter(id);
             return CreateResponse(result);
         }
 
         // POST: api/administrator/encounters/{id}/mark-reviewed
-        [HttpPost("{id:int}/mark-reviewed")]
-        public ActionResult MarkAsReviewed(int id)
+        [HttpPost("{id:long}/mark-reviewed")]
+        public ActionResult MarkAsReviewed(long id)
         {
             var result = _encounterService.MarkEncounterAsReviewed(id);
             return CreateResponse(result);

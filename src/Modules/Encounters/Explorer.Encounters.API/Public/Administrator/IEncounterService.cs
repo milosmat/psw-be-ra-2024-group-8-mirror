@@ -1,5 +1,6 @@
-﻿using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Encounters.API.Dtos;
+using Explorer.Tours.API.Dtos;
 using FluentResults;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace Explorer.Encounters.API.Public.Administrator
         Result Delete(long id);
         Result ArchiveEncounter(long id);
         Result PublishEncounter(long id);
+        Result CheckTouristsInEncounters();
         Result MarkEncounterAsReviewed(long encounterId);
+
     }
 }

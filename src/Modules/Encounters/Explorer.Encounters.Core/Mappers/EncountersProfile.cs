@@ -26,6 +26,11 @@ namespace Explorer.Encounters.Core.Mappers
             CreateMap<MapLocationDTO, MapLocation>()
                 .ConstructUsing(src => new MapLocation(src.Latitude, src.Longitude))
                 .ReverseMap();
+
+            CreateMap<Tours.API.Dtos.TouristPositionDto.MapLocationDto, MapLocation>()
+                .ConstructUsing(src => new MapLocation(src.Latitude, src.Longitude))
+                .ReverseMap();
+
         }
     }
 }

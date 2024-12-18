@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Encounters.API.Dtos;
 using Explorer.Encounters.Core.Domain;
@@ -119,16 +119,34 @@ namespace Explorer.Encounters.Core.UseCases.Tourist
             return Result.Ok(touristDto);
         }
 
+
+        public Result<IEnumerable<TouristProfileDTO>> GetAll()
+        {
+            var tourists = _touristRepository.GetAll(); // Dohvatanje svih turista iz repozitorijuma
+
+            if (tourists == null || !tourists.Any())
+            {
+                return Result.Fail("No tourists found.");
+            }
+
+            var touristDtos = _mapper.Map<IEnumerable<TouristProfileDTO>>(tourists); // Mapiranje na DTO
+            return Result.Ok(touristDtos);
+        }
+
         public Result SyncCompletedEncounters(string username)
         {
             // Dohvati korisnika prema username-u
             var user = _userRepository.GetActiveByName(username);
+            if (user == null)
+            {
+                return Result.Fail($"User with username '{username}' not found.");
+            }
 
             // Proveri da li je korisnik turist
             var tourist = _touristRepository.GetByUsername(username);
-            if (tourist == null || tourist.IsActive == false)
+            if (tourist == null)
             {
-                return Result.Fail($"Tourist profile for user '{username}' not found or tourist not active.");
+                return Result.Fail($"Tourist profile for user '{username}' not found.");
             }
 
             // Dohvati sve izazove iz baze

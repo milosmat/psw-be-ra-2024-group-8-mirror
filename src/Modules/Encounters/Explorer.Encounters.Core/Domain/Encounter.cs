@@ -25,9 +25,9 @@ namespace Explorer.Encounters.Core.Domain
         public bool? IsRequired { get; private set; }
         public Encounter() { }
 
-        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, bool isReviewed, string? image = null)
+        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, bool isReviewed, string? image = null) { }
 
-        public Encounter() { }
+        //public Encounter() { }
 
         public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, bool isReviewed, string? image = null, bool? isRequired = false)
         {

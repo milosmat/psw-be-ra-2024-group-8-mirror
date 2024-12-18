@@ -10,14 +10,13 @@ namespace Explorer.API.Controllers.Author
     public class TourSaleController : BaseApiController
     {
         private readonly ITourSaleService _tourSaleService;
-        private readonly ITourService _tourService;
-        private readonly ToursContext _context;
+       
+        
 
-        public TourSaleController(ITourSaleService tourSaleService, ITourService tourService, ToursContext context)
+        public TourSaleController(ITourSaleService tourSaleService)
         {
             _tourSaleService = tourSaleService;
-            _tourService = tourService;
-            _context = context;
+                        
         }
 
         [HttpPost("activateSales")]

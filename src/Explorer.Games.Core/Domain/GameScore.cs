@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Explorer.BuildingBlocks.Core.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Explorer.Games.Core.Domain
 {
-    public class GameScore
+    public class GameScore : Entity
+
     {
         public long PlayerId { get; set; }
         public double Score { get; set; }

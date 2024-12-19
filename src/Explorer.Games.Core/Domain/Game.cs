@@ -10,11 +10,10 @@ namespace Explorer.Games.Core.Domain
     public class Game : Entity
     {
         public double Highscore { get; set; } = 0.0;
-        public List<GameScore> Scores { get; set; }
+        public List<GameScore> Scores { get; set; } = new List<GameScore>();
 
         public Game()
         {
-            Scores = new List<GameScore>();
         }
 
         public Game(double highscore, List<GameScore> scores)

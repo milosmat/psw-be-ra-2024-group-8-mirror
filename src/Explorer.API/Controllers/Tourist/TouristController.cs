@@ -20,8 +20,15 @@ namespace Explorer.API.Controllers.Tourist
         [HttpGet("{id:long}")]
         public ActionResult<TouristProfileDTO> GetTouristById(long id)
         {
-            var result = _touristProfileService.GetTouristById(id);
-            return CreateResponse(result);
+            try
+            {
+                var result = _touristProfileService.GetTouristById(id);
+                return Ok(result);
+            }
+            catch(KeyNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("{id:long}/add-xp")]

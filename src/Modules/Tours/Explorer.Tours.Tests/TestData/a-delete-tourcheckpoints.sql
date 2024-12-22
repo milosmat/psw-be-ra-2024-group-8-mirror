@@ -1,1 +1,1 @@
-﻿DELETE FROM tours.TourCheckpoint;
+﻿DELETE FROM tours."TourCheckpoint";

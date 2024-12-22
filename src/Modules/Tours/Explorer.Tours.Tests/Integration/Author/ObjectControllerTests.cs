@@ -1,8 +1,11 @@
-﻿using Explorer.API.Controllers.Author;
+﻿using Azure.Core.GeoJson;
+using Explorer.API.Controllers.Author;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
+using Explorer.Tours.Core.Domain;
 using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using System;
@@ -10,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Object = Explorer.Tours.Core.Domain.Object;
 
 namespace Explorer.Tours.Tests.Integration.Author
 {
@@ -47,7 +51,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.Name.ShouldBe(newObject.Name);
 
             // Assert - Database
-            var storedCheckpoint = dbContext.Tours.FirstOrDefault(i => i.Name == newObject.Name);
+            var storedCheckpoint = dbContext.Objects.FirstOrDefault(i => i.Id == result.Id);
             storedCheckpoint.ShouldNotBeNull();
             storedCheckpoint.Id.ShouldBe(result.Id);
         }
@@ -78,9 +82,22 @@ namespace Explorer.Tours.Tests.Integration.Author
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
+            
+            
+            var newObject = new ObjectDTO
+            {
+               
+                Name = "UPDATED object",
+                Description = "shiny",
+                Image = "url_to_image",
+                Category = "Other",
+                Latitude = 42,
+                Longitude = 19
+            };
+            var createResult = ((ObjectResult)controller.Create(newObject).Result)?.Value as ObjectDTO;
             var updatedObject = new ObjectDTO
             {
-                Id = 1,
+                Id = createResult.Id,
                 Name = "UPDATED object",
                 Description = "shiny UPDATED",
                 Image = "url_to_image",
@@ -88,15 +105,21 @@ namespace Explorer.Tours.Tests.Integration.Author
                 Latitude = 42,
                 Longitude = 19
             };
-
-            var result = ((ObjectResult)controller.Update(updatedObject).Result)?.Value as TourDTO;
+            var existingEntity = dbContext.ChangeTracker
+            .Entries<Object>()
+            .FirstOrDefault(e => e.Entity.Id == updatedObject.Id);
+            if (existingEntity != null)
+            {
+                dbContext.Entry(existingEntity.Entity).State = EntityState.Detached;
+            }
+            var result = ((ObjectResult)controller.Update(updatedObject).Result)?.Value as ObjectDTO;
 
             result.ShouldNotBeNull();
             result.Id.ShouldBe(updatedObject.Id);
             result.Name.ShouldBe(updatedObject.Name);
             result.Description.ShouldBe(updatedObject.Description);
 
-            var storedTour = dbContext.Tours.FirstOrDefault(i => i.Id == updatedObject.Id);
+            var storedTour = dbContext.Objects.FirstOrDefault(i => i.Id == updatedObject.Id);
             storedTour.ShouldNotBeNull();
             storedTour.Description.ShouldBe(updatedObject.Description);
         }

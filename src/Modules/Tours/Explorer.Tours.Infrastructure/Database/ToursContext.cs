@@ -31,7 +31,8 @@ public class ToursContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("tours");
-        modelBuilder.Entity<Object>()
+
+        modelBuilder.Entity<Object>().ToTable("Objects")
         .Property(o => o.Category)
         .HasConversion(
         v => v.ToString(),

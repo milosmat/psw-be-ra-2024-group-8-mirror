@@ -24,13 +24,13 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         private readonly IBundleRepository _bundleRepository;
         private readonly IBundleService _bundleService;
         public ShoppingCartService(
-   ICardRepository cardRepository,
-   ITourPurchaseTokenService tokenService,
-   IPaymentRecordService paymentRecordService,
-   IPaymentRecordRepository paymentRepository,
-   IBundleRepository bundleRepository,
-   IBundleService bundleService
-   )
+               ICardRepository cardRepository,
+               ITourPurchaseTokenService tokenService,
+               IPaymentRecordService paymentRecordService,
+               IPaymentRecordRepository paymentRepository,
+               IBundleRepository bundleRepository,
+               IBundleService bundleService
+            )
         {
             _cardRepository = cardRepository ?? throw new ArgumentNullException(nameof(cardRepository));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
@@ -251,7 +251,38 @@ namespace Explorer.Payments.Core.UseCases.Tourist
 
             return Result.Ok(bundles);
         }
+
+
+        public ShoppingCartDTO Update(ShoppingCartDTO updatedShoppingCart)
+        {
+            // Fetch the existing shopping cart
+            var shoppingCart = _cardRepository.GetByTouristId(updatedShoppingCart.TouristId);
+            if (shoppingCart == null)
+            {
+                throw new InvalidOperationException("Shopping cart not found.");
+            }
+
+            // Update the shopping cart with values from the updated DTO
+            shoppingCart.ShopingItems = updatedShoppingCart.ShopingItems.Select(itemDto => new ShoppingCartItem(itemDto.TourId, itemDto.TourName, itemDto.TourPrice)).ToList();
+
+            // Save the updated shopping cart back to the repository
+            _cardRepository.Update(shoppingCart);
+
+            // Return the updated DTO (map back if needed)
+            return new ShoppingCartDTO
+            {
+                TouristId = shoppingCart.TouristId,
+                ShopingItems = shoppingCart.ShopingItems.Select(item => new ShoppingCartDTO.ShoppingCartItemDTO
+                {
+                    TourId = item.TourId,
+                    TourName = item.Name,
+                    TourPrice = item.Price
+                }).ToList(),
+                TotalPrice = shoppingCart.ShopingItems.Sum(item => item.Price)
+            };
+        }
+
+
+
     }
-
 }
-

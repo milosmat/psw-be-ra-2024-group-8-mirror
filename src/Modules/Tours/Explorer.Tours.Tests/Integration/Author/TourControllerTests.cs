@@ -28,9 +28,15 @@ namespace Explorer.Tours.Tests.Integration.Author
             {
                 Name = "Nova Tura",
                 Description = "Opis nove ture.",
-                Weight = "5kg",
+                Weight = "medium",
                 Tags = new[] { "avantura", "priroda" },
-                Price = 100.00m
+                Price = 100,
+                Status = 1,
+                LengthInKm = 15,
+                PublishedDate = DateTime.UtcNow,
+                ArchivedDate = DateTime.UtcNow,
+                AuthorId = 1
+
             };
 
             // Act
@@ -42,9 +48,9 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.Name.ShouldBe(newTour.Name);
 
             // Assert - Database
-            var storedTour = dbContext.Tours.FirstOrDefault(i => i.Name == newTour.Name);
+            var storedTour = dbContext.Tours.FirstOrDefault(i => i.Id == result.Id);
             storedTour.ShouldNotBeNull();
-            storedTour.Id.ShouldBe(result.Id);
+            storedTour.Name.ShouldBe(result.Name);
         }
 
         [Fact]
@@ -120,12 +126,28 @@ namespace Explorer.Tours.Tests.Integration.Author
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
+            var newTour = new TourDTO
+            {
+                Name = "Nova Tura",
+                Description = "Opis nove ture.",
+                Weight = "medium",
+                Tags = new[] { "avantura", "priroda" },
+                Price = 100,
+                Status = 1,
+                LengthInKm = 15,
+                PublishedDate = DateTime.UtcNow,
+                ArchivedDate = DateTime.UtcNow,
+                AuthorId = 1
 
-            var result = (OkResult)controller.Delete(1);
+            };
+
+            // Act
+            var createResult = ((ObjectResult)controller.Create(newTour).Result)?.Value as TourDTO;
+            var result = (OkResult)controller.Delete(createResult.Id);
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
-            var storedTour = dbContext.Tours.FirstOrDefault(i => i.Id == 1);
+            var storedTour = dbContext.Tours.FirstOrDefault(i => i.Id == createResult.Id);
             storedTour.ShouldBeNull();
         }
 

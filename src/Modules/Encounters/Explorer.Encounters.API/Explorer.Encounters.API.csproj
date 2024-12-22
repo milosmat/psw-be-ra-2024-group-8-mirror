@@ -10,6 +10,7 @@
 		<!-- Dodavanje reference na BuildingBlocks.Core -->
 		<ProjectReference Include="..\..\..\BuildingBlocks\Explorer.BuildingBlocks.Core\Explorer.BuildingBlocks.Core.csproj" />
 		<ProjectReference Include="..\..\Stakeholders\Explorer.Stakeholders.Core\Explorer.Stakeholders.Core.csproj" />
+		<ProjectReference Include="..\..\Tours\Explorer.Tours.API\Explorer.Tours.API.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

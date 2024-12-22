@@ -23,32 +23,68 @@ namespace Explorer.Encounters.Core.Domain
         public List<long>? UsersWhoCompletedId { get; private set; }
         public bool IsReviewed { get; private set; }
         public bool? IsRequired { get; private set; }
-        public Encounter() { }
 
-        //public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, List<long>? users, long authorId, bool isReviewed, string? image = null);
+
+        // Dodata polja za Social Encounter
+        public int? RequiredParticipants { get; private set; } = 0;
+        public int? Radius { get; private set; } = 0;
+
 
         //public Encounter() { }
 
-        public Encounter(string name, string description, MapLocation location, int xp, EncounterType type,List<long>? users, long authorId, bool isReviewed, string? image = null, bool? isRequired = false)
-        {
-            // Validate name and xp as required
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
-            if (xp < 0) throw new ArgumentException("XP cannot be negative.");
+            // Original constructor for feat/encounters
+    public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, List<long>? users, long authorId, string? image = null, int? requiredParticipants = null, int? radius = null)
+    {
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
+        if (xp < 0) throw new ArgumentException("XP cannot be negative.");
 
-            Name = name;
-            Description = description;
-            Location = location;
-            XP = xp;
-            Type = type;
-            Status = EncounterStatus.DRAFT;
-            AuthorId = authorId;
+        Name = name;
+        Description = description;
+        Location = location;
+        XP = xp;
+        Type = type;
+        Status = EncounterStatus.DRAFT;
+        AuthorId = authorId;
+        Image = image;
+        UsersWhoCompletedId = users;
+        RequiredParticipants = requiredParticipants ?? 0;
+        Radius = radius ?? 0;
+        IsReviewed = false; // Default value
+        IsRequired = null; // Default value
+    }
 
-            // Samo za hidden location, u suprotnom ce biti null
-            Image = image;
-            UsersWhoCompletedId = users;
-            IsReviewed = isReviewed;
-            IsRequired = isRequired;
-        }
+    // Overloaded constructor for development
+    public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, List<long>? users, long authorId, bool isReviewed, string? image = null, bool? isRequired = false)
+    {
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
+        if (xp < 0) throw new ArgumentException("XP cannot be negative.");
+
+        Name = name;
+        Description = description;
+        Location = location;
+        XP = xp;
+        Type = type;
+        Status = EncounterStatus.DRAFT;
+        AuthorId = authorId;
+        Image = image;
+        UsersWhoCompletedId = users;
+        RequiredParticipants = 0; // Default value
+        Radius = 0; // Default value
+        IsReviewed = isReviewed;
+        IsRequired = isRequired;
+    }
+
+    public void SetSocialEncounterData(int requiredParticipants, int radius)
+    {
+        if (Type != EncounterType.SOCIAL)
+            throw new InvalidOperationException("This encounter is not of type SOCIAL.");
+
+        if (requiredParticipants <= 0) throw new ArgumentException("Required participants must be greater than 0.");
+        if (radius <= 0) throw new ArgumentException("Radius must be greater than 0.");
+
+        RequiredParticipants = requiredParticipants;
+        Radius = radius;
+    }
 
         public Result MarkAsReviewed()
         {
@@ -88,6 +124,15 @@ namespace Explorer.Encounters.Core.Domain
             XP = newXP;
             return Result.Ok();
         }
+
+        public void AddUserToCompleted(long userId)
+        {
+            if (UsersWhoCompletedId == null)
+                UsersWhoCompletedId = new List<long>();
+
+            if (!UsersWhoCompletedId.Contains(userId))
+                UsersWhoCompletedId.Add(userId);
+        }
     }
 
     public enum EncounterStatus
@@ -103,4 +148,6 @@ namespace Explorer.Encounters.Core.Domain
         LOCATION,
         MISC
     }
+
+
 }

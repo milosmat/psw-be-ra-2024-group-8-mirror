@@ -2,8 +2,10 @@
 using Explorer.API.Controllers.Tourist;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Administration;
+using Explorer.Tours.Core.Domain;
 using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using System;
@@ -28,7 +30,7 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var newEntity = new TourPreferencesDto
             {
-                Difficulty = DifficultyLevel.EASY,
+                Difficulty = API.Dtos.DifficultyLevel.EASY,
                 WalkRating = 3,
                 BikeRating = 2,
                 CarRating = 0,
@@ -82,23 +84,43 @@ namespace Explorer.Tours.Tests.Integration.Administration
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
+            var newEntity = new TourPreferencesDto
+            {
+                Difficulty = API.Dtos.DifficultyLevel.EASY,
+                WalkRating = 3,
+                BikeRating = 2,
+                CarRating = 0,
+                BoatRating = 1,
+                InterestTags = new List<string>() { "nature" }
+
+            };
+
+            // Act
+            var createResult = ((ObjectResult)controller.Create(newEntity).Result)?.Value as TourPreferencesDto;
+
             var updatedEntity = new TourPreferencesDto
             {
-                Id = -1,
-                Difficulty = DifficultyLevel.EASY,
+                Id = createResult.Id,
+                Difficulty = API.Dtos.DifficultyLevel.EASY,
                 WalkRating = 0,
                 BikeRating = 2,
                 CarRating = 2,
                 BoatRating = 2,
                 InterestTags = new List<string>() { "rucnoDodat" }
             };
-
+            var existingEntity = dbContext.ChangeTracker
+            .Entries<TourPreferences>()
+            .FirstOrDefault(e => e.Entity.Id == updatedEntity.Id);
+            if (existingEntity != null)
+            {
+                dbContext.Entry(existingEntity.Entity).State = EntityState.Detached;
+            }
             // Act
             var result = ((ObjectResult)controller.Update(updatedEntity).Result)?.Value as TourPreferencesDto;
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(-1);
+            result.Id.ShouldBe(createResult.Id);
             result.Difficulty.ShouldBe(updatedEntity.Difficulty);
             result.WalkRating.ShouldBe(updatedEntity.WalkRating);   
             result.BikeRating.ShouldBe(updatedEntity.BikeRating);
@@ -145,16 +167,29 @@ namespace Explorer.Tours.Tests.Integration.Administration
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
+            var newEntity = new TourPreferencesDto
+            {
+                Difficulty = API.Dtos.DifficultyLevel.EASY,
+                WalkRating = 3,
+                BikeRating = 2,
+                CarRating = 0,
+                BoatRating = 1,
+                InterestTags = new List<string>() { "nature" }
+
+            };
 
             // Act
-            var result = (OkResult)controller.Delete(-1);
+            var createResult = ((ObjectResult)controller.Create(newEntity).Result)?.Value as TourPreferencesDto;
+
+            // Act
+            var result = (OkResult)controller.Delete(createResult.Id);
 
             // Assert - Response
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
             // Assert - Database
-            var storedCourse = dbContext.TourPreferences.FirstOrDefault(i => i.Id == -1);
+            var storedCourse = dbContext.TourPreferences.FirstOrDefault(i => i.Id == createResult.Id);
             storedCourse.ShouldBeNull();
         }
 

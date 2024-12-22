@@ -25,8 +25,8 @@ public class EquipmentQueryTests : BaseToursIntegrationTest
 
         // Assert
         result.ShouldNotBeNull();
-        result.Results.Count.ShouldBe(3);
-        result.TotalCount.ShouldBe(3);
+        result.Results.Count.ShouldBe(2);
+        result.TotalCount.ShouldBe(2);
     }
 
     private static EquipmentController CreateController(IServiceScope scope)

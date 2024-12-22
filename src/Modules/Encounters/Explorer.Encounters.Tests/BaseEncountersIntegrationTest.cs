@@ -9,6 +9,6 @@ namespace Explorer.Encounters.Tests
 {
     public class BaseEncountersIntegrationTest : BaseWebIntegrationTest<EncountersTestFactory>
     {
-        BaseEncountersIntegrationTest(EncountersTestFactory factory) : base(factory) { }
+        public BaseEncountersIntegrationTest(EncountersTestFactory factory) : base(factory) { }
     }
 }

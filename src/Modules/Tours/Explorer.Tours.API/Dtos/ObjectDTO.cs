@@ -17,3 +17,4 @@ namespace Explorer.Tours.API.Dtos
         public double Longitude { get; set; }
     }
 }
+

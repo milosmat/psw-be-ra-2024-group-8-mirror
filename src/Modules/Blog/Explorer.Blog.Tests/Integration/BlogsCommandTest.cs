@@ -16,7 +16,8 @@ using Markdown = Explorer.Blog.Core.Domain.Blogs.Markdown;
 using BlogsStatus = Explorer.Blog.API.Dtos.BlogsStatus;
 using Explorer.Stakeholders.Core.Domain;
 using static System.Net.Mime.MediaTypeNames;
-
+using Status = Explorer.Blog.API.Dtos.Status;
+using Explorer.Tours.Core.Domain;
 
 namespace Explorer.Blog.Tests.Integration
 {
@@ -100,25 +101,51 @@ namespace Explorer.Blog.Tests.Integration
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-
-            var updatedEntity = new BlogsDto
+            var newEntity = new BlogsDto
             {
-                Id = id,
-                Title = title,
-                Description = description
+                UserId = 1,
+                Title = "NewEntity",
+                Description = "NewDescription",
+                CreatedDate = DateTime.UtcNow,
+                Images = (new[] { "image.png" }).ToList(),
+                Status = BlogsStatus.Published,
+                Votes = new List<VoteDto>() // Initialize as empty
             };
 
+
+            // Act
+            var createResult = ((ObjectResult)controller.Create(newEntity).Result)?.Value as BlogsDto;
+            var updatedEntity = new BlogsDto
+            {
+                Id = createResult.Id,
+                UserId = 1,
+                Title = title,
+                Description = description,
+                CreatedDate = DateTime.UtcNow,
+                BlogStatus = Status.Active,
+                Status = BlogsStatus.Published
+
+
+
+            };
+            var existingEntity = dbContext.ChangeTracker
+            .Entries<Blogg>()
+            .FirstOrDefault(e => e.Entity.Id == updatedEntity.Id);
+            if (existingEntity != null)
+            {
+                dbContext.Entry(existingEntity.Entity).State = EntityState.Detached;
+            }
             // Act
             var result = ((ObjectResult)controller.Update(updatedEntity).Result)?.Value as BlogsDto;
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(id);
+            result.Id.ShouldBe(createResult.Id);
             result.Title.ShouldBe(updatedEntity.Title);
             result.Description.ShouldBe(updatedEntity.Description);
 
             // Assert - Database
-            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
+            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == createResult.Id);
             storedEntity.ShouldNotBeNull();
             storedEntity.Title.ShouldBe(title);
             storedEntity.Description.ShouldBe(description);

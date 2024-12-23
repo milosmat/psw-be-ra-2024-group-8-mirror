@@ -1,5 +1,5 @@
-INSERT INTO
-  tours.TourCheckpoints (Latitude, Longitude, Name, Description, Image)
+/*INSERT INTO
+  tours."TourCheckpoints" (Latitude, Longitude, Name, Description, Image)
 VALUES
   (
     45.2671,
@@ -21,5 +21,6 @@ VALUES
     'Beograd',
     'Glavni grad Srbije.',
     'url_to_image_3'
-  );
+  );*/
 
+  

@@ -15,3 +15,7 @@ INSERT INTO tours."Tours"(
 INSERT INTO tours."Tours"(
 	"Id", "Name", "Description", "Weight", "Tags", "Status", "Price", "LengthInKm", "PublishedDate", "ArchivedDate", "TravelTimes", "DailyAgendas", "AuthorId")
 	VALUES (-3, 'Name3', 'Description3', 'Weight3', '{{"Tags3"}}', 0, 300, 3000, '2024-10-04 15:23:44.223+02', '2024-10-29 15:23:44.223+02', '[{{}}]', '[{{}}]', -13);
+
+	INSERT INTO tours."Tours"(
+	"Id", "Name", "Description", "Weight", "Tags", "Status", "Price", "LengthInKm", "PublishedDate", "ArchivedDate", "TravelTimes", "DailyAgendas", "AuthorId")
+	VALUES (100, 'NameUpdate', 'DescriptionUpdate', 'WeightUpdate', '{{"TagsUpdate"}}', 0, 1000, 30100, '2024-10-04 15:23:44.223+02', '2024-10-29 15:23:44.223+02', '[{{}}]', '[{{}}]', -13);

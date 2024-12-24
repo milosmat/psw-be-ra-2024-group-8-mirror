@@ -6,7 +6,6 @@ using Explorer.Blog.API.Public;
 using Explorer.Blog.Core.Domain.Blogs;
 using Explorer.Blog.Core.UseCases;
 using Explorer.Blog.Infrastructure.Database;
-using Explorer.Stakeholders.Core.Domain;
 using Explorer.Tours.API.Public.Administration;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +16,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Explorer.Blog.Tests.Integration.Administration
 {
@@ -34,36 +32,19 @@ namespace Explorer.Blog.Tests.Integration.Administration
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
-            
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-            var blogController = CreateBlogController(scope);
-            var newEntity = new BlogsDto
-            {
-                UserId = userId,
-                Title = "Naslov",
-                Description = "Opis",
-                CreatedDate = DateTime.UtcNow,
-                Images = (new[] { "image.png" }).ToList(),
-                Status = API.Dtos.BlogsStatus.Published,
-                Votes = new List<VoteDto>() // Initialize as empty
-            };
-
-
-            // Act
-            var blogResult = ((ObjectResult)blogController.Create(newEntity).Result)?.Value as BlogsDto;
-
-
+           
             var newComment = new CommentDto
             {
                 UserId = userId,
                 Text = content,
-                BlogId = blogResult.Id,
+                BlogId = blogId,
                 CreationTime = DateTime.UtcNow,
                 LastModifiedTime = DateTime.UtcNow
             };
 
             // Act
-            var result = ((ObjectResult)controller.Create(blogResult.Id, newComment).Result)?.Value as CommentDto;
+            var result = ((ObjectResult)controller.Create(blogId, newComment).Result)?.Value as CommentDto;
             var createdCommentId = result?.Id ?? 0; 
             // Assert - Response
             result.ShouldNotBeNull();
@@ -111,33 +92,17 @@ namespace Explorer.Blog.Tests.Integration.Administration
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-            var blogController = CreateBlogController(scope);
-            var newEntity = new BlogsDto
-            {
-                UserId = userId,
-                Title = "Naslov",
-                Description = "Opis",
-                CreatedDate = DateTime.UtcNow,
-                Images = (new[] { "image.png" }).ToList(),
-                Status = API.Dtos.BlogsStatus.Published,
-                Votes = new List<VoteDto>() // Initialize as empty
-            };
-
-
-            // Act
-            var blogResult = ((ObjectResult)blogController.Create(newEntity).Result)?.Value as BlogsDto;
-
 
             var newComment = new CommentDto
             {
                 UserId = userId,
                 Text = "Initial comment content",
-                BlogId = blogResult.Id,
+                BlogId = blogId,
                 CreationTime = DateTime.UtcNow,
                 LastModifiedTime = DateTime.UtcNow,
             };
 
-            var createdComment = ((ObjectResult)controller.Create(blogResult.Id, newComment).Result)?.Value as CommentDto;
+            var createdComment = ((ObjectResult)controller.Create(blogId, newComment).Result)?.Value as CommentDto;
             var createdCommentId = createdComment?.Id ?? -1;
 
 
@@ -145,14 +110,14 @@ namespace Explorer.Blog.Tests.Integration.Administration
             {
                 Id = createdCommentId,
                 Text = content,
-                BlogId = blogResult.Id,
+                BlogId = blogId,
                 UserId = userId,
                 CreationTime = createdComment.CreationTime,
                 LastModifiedTime = DateTime.UtcNow
             };
 
             // Act
-            var result = ((ObjectResult)controller.Update(blogResult.Id, createdCommentId, updatedComment).Result)?.Value as CommentDto;
+            var result = ((ObjectResult)controller.Update(blogId, createdCommentId, updatedComment).Result)?.Value as CommentDto;
 
             // Assert - Response
             result.ShouldNotBeNull();
@@ -196,47 +161,31 @@ namespace Explorer.Blog.Tests.Integration.Administration
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-            var blogController = CreateBlogController(scope);
-            var newEntity = new BlogsDto
-            {
-                UserId = userId,
-                Title = "Naslov",
-                Description = "Opis",
-                CreatedDate = DateTime.UtcNow,
-                Images = (new[] { "image.png" }).ToList(),
-                Status = API.Dtos.BlogsStatus.Published,
-                Votes = new List<VoteDto>() // Initialize as empty
-            };
-
-
-            // Act
-            var blogResult = ((ObjectResult)blogController.Create(newEntity).Result)?.Value as BlogsDto;
-
 
             var newComment = new CommentDto
             {
                 UserId = userId,
-                BlogId = blogResult.Id,
+                BlogId = blogId,
                 Text =  "Initial text",
                 CreationTime = DateTime.UtcNow,
                 LastModifiedTime = DateTime.UtcNow,
             };
 
-            var createdComment = ((ObjectResult)controller.Create(blogResult.Id, newComment).Result)?.Value as CommentDto;
+            var createdComment = ((ObjectResult)controller.Create(blogId, newComment).Result)?.Value as CommentDto;
             var createdCommentId = createdComment?.Id ?? -1;
 
             var updatedComment = new CommentDto
             {
                 Id = createdCommentId,
                 UserId = userId,
-                BlogId = blogResult.Id,
+                BlogId = blogId,
                 CreationTime = createdComment.CreationTime,
                 LastModifiedTime = DateTime.UtcNow,
                 Text = content
             };
 
             //Act
-            var result = (ObjectResult)controller.Update(blogResult.Id, updatedComment.Id, updatedComment).Result;
+            var result = (ObjectResult)controller.Update(1, updatedComment.Id, updatedComment).Result;
              
             //Assert
             result.ShouldNotBeNull();
@@ -244,47 +193,47 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
         }
 
-         [Theory]
-         [InlineData("Create", "Description", new[] { "image.png" }, BlogsStatus.Published, true)] // Expected to exist and be deleted
-         public void Deletes(string title, string description, string[] images, BlogsStatus status, bool shouldExist)
-         {
-             // Arrange
-             using var scope = Factory.Services.CreateScope();
-             var controller = CreateController(scope);
-             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
+        [Theory]
+        [InlineData(true)]
+        public void Deletes( bool shouldExist)
+        {
+            // Arrange
+            using var scope = Factory.Services.CreateScope();
+            var controller = CreateController(scope);
+            var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
-             var newBlog = new BlogsDto
-             {
-                 UserId = 1,
-                 Title = "Initial title",
-                 Description = "Initial description",
-                 CreatedDate = DateTime.UtcNow,
-                 Images = images.ToList(),
-                 Status = status,
-                 Votes = new List<VoteDto>() // Initialize as empty
-             };
-             var createdBlog = ((ObjectResult)controller.Create(newBlog).Result)?.Value as BlogsDto;
-             var createdBlogId = createdBlog?.Id ?? -1;
+            var comment = new CommentDto
+            {
+                UserId = 1,
+                Text = "Test comment for delete.",
+                CreationTime = DateTime.UtcNow,
+                LastModifiedTime = DateTime.UtcNow,
+                BlogId = -1
+            };
+            var createdComment = ((ObjectResult)controller.Create(-1, comment).Result)?.Value as CommentDto;
+            var createdCommentId = createdComment?.Id ?? -1;
 
-             // Pre-check: Verify the initial existence state based on shouldExist
-             var preDeleteEntity = dbContext.Blogs.FirstOrDefault(b => b.Id == createdBlogId);
-             if (shouldExist)
-             {
-                 preDeleteEntity.ShouldNotBeNull();
-             }
-             else
-             {
-                 preDeleteEntity.ShouldBeNull();
-             }
+            var preDeleteEntity = dbContext.Comments.FirstOrDefault(c => c.Id == createdCommentId);
+            if (shouldExist)
+            {
+                preDeleteEntity.ShouldNotBeNull();
+            }
+            else
+            {
+                preDeleteEntity.ShouldBeNull();
+            }
 
-             // Act: Call Delete method
-             controller.Delete(createdBlogId);
 
-             // Assert - Check if entity was deleted from the database
-             var postDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == createdBlogId);
-             postDeleteEntity.ShouldBeNull(); // Should be null if successfully deleted or if it didn't exist initially
-         }
 
+            controller.Delete(-1, createdCommentId); 
+
+
+            // Assert - Check if entity was deleted from the database
+            var postDeleteEntity = dbContext.Comments.FirstOrDefault(i => i.Id == createdCommentId);
+            postDeleteEntity.ShouldBeNull(); // Should be null if successfully deleted or if it didn't exist initially
+
+
+        }
 
         [Theory]
         [InlineData(-1000L, 404)] // Invalid comment ID
@@ -305,13 +254,6 @@ namespace Explorer.Blog.Tests.Integration.Administration
         private static Explorer.API.Controllers.Author.CommentController CreateController(IServiceScope scope)
         {
             return new Explorer.API.Controllers.Author.CommentController(scope.ServiceProvider.GetRequiredService<ICommentService>())
-            {
-                ControllerContext = BuildContext("-1")
-            };
-        }
-        private static Explorer.API.Controllers.Author.BlogsController CreateBlogController(IServiceScope scope)
-        {
-            return new Explorer.API.Controllers.Author.BlogsController(scope.ServiceProvider.GetRequiredService<IBlogsService>())
             {
                 ControllerContext = BuildContext("-1")
             };

@@ -1,4 +1,4 @@
-﻿INSERT INTO blog."Blogs"(
+INSERT INTO blog."Blogs"(
     "Id", "UserId", "Title", "Description", "CreatedDate", "Images", "Status", "Votes", "BlogStatus"
 ) 
 VALUES 

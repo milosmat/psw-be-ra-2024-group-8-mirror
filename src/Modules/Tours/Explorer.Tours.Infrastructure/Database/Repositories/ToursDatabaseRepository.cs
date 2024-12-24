@@ -35,9 +35,18 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
         }
         public new Tour Update(Tour aggregateRoot)
         {
-            DbContext.Entry(aggregateRoot).State = EntityState.Modified;
-            DbContext.SaveChanges();
-            return aggregateRoot;
+           if(aggregateRoot.Id <= 0)
+            {
+                throw new KeyNotFoundException("The provided Tour ID is invalid.");
+            }
+            else
+            {
+                DbContext.Entry(aggregateRoot).State = EntityState.Modified;
+                DbContext.SaveChanges();
+                return aggregateRoot;
+            }
+                
+            
         }
 
         

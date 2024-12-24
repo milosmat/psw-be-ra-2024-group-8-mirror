@@ -12,6 +12,7 @@ using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
 using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.Core.Domain.RepositoryInterfaces;
 using Explorer.Tours.API.Dtos;
+using AutoMapper;
 
 namespace Explorer.Payments.Core.UseCases.Tourist
 {
@@ -23,13 +24,15 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         private readonly IPaymentRecordRepository _paymentRepository;
         private readonly IBundleRepository _bundleRepository;
         private readonly IBundleService _bundleService;
+        public IMapper _mapper { get; set; }
         public ShoppingCartService(
                ICardRepository cardRepository,
                ITourPurchaseTokenService tokenService,
                IPaymentRecordService paymentRecordService,
                IPaymentRecordRepository paymentRepository,
                IBundleRepository bundleRepository,
-               IBundleService bundleService
+               IBundleService bundleService,
+               IMapper mapper
             )
         {
             _cardRepository = cardRepository ?? throw new ArgumentNullException(nameof(cardRepository));
@@ -38,10 +41,11 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
             _bundleRepository = bundleRepository;
             _bundleService = bundleService;
+            _mapper = mapper;
         }
 
 
-        public void AddTourToCart(long touristId, ShoppingCartItemDTO shoppingCartItemDto)
+        public List<ShoppingCartItemDto> AddTourToCart(long touristId, ShoppingCartItemDto shoppingCartItemDto)
         {
             // Pretraži korpu za turistu
             var shoppingCart = _cardRepository.GetByTouristId(touristId);
@@ -61,6 +65,9 @@ namespace Explorer.Payments.Core.UseCases.Tourist
 
             // Spremi ažuriranu korpu u bazu
             _cardRepository.Update(shoppingCart);
+
+            return _mapper.Map<List<ShoppingCartItemDto>>(shoppingCart.ShopingItems);
+            
         }
 
         public void AddBoundleToCart(long touristId, ShoppingBundleDto shoppingBoundleDto)
@@ -85,23 +92,31 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             _cardRepository.Update(shoppingCart);
         }
 
-
-
-        // Uklanjanje ture iz korpe
-        public void RemoveTourFromCart(long touristId, long tourId)
+        public bool RemoveTourFromCart(long touristId, long tourId)
         {
-            var shoppingCart = _cardRepository.GetByTouristId(touristId);
-            if (shoppingCart != null)
+            try
             {
-                var itemToRemove = shoppingCart.ShopingItems.FirstOrDefault(item => item.TourId == tourId);
-                if (itemToRemove != null)
+                var shoppingCart = _cardRepository.GetByTouristId(touristId);
+                if (shoppingCart == null)
                 {
-                    shoppingCart.RemoveItem(itemToRemove);
-
-                    // Spremanje ažurirane korpe u bazu
-                    _cardRepository.Update(shoppingCart);
+                    return false;
                 }
+
+                var itemToRemove = shoppingCart.ShopingItems.FirstOrDefault(item => item.TourId == tourId);
+                if (itemToRemove == null)
+                {
+                    return false;
+                }
+                shoppingCart.RemoveItem(itemToRemove);
+
+                _cardRepository.Update(shoppingCart);
+                return true;
             }
+            catch (InvalidOperationException ex)
+            {
+                return false;
+            }
+            
         }
 
         public void RemoveBundleFromCart(long touristId, long bundleId)
@@ -133,7 +148,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             var shoppingCartDto = new ShoppingCartDTO
             {
                 TouristId = shoppingCart.TouristId,
-                ShopingItems = shoppingCart.ShopingItems.Select(item => new ShoppingCartDTO.ShoppingCartItemDTO
+                ShopingItems = shoppingCart.ShopingItems.Select(item => new ShoppingCartItemDto
                 {
                     TourId = item.TourId,
                     TourName = item.Name,
@@ -272,7 +287,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             return new ShoppingCartDTO
             {
                 TouristId = shoppingCart.TouristId,
-                ShopingItems = shoppingCart.ShopingItems.Select(item => new ShoppingCartDTO.ShoppingCartItemDTO
+                ShopingItems = shoppingCart.ShopingItems.Select(item => new ShoppingCartItemDto
                 {
                     TourId = item.TourId,
                     TourName = item.Name,

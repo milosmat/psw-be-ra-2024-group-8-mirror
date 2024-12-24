@@ -55,7 +55,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             return _mapper.Map<CouponDTO>(_couponRepository.Get(id));
         }
 
-        public List<ShoppingCartItemDTO> ApplyCouponOnCartItems(string code, List<ShoppingCartItemDTO> cartItems)
+        public List<ShoppingCartItemDto> ApplyCouponOnCartItems(string code, List<ShoppingCartItemDto> cartItems)
         {
             //pronadjemo kupon na osnovu koda
             var coupons = _mapper.Map<List<CouponDTO>>(_couponRepository.GetCouponsByCode(code));
@@ -91,7 +91,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             return cartItems;
         }
 
-        public void ApplyDiscount(ShoppingCartItemDTO cartItem, int discountPercentage)
+        public void ApplyDiscount(ShoppingCartItemDto cartItem, int discountPercentage)
         {
 
             if (discountPercentage < 0 || discountPercentage > 100)

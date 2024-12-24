@@ -33,27 +33,27 @@ namespace Explorer.Payments.Core.Domain
         public void AddItem(ShoppingCartItem item)
         {
             ShopingItems.Add(item);
-            UpdateTotalPrice();
+            CalculateTotalPrice();
         }
 
         public void RemoveItem(ShoppingCartItem item)
         {
             if (ShopingItems.Remove(item))
             {
-                UpdateTotalPrice();
+                CalculateTotalPrice();
             }
         }
         public void AddBundle(ShoppingCartBundle item)
         {
             ShopingBundles.Add(item);
-            UpdateTotalPrice();
+            CalculateTotalPrice();
         }
 
         public void RemoveBundle(ShoppingCartBundle item)
         {
             if (ShopingBundles.Remove(item))
             {
-                UpdateTotalPrice();
+                CalculateTotalPrice();
             }
         }
 
@@ -69,9 +69,10 @@ namespace Explorer.Payments.Core.Domain
 
         }
 
-        private void UpdateTotalPrice()
+        public decimal CalculateTotalPrice()
         {
-            TotalPrice = ShopingItems.Sum(item => item.TotalPrice) + ShopingBundles.Sum(bundle => bundle.Price);
+            TotalPrice = ShopingItems.Sum(item => item.Price) + ShopingBundles.Sum(bundle => bundle.Price);
+            return TotalPrice;
         }
 
     }

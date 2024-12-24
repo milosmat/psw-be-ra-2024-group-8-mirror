@@ -12,8 +12,8 @@ namespace Explorer.Payments.API.Public.Tourist
 {
     public interface IShoppingCartService
     {
-        void AddTourToCart(long touristId, ShoppingCartItemDTO shoppingCartItemDto);
-        void RemoveTourFromCart(long touristId, long tourId);
+        List<ShoppingCartItemDto> AddTourToCart(long touristId, ShoppingCartItemDto shoppingCartItemDto);
+        bool RemoveTourFromCart(long touristId, long tourId);
         ShoppingCartDTO GetShoppingCart(long touristId);
         Result Checkout(long touristId);
         void AddBoundleToCart(long touristId, ShoppingBundleDto shoppingBoundleDto);

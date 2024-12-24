@@ -1,4 +1,6 @@
-﻿using Explorer.Stakeholders.API.Dtos;
+﻿using Explorer.Blog.API.Dtos;
+using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +12,12 @@ namespace Explorer.API.Controllers.Tourist;
 public class NotificationController : BaseApiController
 {
     private readonly INotificationService _notificationService;
+    private readonly IMessageService _messageService;
 
-    public NotificationController(INotificationService notificationService)
+    public NotificationController(INotificationService notificationService, IMessageService messageService)
     {
         _notificationService = notificationService;
+        _messageService = messageService;
     }
 
 
@@ -48,7 +52,6 @@ public class NotificationController : BaseApiController
 
         return BadRequest(result.Errors);
     }
-
 
 
     [HttpGet("{userId}")]

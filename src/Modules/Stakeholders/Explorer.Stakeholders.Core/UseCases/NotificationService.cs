@@ -30,19 +30,27 @@ namespace Explorer.Stakeholders.Core.UseCases
 
         public async Task<Result> SendMessageAndNotificationToFollowerAsync(int senderId, int followerId, string content, string? resourceUrl, ResourceType? resourceType)
         {
+            // Provera dužine sadržaja poruke
             if (content.Length > 280)
             {
                 return Result.Fail("Message content exceeds 280 characters.");
             }
 
-            var message = new Message(senderId, content, resourceUrl, (Domain.ResourceType?)resourceType);
+            // Kreiranje poruke
+            var message = new Message(senderId, content, resourceUrl, (Domain.ResourceType?)resourceType, followerId);
             _messageRepository.Create(message); // Spremamo poruku u bazu
 
-            var notification = new Notification(senderId, followerId, message.Id);
-            _notificationRepository.Create(notification); // Spremamo notifikaciju u bazu
+            // Ako je resourceType "Club", preskačemo kreiranje notifikacije
+            if (resourceType != ResourceType.Club)
+            {
+                // Kreiranje notifikacije samo ako resourceType nije "Club"
+                var notification = new Notification(senderId, followerId, message.Id);
+                _notificationRepository.Create(notification); // Spremamo notifikaciju u bazu
+            }
 
             return Result.Ok();
         }
+
 
 
         public async Task<Result> MarkNotificationAsReadAsync(int notificationId)

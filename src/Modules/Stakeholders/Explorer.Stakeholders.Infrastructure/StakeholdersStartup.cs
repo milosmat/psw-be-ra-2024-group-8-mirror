@@ -45,6 +45,8 @@ public static class StakeholdersStartup
         services.AddScoped<ITourProblemService, TourProblemService>();
         services.AddScoped<IFollowersService, FollowersService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IMessageService, MessageService>();
     }
 
     private static void SetupInfrastructure(IServiceCollection services)
@@ -62,6 +64,7 @@ public static class StakeholdersStartup
         services.AddScoped(typeof(ICrudRepository<AppRating>), typeof(CrudDatabaseRepository<AppRating, StakeholdersContext>));
 
         services.AddScoped(typeof(ICrudRepository<Followers>), typeof(CrudDatabaseRepository<Followers, StakeholdersContext>));
+        services.AddScoped(typeof(ICrudRepository<Message>), typeof(CrudDatabaseRepository<Message, StakeholdersContext>));
 
         services.AddScoped(typeof(ICrudRepository<Notification>), typeof(CrudDatabaseRepository<Notification, StakeholdersContext>));
 

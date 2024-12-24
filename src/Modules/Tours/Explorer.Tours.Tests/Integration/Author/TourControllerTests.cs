@@ -75,7 +75,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var updatedTour = new TourDTO
             {
-                Id = 1, // Pretpostavljamo da entitet sa ID 1 postoji
+                Id = -1, // Pretpostavljamo da entitet sa ID 1 postoji
                 Name = "Izmenjena Tura",
                 Description = "Izmenjen opis nove ture.",
                 Weight = "6kg",
@@ -104,7 +104,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var controller = CreateController(scope);
             var invalidTour = new TourDTO
             {
-                Id = -1000,
+                Id = 1000,
                 Name = "Test"
             };
 

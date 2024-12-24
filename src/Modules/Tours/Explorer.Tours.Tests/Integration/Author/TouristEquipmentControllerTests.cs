@@ -35,8 +35,9 @@ namespace Explorer.Tours.Tests.Integration.Author
 
             var newTouristEquipment = new TouristEquipmentDTO
             {
-                TouristId = 5,
-                EquipmentId = 10
+                Id = 5,
+                TouristId = 1,
+                EquipmentId = 1
             };
 
             // Act
@@ -129,7 +130,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
 
             // Act
-            var result = controller.Delete(1);  // Assuming Id = 1 exists
+            var result = controller.Delete(5);  // Assuming Id = 1 exists
 
             // Assert
             var okResult = result as OkResult;
@@ -137,7 +138,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             okResult.StatusCode.ShouldBe(200);
 
             var storedTouristEquipment = dbContext.TouristEquipments
-                .FirstOrDefault(te => te.Id == 1);
+                .FirstOrDefault(te => te.Id == 5);
             storedTouristEquipment.ShouldBeNull();
         }
 

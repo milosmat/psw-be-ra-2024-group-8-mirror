@@ -1,6 +1,7 @@
 ﻿using Explorer.API.Controllers.Author;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
+using Explorer.Tours.Core.Domain;
 using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,12 +30,13 @@ namespace Explorer.Tours.Tests.Integration.Author
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var newCheckpoint = new TourCheckpointDto
             {
-                Id = 0, // This ID will be ignored and auto-generated in the database
+
                 Latitude = 45.2671,
                 Longitude = 19.8335,
                 CheckpointName = "Novi Sad",
                 CheckpointDescription = "Glavni grad Vojvodine.",
-                Image = "url_to_image"
+                Image = "url_to_image",
+                TourId = -1
             };
 
             // Act
@@ -81,12 +83,13 @@ namespace Explorer.Tours.Tests.Integration.Author
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var updatedCheckpoint = new TourCheckpointDto
             {
-                Id = 1,
+                Id = -1,
                 Latitude = 45.2671,
                 Longitude = 19.8335,
                 CheckpointName = "Izmenjeni Novi Sad",
                 CheckpointDescription = "Izmenjen opis glavnog grada Vojvodine.",
-                Image = "url_to_updated_image"
+                Image = "url_to_updated_image",
+                TourId = -1
             };
 
             // Act
@@ -134,11 +137,11 @@ namespace Explorer.Tours.Tests.Integration.Author
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
 
-            var result = (OkResult)controller.Delete(1);
+            var result = (OkResult)controller.Delete(-3);
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == 1);
+            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == -3);
             storedCheckpoint.ShouldBeNull();
         }
 

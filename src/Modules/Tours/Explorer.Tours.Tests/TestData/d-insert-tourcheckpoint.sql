@@ -1,26 +1,11 @@
-/*INSERT INTO
-  tours."TourCheckpoints" (Latitude, Longitude, Name, Description, Image)
-VALUES
-  (
-    45.2671,
-    19.8335,
-    'Novi Sad',
-    'Glavni grad Vojvodine.',
-    'url_to_image_1'
-  ),
-  (
-    45.0400,
-    19.8510,
-    'Fruška Gora',
-    'Prelepa planina i nacionalni park.',
-    'url_to_image_2'
-  ),
-  (
-    44.8176,
-    20.4633,
-    'Beograd',
-    'Glavni grad Srbije.',
-    'url_to_image_3'
-  );*/
+INSERT INTO tours."TourCheckpoint"(
+	"Id", "Latitude", "Longitude", "CheckpointName", "CheckpointDescription", "Image", "TourId")
+	VALUES (-1, 45.2671, 45.2671, 'Novi Sad', 'Glavni grad Vojvodine.','url_to_image_1', -1);
 
-  
+INSERT INTO tours."TourCheckpoint"(
+	"Id", "Latitude", "Longitude", "CheckpointName", "CheckpointDescription", "Image", "TourId")
+	VALUES (-2, 17.2671, 55.2671, 'Fruška Gora', 'Prelijepa planina u Srbiji.','url_to_image_2', -1);
+
+INSERT INTO tours."TourCheckpoint"(
+	"Id", "Latitude", "Longitude", "CheckpointName", "CheckpointDescription", "Image", "TourId")
+	VALUES (-3, 67.2671, 25.2671, 'Neveisnje', 'Najljepsi grad','url_to_image_3', -3);

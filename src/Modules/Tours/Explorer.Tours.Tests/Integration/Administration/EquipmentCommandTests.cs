@@ -22,6 +22,7 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
         var newEntity = new EquipmentDto
         {
+            Id = 5,
             Name = "Obuća za grub teren",
             Description = "Patike sa tvrdim đonom i kramponima koje daju stabilnost na neravnom i rastresitom terenu."
         };

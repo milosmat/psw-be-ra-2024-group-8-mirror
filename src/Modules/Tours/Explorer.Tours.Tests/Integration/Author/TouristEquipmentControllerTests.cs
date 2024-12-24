@@ -74,7 +74,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.StatusCode.ShouldBe(400);
         }
 
-        /*[Fact]
+      /*  [Fact]
         public void Updates_TouristEquipment()
         {
             // Arrange
@@ -84,12 +84,13 @@ namespace Explorer.Tours.Tests.Integration.Author
 
             var updatedTouristEquipment = new TouristEquipmentDTO
             {
+                Id = -1,
                 TouristId = 1,
                 EquipmentId = 3 // Changing EquipmentId
             };
 
             // Act
-            var result = ((ObjectResult)controller.Update(updatedTouristEquipment).Result)?.Value as TouristEquipmentDTO;
+            var result = ((ObjectResult)controller.Update(updatedObject).Result)?.Value as ObjectDTO;
 
             // Assert
             result.ShouldNotBeNull();

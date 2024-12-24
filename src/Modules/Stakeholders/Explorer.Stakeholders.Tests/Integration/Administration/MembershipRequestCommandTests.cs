@@ -233,24 +233,41 @@ namespace Explorer.Stakeholders.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(-1, -21, true)] // Test sa turistom koji je pozvan
+        [InlineData(-3, -21, true)] // Test sa turistom koji je pozvan
         [InlineData(-2, -21, false)]
         public void IsTouristInvited_ReturnsExpectedResult(int clubId, int touristId, bool expectedResult)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
-            var dbContext = scope.ServiceProvider.GetRequiredService<StakeholdersContext>(); // Koristite svoj kontekst
-   
+            var dbContext = scope.ServiceProvider.GetRequiredService<StakeholdersContext>();
+
+            // Ako očekujemo da je turist pozvan, kreiramo zahtev za članstvo
+            if (expectedResult)
+            {
+                var newMembershipRequest = new MembershipRequestDto
+                {
+                    SenderId = touristId, // ID turiste
+                    OwnerId = -13,        // Neka vrednost vlasnika
+                    Status = MemRequestStatus.Invited,
+                    ClubId = clubId
+                };
+
+                var createResult = (ObjectResult)controller.Create(clubId, newMembershipRequest).Result;
+                createResult.ShouldNotBeNull();
+                createResult.StatusCode.ShouldBe(201); // Proveravamo da je zahtev uspešno kreiran
+            }
+
             // Act - Pozivamo metodu IsTouristInvited
-            var result = (ObjectResult)controller.IsTouristInvited(clubId, touristId).Result;
+            var resultInvited = (ObjectResult)controller.IsTouristInvited(clubId, touristId).Result;
 
             // Assert - Proveravamo da li rezultat odgovara očekivanom
-            result.ShouldNotBeNull();
-            result.StatusCode.ShouldBe(200); // OK status code
-            var isInvited = (bool)result.Value;
+            resultInvited.ShouldNotBeNull();
+            resultInvited.StatusCode.ShouldBe(200); // OK status code
+            var isInvited = (bool)resultInvited.Value;
             isInvited.ShouldBe(expectedResult); // Provera da li je turist pozvan
         }
+
 
 
         [Theory]

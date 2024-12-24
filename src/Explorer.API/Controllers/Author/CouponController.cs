@@ -53,7 +53,7 @@ namespace Explorer.API.Controllers.Author
                 }
                 else
                 {
-                    return BadRequest("The blog could not be created due to invalid data.");
+                    return BadRequest("The coupon could not be created due to invalid data.");
                 }
             }
             catch (Exception ex)

@@ -1,8 +1,9 @@
-﻿using Explorer.API.Controllers.Author;
+﻿using Explorer.API.Controllers.Tourist;
 using Explorer.Blog.API.Dtos;
 using Explorer.Blog.API.Public;
 using Explorer.BuildingBlocks.Core.UseCases;
-using Explorer.Tours.API.Dtos;
+using Explorer.Stakeholders.API.Dtos;
+using Explorer.Stakeholders.API.Public;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -12,13 +13,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Explorer.Blog.Tests.Integration
+namespace Explorer.Stakeholders.Tests.Integration.Administration
 {
-
-    [Collection("Sequential")]
-    public class BlogsQueryTests : BaseBlogIntegrationTest
+    public class ClubQueryTests : BaseStakeholdersIntegrationTest
     {
-        public BlogsQueryTests(BlogTestFactory factory) : base(factory) { }
+        public ClubQueryTests(StakeholdersTestFactory factory) : base(factory) { }
 
         [Theory]
         [InlineData(0, 0, 3, 3)]
@@ -30,7 +29,7 @@ namespace Explorer.Blog.Tests.Integration
             var controller = CreateController(scope);
 
             // Act
-            var result = ((ObjectResult)controller.GetAll(pageNumber, pageSize).Result)?.Value as PagedResult<BlogsDto>;
+            var result = ((ObjectResult)controller.GetAll(pageNumber, pageSize).Result)?.Value as PagedResult<ClubDto>;
 
             // Assert
             result.ShouldNotBeNull();
@@ -38,14 +37,12 @@ namespace Explorer.Blog.Tests.Integration
             result.TotalCount.ShouldBe(expectedTotalCount);
         }
 
-        private static BlogsController CreateController(IServiceScope scope)
+        private static ClubController CreateController(IServiceScope scope)
         {
-            return new BlogsController(scope.ServiceProvider.GetRequiredService<IBlogsService>())
+            return new ClubController(scope.ServiceProvider.GetRequiredService<IClubService>())
             {
                 ControllerContext = BuildContext("-1")
             };
         }
-      
-
     }
 }

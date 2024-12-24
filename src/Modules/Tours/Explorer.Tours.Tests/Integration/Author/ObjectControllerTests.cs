@@ -1,11 +1,8 @@
-﻿using Azure.Core.GeoJson;
 using Explorer.API.Controllers.Author;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
-using Explorer.Tours.Core.Domain;
 using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using System;
@@ -13,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Object = Explorer.Tours.Core.Domain.Object;
 
 namespace Explorer.Tours.Tests.Integration.Author
 {
@@ -33,7 +29,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var newObject = new ObjectDTO
             {
-                Id = 0,
+                Id = 1,
                 Name = "new object",
                 Description = "shiny new",
                 Image = "url_to_image",
@@ -51,7 +47,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.Name.ShouldBe(newObject.Name);
 
             // Assert - Database
-            var storedCheckpoint = dbContext.Objects.FirstOrDefault(i => i.Id == result.Id);
+            var storedCheckpoint = dbContext.Objects.FirstOrDefault(i => i.Name == newObject.Name);
             storedCheckpoint.ShouldNotBeNull();
             storedCheckpoint.Id.ShouldBe(result.Id);
         }
@@ -82,36 +78,17 @@ namespace Explorer.Tours.Tests.Integration.Author
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
-            
-            
-            var newObject = new ObjectDTO
-            {
-               
-                Name = "UPDATED object",
-                Description = "shiny",
-                Image = "url_to_image",
-                Category = "Other",
-                Latitude = 42,
-                Longitude = 19
-            };
-            var createResult = ((ObjectResult)controller.Create(newObject).Result)?.Value as ObjectDTO;
             var updatedObject = new ObjectDTO
             {
-                Id = createResult.Id,
+                Id = -1,
                 Name = "UPDATED object",
                 Description = "shiny UPDATED",
                 Image = "url_to_image",
                 Category = "Other",
-                Latitude = 42,
-                Longitude = 19
+                Latitude = 42.5889,
+                Longitude = 19.5789
             };
-            var existingEntity = dbContext.ChangeTracker
-            .Entries<Object>()
-            .FirstOrDefault(e => e.Entity.Id == updatedObject.Id);
-            if (existingEntity != null)
-            {
-                dbContext.Entry(existingEntity.Entity).State = EntityState.Detached;
-            }
+
             var result = ((ObjectResult)controller.Update(updatedObject).Result)?.Value as ObjectDTO;
 
             result.ShouldNotBeNull();

@@ -19,7 +19,20 @@ namespace Explorer.Payments.Core.Domain
 
         public Coupon(int id,string code, int discountPercentage, DateTime? expiryDate, long? tourId, long authorId)
         {
+            if (discountPercentage <= 0) throw new ArgumentException("Discount Percentage must be positive.", nameof(discountPercentage));
+
             Id = id;
+            Code = code;
+            DiscountPercentage = discountPercentage;
+            ExpiryDate = expiryDate;
+            TourId = tourId;
+            AuthorId = authorId;
+        }
+
+        public Coupon(string code, int discountPercentage, DateTime? expiryDate, long? tourId, long authorId)
+        {
+            if (discountPercentage <= 0) throw new ArgumentException("Discount Percentage must be positive.", nameof(discountPercentage));
+
             Code = code;
             DiscountPercentage = discountPercentage;
             ExpiryDate = expiryDate;

@@ -1,13 +1,9 @@
-﻿using Explorer.API.Controllers.Author;
-using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.API.Controllers.Author;
 using Explorer.Tours.API.Dtos;
-using Explorer.Tours.API.Public.Administration;
 using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.Core.Domain;
-using Explorer.Tours.Core.Domain.ValueObjects;
 using Explorer.Tours.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using System;
@@ -15,14 +11,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Explorer.Tours.Tests.Integration.Author
 {
     [Collection("Sequential")]
     public class TourCheckpointControllerTests : BaseToursIntegrationTest
     {
-        
         public TourCheckpointControllerTests(ToursTestFactory factory) : base(factory)
         {
         }
@@ -34,35 +28,15 @@ namespace Explorer.Tours.Tests.Integration.Author
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
-            var tourController = CreateTourController(scope);
-            var tourDbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
-            var newTour = new TourDTO
-            {
-                Name = "Nova Tura",
-                Description = "Opis nove ture.",
-                Weight = "medium",
-                Tags = new[] { "avantura", "priroda" },
-                Price = 100,
-                Status = 1,
-                LengthInKm = 15,
-                PublishedDate = DateTime.UtcNow,
-                ArchivedDate = DateTime.UtcNow,
-                AuthorId = 1
-
-            };
-
-            // Act
-            var createResult = ((ObjectResult)tourController.Create(newTour).Result)?.Value as TourDTO;
-
             var newCheckpoint = new TourCheckpointDto
             {
-               
+
                 Latitude = 45.2671,
                 Longitude = 19.8335,
                 CheckpointName = "Novi Sad",
                 CheckpointDescription = "Glavni grad Vojvodine.",
                 Image = "url_to_image",
-                TourId = createResult.Id
+                TourId = -1
             };
 
             // Act
@@ -107,70 +81,29 @@ namespace Explorer.Tours.Tests.Integration.Author
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
-            var tourController = CreateTourController(scope);
-            var tourDbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
-            var newTour = new TourDTO
-            {
-                Name = "Nova Tura",
-                Description = "Opis nove ture.",
-                Weight = "medium",
-                Tags = new[] { "avantura", "priroda" },
-                Price = 100,
-                Status = 1,
-                LengthInKm = 15,
-                PublishedDate = DateTime.UtcNow,
-                ArchivedDate = DateTime.UtcNow,
-                AuthorId = 1
-
-            };
-
-            // Act
-            var createResult = ((ObjectResult)tourController.Create(newTour).Result)?.Value as TourDTO;
-
-
-            var newCheckpoint = new TourCheckpointDto
-            {
-
-                Latitude = 45.2671,
-                Longitude = 19.8335,
-                CheckpointName = "Novi Sad",
-                CheckpointDescription = "Glavni grad Vojvodine.",
-                Image = "url_to_image",
-                TourId = 1
-            };
-
-            // Act
-            var result = ((ObjectResult)controller.Create(newCheckpoint).Result)?.Value as TourCheckpointDto;
-
             var updatedCheckpoint = new TourCheckpointDto
             {
-                Id = result.Id,
+                Id = -1,
                 Latitude = 45.2671,
                 Longitude = 19.8335,
-                CheckpointName = "Novi Sad",
-                CheckpointDescription = "Glavni grad Vojvodine.",
-                Image = "url_to_image",
-                TourId = 1
+                CheckpointName = "Izmenjeni Novi Sad",
+                CheckpointDescription = "Izmenjen opis glavnog grada Vojvodine.",
+                Image = "url_to_updated_image",
+                TourId = -1
             };
-            var existingEntity = dbContext.ChangeTracker
-            .Entries<TourCheckpoint>()
-            .FirstOrDefault(e => e.Entity.Id == updatedCheckpoint.Id);
-            if (existingEntity != null)
-            {
-                dbContext.Entry(existingEntity.Entity).State = EntityState.Detached;
-            }
+
             // Act
-            var updateResult = ((ObjectResult)controller.Update(updatedCheckpoint).Result)?.Value as TourCheckpointDto;
+            var result = ((ObjectResult)controller.Update(updatedCheckpoint).Result)?.Value as TourCheckpointDto;
 
             // Assert
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(updateResult.Id);
-            result.CheckpointName.ShouldBe(updateResult.CheckpointName);
-            result.CheckpointDescription.ShouldBe(updateResult.CheckpointDescription);
+            result.Id.ShouldBe(updatedCheckpoint.Id);
+            result.CheckpointName.ShouldBe(updatedCheckpoint.CheckpointName);
+            result.CheckpointDescription.ShouldBe(updatedCheckpoint.CheckpointDescription);
 
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == updateResult.Id);
+            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == updatedCheckpoint.Id);
             storedCheckpoint.ShouldNotBeNull();
-            storedCheckpoint.CheckpointDescription.ShouldBe(updateResult.CheckpointDescription);
+            storedCheckpoint.CheckpointDescription.ShouldBe(updatedCheckpoint.CheckpointDescription);
         }
 
         [Fact]
@@ -203,42 +136,12 @@ namespace Explorer.Tours.Tests.Integration.Author
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
-            var tourController = CreateTourController(scope);
-            var tourDbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
-            var newTour = new TourDTO
-            {
-                Name = "Nova Tura",
-                Description = "Opis nove ture.",
-                Weight = "medium",
-                Tags = new[] { "avantura", "priroda" },
-                Price = 100,
-                Status = 1,
-                LengthInKm = 15,
-                PublishedDate = DateTime.UtcNow,
-                ArchivedDate = DateTime.UtcNow,
-                AuthorId = 1
 
-            };
-
-            // Act
-            var createTourResult = ((ObjectResult)tourController.Create(newTour).Result)?.Value as TourDTO;
-            var newCheckpoint = new TourCheckpointDto
-            {
-                
-                Latitude = 45.2671,
-                Longitude = 19.8335,
-                CheckpointName = "Izmenjeni Beograd",
-                CheckpointDescription = "Izmenjen opis glavnog grada Srbije.",
-                Image = "url_to_updated_image",
-                TourId = createTourResult.Id
-            };
-            var createResult = ((ObjectResult)controller.Create(newCheckpoint).Result)?.Value as TourCheckpointDto;
-
-            var result = (OkResult)controller.Delete(createResult.Id);
+            var result = (OkResult)controller.Delete(-3);
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(200);
 
-            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == createResult.Id);
+            var storedCheckpoint = dbContext.TourCheckpoints.FirstOrDefault(i => i.Id == -3);
             storedCheckpoint.ShouldBeNull();
         }
 
@@ -260,13 +163,6 @@ namespace Explorer.Tours.Tests.Integration.Author
         private static TourCheckpointController CreateController(IServiceScope scope)
         {
             return new TourCheckpointController(scope.ServiceProvider.GetRequiredService<ITourCheckpointService>())
-            {
-                ControllerContext = BuildContext("-1")
-            };
-        }
-        private static TourController CreateTourController(IServiceScope scope)
-        {
-            return new TourController(scope.ServiceProvider.GetRequiredService<ITourService>(), scope.ServiceProvider.GetRequiredService<IEquipmentService>(), scope.ServiceProvider.GetRequiredService<ITourCheckpointService>())
             {
                 ControllerContext = BuildContext("-1")
             };

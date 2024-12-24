@@ -13,6 +13,7 @@ using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Shouldly;
 using System.Collections.Generic;
 using Xunit;
@@ -41,15 +42,21 @@ public class EncounterControllerTest : BaseEncountersIntegrationTest
         };
         var newEncounter = new EncounterDTO
         {
+            Id = 5,
             Name = "Test Encounter",
             Description = "Test Description",
             Location = mapLocationDto,
             XP = 100,
             Status = "DRAFT",
             Type = "SOCIAL",
-            AuthorId = 1,
-            IsReviewed = false
-        };
+            PublishedDate = DateTime.UtcNow,
+            ArchivedDate = DateTime.UtcNow.AddDays(5),
+            AuthorId = 5,
+            IsReviewed = false,
+            IsRequired = false,
+            RequiredParticipants = 8,
+            Radius = 10
+};
 
         // Act
         var result = ((ObjectResult)controller.Create(newEncounter).Result)?.Value as EncounterDTO;
@@ -104,7 +111,7 @@ public class EncounterControllerTest : BaseEncountersIntegrationTest
 
         var updatedEncounter = new EncounterDTO
         {
-            Id = 1, // Id je postavljen na validnu vrednost
+            Id = 15, // Id je postavljen na validnu vrednost
             Name = "Updated Encounter",
             Description = "Updated Description",
             Location = mapLocationDto,

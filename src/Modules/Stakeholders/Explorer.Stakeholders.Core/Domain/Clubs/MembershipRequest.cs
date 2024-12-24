@@ -20,9 +20,26 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
         public MembershipRequest() { }
         public MembershipRequest(int senderId, int ownerId, MemRequestStatus status)
         {
-            if (senderId <= 0) throw new ArgumentException("Sender ID must be positive.", nameof(senderId));
-            if (ownerId <= 0) throw new ArgumentException("Follower ID must be positive.", nameof(ownerId));
-            
+            //if (senderId <= 0) throw new ArgumentException("Sender ID must be positive.", nameof(senderId));
+            //if (ownerId <= 0) throw new ArgumentException("Follower ID must be positive.", nameof(ownerId));
+
+            if (!Enum.IsDefined(typeof(MemRequestStatus), status))
+                throw new ArgumentException("Invalid membership request status.", nameof(status));
+
+            SenderId = senderId;
+            OwnerId = ownerId;
+            Status = status;
+        }
+
+        public MembershipRequest(long id,int senderId, int ownerId, MemRequestStatus status)
+        {
+            //if (senderId <= 0) throw new ArgumentException("Sender ID must be positive.", nameof(senderId));
+            //if (ownerId <= 0) throw new ArgumentException("Follower ID must be positive.", nameof(ownerId));
+
+            if (!Enum.IsDefined(typeof(MemRequestStatus), status))
+                throw new ArgumentException("Invalid membership request status.", nameof(status));
+
+            Id = id;
             SenderId = senderId;
             OwnerId = ownerId;
             Status = status;

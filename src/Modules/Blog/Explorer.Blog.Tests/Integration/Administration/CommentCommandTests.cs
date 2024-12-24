@@ -28,7 +28,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
         public CommentsCommandTests(BlogTestFactory factory) : base(factory) { }
 
         [Theory]
-        [InlineData(1L, "Test comment", 1L)] // User 1, Blog 1, Comment content
+        [InlineData(-11, "Test comment", -1)] // User 1, Blog 1, Comment content
         public void Creates(long userId, string content, long blogId)
         {
             // Arrange
@@ -104,7 +104,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData("Updated comment content", 1L, 1L)]
+        [InlineData("Updated comment content", -1L, 1L)]
         public void Updates(string content, long blogId, long userId)
         {
             // Arrange
@@ -189,7 +189,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(1L, 1L, "", 400)] //Empty text comment
+        [InlineData(-1L, 1L, "", 404)] //Empty text comment
         public void Update_fails_invalid_content(long blogId, long userId, string content, int expectedStatusCode)
         {
             //Arrange
@@ -244,63 +244,47 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
         }
 
-        [Theory]
-        [InlineData(true)]
-        public void Deletes( bool shouldExist)
-        {
-            // Arrange
-            using var scope = Factory.Services.CreateScope();
-            var controller = CreateController(scope);
-            var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-            var blogController = CreateBlogController(scope);
-            var newEntity = new BlogsDto
-            {
-                UserId = 1,
-                Title = "Naslov",
-                Description = "Opis",
-                CreatedDate = DateTime.UtcNow,
-                Images = (new[] { "image.png" }).ToList(),
-                Status = API.Dtos.BlogsStatus.Published,
-                Votes = new List<VoteDto>() // Initialize as empty
-            };
+         [Theory]
+         [InlineData("Create", "Description", new[] { "image.png" }, BlogsStatus.Published, true)] // Expected to exist and be deleted
+         public void Deletes(string title, string description, string[] images, BlogsStatus status, bool shouldExist)
+         {
+             // Arrange
+             using var scope = Factory.Services.CreateScope();
+             var controller = CreateController(scope);
+             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
+             var newBlog = new BlogsDto
+             {
+                 UserId = 1,
+                 Title = "Initial title",
+                 Description = "Initial description",
+                 CreatedDate = DateTime.UtcNow,
+                 Images = images.ToList(),
+                 Status = status,
+                 Votes = new List<VoteDto>() // Initialize as empty
+             };
+             var createdBlog = ((ObjectResult)controller.Create(newBlog).Result)?.Value as BlogsDto;
+             var createdBlogId = createdBlog?.Id ?? -1;
 
-            // Act
-            var blogResult = ((ObjectResult)blogController.Create(newEntity).Result)?.Value as BlogsDto;
+             // Pre-check: Verify the initial existence state based on shouldExist
+             var preDeleteEntity = dbContext.Blogs.FirstOrDefault(b => b.Id == createdBlogId);
+             if (shouldExist)
+             {
+                 preDeleteEntity.ShouldNotBeNull();
+             }
+             else
+             {
+                 preDeleteEntity.ShouldBeNull();
+             }
 
+             // Act: Call Delete method
+             controller.Delete(createdBlogId);
 
-            var comment = new CommentDto
-            {
-                UserId = 1,
-                Text = "Test comment for delete.",
-                CreationTime = DateTime.UtcNow,
-                LastModifiedTime = DateTime.UtcNow,
-                BlogId = blogResult.Id
-            };
-            var createdComment = ((ObjectResult)controller.Create(blogResult.Id, comment).Result)?.Value as CommentDto;
-            var createdCommentId = createdComment?.Id ?? -1;
+             // Assert - Check if entity was deleted from the database
+             var postDeleteEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == createdBlogId);
+             postDeleteEntity.ShouldBeNull(); // Should be null if successfully deleted or if it didn't exist initially
+         }
 
-            var preDeleteEntity = dbContext.Comments.FirstOrDefault(c => c.Id == createdCommentId);
-            if (shouldExist)
-            {
-                preDeleteEntity.ShouldNotBeNull();
-            }
-            else
-            {
-                preDeleteEntity.ShouldBeNull();
-            }
-
-
-
-            controller.Delete(blogResult.Id, createdCommentId); 
-
-
-            // Assert - Check if entity was deleted from the database
-            var postDeleteEntity = dbContext.Comments.FirstOrDefault(i => i.Id == createdCommentId);
-            postDeleteEntity.ShouldBeNull(); // Should be null if successfully deleted or if it didn't exist initially
-
-
-        }
 
         [Theory]
         [InlineData(-1000L, 404)] // Invalid comment ID

@@ -33,7 +33,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
-
+           
             var newComment = new CommentDto
             {
                 UserId = userId,
@@ -45,7 +45,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
             // Act
             var result = ((ObjectResult)controller.Create(blogId, newComment).Result)?.Value as CommentDto;
-            var createdCommentId = result?.Id ?? 0;
+            var createdCommentId = result?.Id ?? 0; 
             // Assert - Response
             result.ShouldNotBeNull();
             result.Id.ShouldNotBe(0);
@@ -166,7 +166,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
             {
                 UserId = userId,
                 BlogId = blogId,
-                Text = "Initial text",
+                Text =  "Initial text",
                 CreationTime = DateTime.UtcNow,
                 LastModifiedTime = DateTime.UtcNow,
             };
@@ -186,7 +186,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
             //Act
             var result = (ObjectResult)controller.Update(1, updatedComment.Id, updatedComment).Result;
-
+             
             //Assert
             result.ShouldNotBeNull();
             result.StatusCode.ShouldBe(expectedStatusCode);
@@ -195,7 +195,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
         [Theory]
         [InlineData(true)]
-        public void Deletes(bool shouldExist)
+        public void Deletes( bool shouldExist)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
@@ -225,7 +225,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
 
 
-            controller.Delete(-1, createdCommentId);
+            controller.Delete(-1, createdCommentId); 
 
 
             // Assert - Check if entity was deleted from the database

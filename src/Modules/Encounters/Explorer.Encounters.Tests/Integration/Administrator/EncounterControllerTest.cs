@@ -111,7 +111,7 @@ public class EncounterControllerTest : BaseEncountersIntegrationTest
 
         var updatedEncounter = new EncounterDTO
         {
-            Id = 15, // Id je postavljen na validnu vrednost
+            Id = 5, // Id je postavljen na validnu vrednost
             Name = "Updated Encounter",
             Description = "Updated Description",
             Location = mapLocationDto,

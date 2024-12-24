@@ -20,11 +20,7 @@ public class Tests : BasePaymentsIntegrationTest
 {
     public Tests(PaymentsTestFactory factory) : base(factory) { }
 
-    [Fact]
-    public void Retrieves_all()
-    {
-
-    }
+    
 
 
 

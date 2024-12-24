@@ -32,6 +32,8 @@ public abstract class BaseTestFactory<TDbContext> : WebApplicationFactory<Progra
             context.Database.EnsureCreated();
             var databaseCreator = context.Database.GetService<IRelationalDatabaseCreator>();
             databaseCreator.CreateTables();
+            logger.LogInformation("Tables created in the database.");
+
         }
         catch (Exception)
         {
@@ -42,8 +44,22 @@ public abstract class BaseTestFactory<TDbContext> : WebApplicationFactory<Progra
         {
             var scriptFiles = Directory.GetFiles(scriptFolder);
             Array.Sort(scriptFiles);
-            var script = string.Join('\n', scriptFiles.Select(File.ReadAllText));
-            context.Database.ExecuteSqlRaw(script);
+            //var script = string.Join('\n', scriptFiles.Select(File.ReadAllText));
+            //context.Database.ExecuteSqlRaw(script);
+            foreach (var scriptFile in scriptFiles)
+            {
+                try
+                {
+                    var script = File.ReadAllText(scriptFile);
+                    context.Database.ExecuteSqlRaw(script);
+                    logger.LogInformation("Executed script: {File}", scriptFile);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error executing script {File}. Error: {Message}", scriptFile, ex.Message);
+                }
+            }
+
         }
         catch (Exception ex)
         {

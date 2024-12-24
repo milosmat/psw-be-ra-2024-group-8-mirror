@@ -49,6 +49,17 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
             
         }
 
+        public List<Tour> GetAllByIds(List<long> tourIds)
+        {
+            if (tourIds == null || !tourIds.Any())
+            {
+                return new List<Tour>();
+            }
+            return DbContext.Tours
+                    .Where(tour => tourIds.Contains(tour.Id)).ToList();
+                 
+
+        }
         
     }
 }

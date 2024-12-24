@@ -63,5 +63,6 @@ namespace Explorer.Tours.API.Public.Author
         //Result UpdateCheckpointIds(int id, long checkpointIds);
 
         Result<List<TourDTO>> GetToursByAuthorId(int authorId);
+        Result<List<TourDTO>> GetPurchasedTourForTourist(List<long> tourIds);
     }
 }

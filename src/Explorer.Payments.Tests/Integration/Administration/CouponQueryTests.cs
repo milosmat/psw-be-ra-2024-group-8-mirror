@@ -1,8 +1,8 @@
 ﻿using Explorer.API.Controllers.Author;
-using Explorer.Blog.API.Dtos;
-using Explorer.Blog.API.Public;
 using Explorer.BuildingBlocks.Core.UseCases;
-using Explorer.Tours.API.Dtos;
+using Explorer.Payments.API.Dtos;
+using Explorer.Payments.API.Public.Tourist;
+using Explorer.Stakeholders.API.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
@@ -12,15 +12,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Explorer.Blog.Tests.Integration.Administration
+namespace Explorer.Payments.Tests.Integration.Administration
 {
-
     [Collection("Sequential")]
-    public class CommentQueryTests : BaseBlogIntegrationTest
+    public class CouponQueryTests : BasePaymentsIntegrationTest
     {
-        public CommentQueryTests(BlogTestFactory factory) : base(factory) { }
+        public CouponQueryTests(PaymentsTestFactory factory) : base(factory) { }
 
-       
         [Theory]
         [InlineData(0, 3, 3)]  // Prva stranica sa 3 komentara
         public void Retrieves_all(int pageNumber, int pageSize, int expectedResultsCount)
@@ -30,20 +28,22 @@ namespace Explorer.Blog.Tests.Integration.Administration
             var controller = CreateController(scope);
 
             // Act
-            var result = ((ObjectResult)controller.GetAll(-1, pageNumber, pageSize).Result)?.Value as PagedResult<CommentDto>;
+            var result = ((ObjectResult)controller.GetAll(pageNumber, pageSize).Result)?.Value as PagedResult<CouponDTO>;
 
             // Assert
             result.ShouldNotBeNull();
             result.Results.Count.ShouldBe(expectedResultsCount);
             result.TotalCount.ShouldBeGreaterThanOrEqualTo(expectedResultsCount);
         }
-        private static CommentController CreateController(IServiceScope scope)
+        private static CouponController CreateController(IServiceScope scope)
         {
-            return new CommentController(scope.ServiceProvider.GetRequiredService<ICommentService>())
+            return new CouponController(scope.ServiceProvider.GetRequiredService<ICouponService>())
             {
                 ControllerContext = BuildContext("-1")
             };
         }
 
     }
+
+
 }

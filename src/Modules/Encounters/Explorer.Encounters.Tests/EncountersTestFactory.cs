@@ -12,7 +12,7 @@ namespace Explorer.Encounters.Tests
 {
     public class EncountersTestFactory : BaseTestFactory<EncountersContext>
     {
-        public EncountersTestFactory() { }
+        //public EncountersTestFactory() { }
         protected override IServiceCollection ReplaceNeededDbContexts(IServiceCollection services)
         {
             var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<EncountersContext>));

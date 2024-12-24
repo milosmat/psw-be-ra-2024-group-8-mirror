@@ -16,7 +16,6 @@ using Markdown = Explorer.Blog.Core.Domain.Blogs.Markdown;
 using BlogsStatus = Explorer.Blog.API.Dtos.BlogsStatus;
 using Explorer.Stakeholders.Core.Domain;
 using static System.Net.Mime.MediaTypeNames;
-using Explorer.BuildingBlocks.Core.UseCases;
 
 
 namespace Explorer.Blog.Tests.Integration
@@ -26,8 +25,10 @@ namespace Explorer.Blog.Tests.Integration
     {
         public BlogsCommandTests(BlogTestFactory factory) : base(factory) { }
 
+
         [Theory]
         [InlineData(1, "Create", "Description", new[] { "image.png" }, BlogsStatus.Published)]
+        [InlineData(1, "CreateForUpdate", "DescriptionForUpdate", new[] { "imageForUpdate.png" }, BlogsStatus.Published)]
         public void Creates(int userId, string title, string description, string[] images, BlogsStatus status)
         {
             // Arrange
@@ -93,86 +94,39 @@ namespace Explorer.Blog.Tests.Integration
 
 
         [Theory]
-        [InlineData(1, "UpdateTitle2", "UpdateDescription2", new[] { "updatedImage.png" })]
-        public void Updates(int userId, string title, string description, string[] images)
+        [InlineData(2, "UpdateTitle2", "UpdateDescription2")]
+        public void Updates(int id, string title, string description)
         {
             // Arrange
             using var scope = Factory.Services.CreateScope();
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<BlogContext>();
 
-            var newEntity = new BlogsDto
+            var updatedEntity = new BlogsDto
             {
-                UserId = userId,
-                Title = "Title",
-                Description = "Description",
-                CreatedDate = DateTime.UtcNow,
-                Images = new List<string>(),
-                Status = BlogsStatus.Published,
-                Votes = new List<VoteDto>() // Initialize as empty
+                Id = id,
+                Title = title,
+                Description = description
             };
-            var createdBlog = ((ObjectResult)controller.Create(newEntity).Result)?.Value as BlogsDto;
-            var createdBlogId = createdBlog?.Id ?? -1;
-
-
-            // Detach previous instance
-            var existingEntity = dbContext.ChangeTracker.Entries<Blogg>()
-                .FirstOrDefault(e => e.Entity.Id == createdBlogId);
-            if (existingEntity != null)
-            {
-                dbContext.Entry(existingEntity.Entity).State = EntityState.Detached;
-            }
-
-            createdBlog.Title = title;
-            createdBlog.Description = description;
-            createdBlog.Images = images.ToList();
-            createdBlog.CreatedDate = DateTime.UtcNow;
 
             // Act
-            controller.Update(createdBlog);
+            var result = ((ObjectResult)controller.Update(updatedEntity).Result)?.Value as BlogsDto;
 
             // Assert - Response
-            var response = controller.GetAll(1, 1).Result;
-            if(response is ObjectResult objectResult)
-            {
-                if(objectResult.Value is PagedResult<BlogsDto> pagedResult)
-                {
-                    var blogs = pagedResult.Results;
-                    if(blogs == null)
-                    {
-                        Assert.Fail("No blogs found in the results.");
-                    }
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(id);
+            result.Title.ShouldBe(updatedEntity.Title);
+            result.Description.ShouldBe(updatedEntity.Description);
 
-                    var result = blogs.FirstOrDefault(blog => blog.Id == createdBlogId);
-                    // Assert - Response
-                    result.ShouldNotBeNull();
-                    result.Id.ShouldBe(createdBlogId);
-                    result.Title.ShouldBe(createdBlog.Title);
-                    result.Description.ShouldBe(createdBlog.Description);
-
-                    // Assert - Database
-                    var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == createdBlog.Id);
-                    storedEntity.ShouldNotBeNull();
-                    storedEntity.Title.ShouldBe(title);
-                    storedEntity.Description.ShouldBe(description);
-                }
-                else
-                {
-                    Assert.Fail("Expected response to be of type PagedResult<BlogsDto> but got something else.");
-                }
-            }
-            else
-            {
-                Assert.Fail("Response is not of type ObjectResult.");
-            }
-
-            
+            // Assert - Database
+            var storedEntity = dbContext.Blogs.FirstOrDefault(i => i.Id == id);
+            storedEntity.ShouldNotBeNull();
+            storedEntity.Title.ShouldBe(title);
+            storedEntity.Description.ShouldBe(description);
         }
 
-
-
         [Theory]
-        [InlineData(-1000,"Test" ,"Description", 500)]
+        [InlineData(-1000, "Test", "Description", 500)]
         public void Update_fails_invalid_id(int id, string title, string description, int expectedStatusCode)
         {
             // Arrange

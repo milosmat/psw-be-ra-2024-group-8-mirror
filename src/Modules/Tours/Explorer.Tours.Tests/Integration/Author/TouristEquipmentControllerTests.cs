@@ -35,8 +35,9 @@ namespace Explorer.Tours.Tests.Integration.Author
 
             var newTouristEquipment = new TouristEquipmentDTO
             {
-                TouristId = 5,
-                EquipmentId = 10
+                Id = 5,
+                TouristId = 1,
+                EquipmentId = 1
             };
 
             // Act
@@ -73,7 +74,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             result.StatusCode.ShouldBe(400);
         }
 
-        /*[Fact]
+      /*  [Fact]
         public void Updates_TouristEquipment()
         {
             // Arrange
@@ -83,12 +84,13 @@ namespace Explorer.Tours.Tests.Integration.Author
 
             var updatedTouristEquipment = new TouristEquipmentDTO
             {
+                Id = -1,
                 TouristId = 1,
                 EquipmentId = 3 // Changing EquipmentId
             };
 
             // Act
-            var result = ((ObjectResult)controller.Update(updatedTouristEquipment).Result)?.Value as TouristEquipmentDTO;
+            var result = ((ObjectResult)controller.Update(updatedObject).Result)?.Value as ObjectDTO;
 
             // Assert
             result.ShouldNotBeNull();
@@ -129,7 +131,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
 
             // Act
-            var result = controller.Delete(1);  // Assuming Id = 1 exists
+            var result = controller.Delete(5);  // Assuming Id = 1 exists
 
             // Assert
             var okResult = result as OkResult;
@@ -137,7 +139,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             okResult.StatusCode.ShouldBe(200);
 
             var storedTouristEquipment = dbContext.TouristEquipments
-                .FirstOrDefault(te => te.Id == 1);
+                .FirstOrDefault(te => te.Id == 5);
             storedTouristEquipment.ShouldBeNull();
         }
 

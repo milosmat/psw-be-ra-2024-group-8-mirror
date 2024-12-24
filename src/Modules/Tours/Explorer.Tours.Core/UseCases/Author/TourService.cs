@@ -549,6 +549,24 @@ namespace Explorer.Tours.Core.UseCases.Author
             }
         }
 
+        public Result<List<TourDTO>> GetPurchasedTourForTourist(List<long> tourIds)
+        {
+            try
+            {
+                var results = tourRepository.GetAllByIds(tourIds);
+                if (!results.Any())
+                {
+                    return Result.Fail("No tours purchased for tourist.");
+                }
+
+                var purchasedTours = _mapper.Map<List<TourDTO>>(results);
+                return Result.Ok(purchasedTours);
+            }
+            catch(Exception e)
+            {
+                return Result.Fail($"An error occurred while collecting the tours: {e.Message}");
+            }
+        }
 
 
     }

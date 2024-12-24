@@ -10,9 +10,10 @@ using Explorer.Payments.Core.Domain;
 using FluentResults;
 using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
 using Explorer.Tours.API.Public.Author;
-using Explorer.Tours.Core.Domain.RepositoryInterfaces;
 using Explorer.Tours.API.Dtos;
 using AutoMapper;
+using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.BuildingBlocks.Core.Dtos;
 
 namespace Explorer.Payments.Core.UseCases.Tourist
 {
@@ -22,16 +23,16 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         private readonly ITourPurchaseTokenService _tokenService;
         private readonly IPaymentRecordService _paymentRecordService;
         private readonly IPaymentRecordRepository _paymentRepository;
-        private readonly IBundleRepository _bundleRepository;
-        private readonly IBundleService _bundleService;
+        // private readonly IBundleService _bundleService;
+        private readonly IPaymentBundleService _paymentBundleService;
         public IMapper _mapper { get; set; }
         public ShoppingCartService(
                ICardRepository cardRepository,
                ITourPurchaseTokenService tokenService,
                IPaymentRecordService paymentRecordService,
                IPaymentRecordRepository paymentRepository,
-               IBundleRepository bundleRepository,
-               IBundleService bundleService,
+               //IBundleService bundleService,
+               IPaymentBundleService paymentBundleService,
                IMapper mapper
             )
         {
@@ -39,8 +40,8 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
             _paymentRecordService = paymentRecordService ?? throw new ArgumentNullException(nameof(paymentRecordService));
             _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
-            _bundleRepository = bundleRepository;
-            _bundleService = bundleService;
+            //_bundleService = bundleService;
+            _paymentBundleService = paymentBundleService;
             _mapper = mapper;
         }
 
@@ -225,7 +226,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             return Result.Ok();
         }
 
-        public Result<List<BundleDTO>> GetBundlesForTourist(long touristId)
+        public Result<List<BuildingBlocks.Core.Dtos.BundleDTO>> GetBundlesForTourist(long touristId)
         {
             // Dobij sve zapise o plaćanju za datog korisnika
             var paymentRecords = _paymentRepository.GetAllByTouristId(touristId);
@@ -239,17 +240,17 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             var bundleIds = paymentRecords.Select(record => record.BundleId).ToList();
 
             // Dohvati sve pakete iz servisa
-            var bundles = new List<BundleDTO>();
+            var bundles = new List<BuildingBlocks.Core.Dtos.BundleDTO>();
             foreach (var bundleId in bundleIds)
             {
                 // Pozivamo GetBuyBundles metodu koja treba da vrati kupljeni paket
-                var bundleResult = _bundleService.Get((int)bundleId);
+                var bundleResult = _paymentBundleService.Get((int)bundleId);
                 if (bundleResult.IsSuccess && bundleResult.Value != null)
                 {
                     var bundle = bundleResult.Value;
 
                     // Dodajemo sve ture za paket
-                    var bundleToursResult = _bundleService.GetAllTours(bundle.Id); // Pozivamo metodu koja vraća sve ture za paket
+                    var bundleToursResult = _paymentBundleService.GetAllTours(bundle.Id); // Pozivamo metodu koja vraća sve ture za paket
                     if (bundleToursResult.IsSuccess && bundleToursResult.Value != null)
                     {
                         bundle.Tours = bundleToursResult.Value;

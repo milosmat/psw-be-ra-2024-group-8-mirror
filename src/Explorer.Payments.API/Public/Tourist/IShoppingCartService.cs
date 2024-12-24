@@ -18,7 +18,7 @@ namespace Explorer.Payments.API.Public.Tourist
         Result Checkout(long touristId);
         void AddBoundleToCart(long touristId, ShoppingBundleDto shoppingBoundleDto);
         void RemoveBundleFromCart(long touristId, long bundleId);
-        Result<List<BundleDTO>> GetBundlesForTourist(long touristId);
+        Result<List<BuildingBlocks.Core.Dtos.BundleDTO>> GetBundlesForTourist(long touristId);
 
 
 

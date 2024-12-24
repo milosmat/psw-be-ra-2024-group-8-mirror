@@ -17,6 +17,6 @@ namespace Explorer.Payments.API.Public.Tourist
         Result<TourPurchaseTokenDTO> Update(TourPurchaseTokenDTO tokenDto);
         Result Delete(int id);
         Result<PagedResult<TourPurchaseTokenDTO>> GetPaged(int page, int pageSize);
-        Result<List<TourDTO>> GetPurchasedToursByTouristId(long touristId);
+        Result<List<long>> GetToursIdsFromToken(long touristId);
     }
 }

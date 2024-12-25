@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Explorer.Games.API\Explorer.Games.API.csproj" />
-    <ProjectReference Include="..\Explorer.Payments.Core\Explorer.Payments.Core.csproj" />
+    <ProjectReference Include="..\Explorer.Payments.API\Explorer.Payments.API.csproj" />
+    <ProjectReference Include="..\Modules\Encounters\Explorer.Encounters.API\Explorer.Encounters.API.csproj" />
+    <ProjectReference Include="..\Modules\Stakeholders\Explorer.Stakeholders.Core\Explorer.Stakeholders.Core.csproj" />
   </ItemGroup>
 
 </Project>

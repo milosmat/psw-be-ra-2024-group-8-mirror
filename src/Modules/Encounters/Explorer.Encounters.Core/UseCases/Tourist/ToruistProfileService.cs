@@ -170,5 +170,66 @@ namespace Explorer.Encounters.Core.UseCases.Tourist
             return Result.Ok();
         }
 
+        public Result AddCouponToTourist(long touristId, long couponId)
+        {
+            try
+            {
+                // Fetch the tourist profile by ID
+                var touristProfile = _touristRepository.Get(touristId);
+                if (touristProfile == null)
+                {
+                    return Result.Fail($"Tourist with ID {touristId} not found.");
+                }
+
+                // Check if the coupon is already associated with the tourist
+                if (touristProfile.CouponIds.Contains(couponId))
+                {
+                    return Result.Fail($"Tourist already has coupon with ID {couponId}.");
+                }
+
+                // Add the coupon ID to the list
+                touristProfile.CouponIds.Add(couponId);
+
+                // Update the tourist profile in the repository
+                _touristRepository.Update(touristProfile);
+
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail($"An error occurred while adding the coupon: {ex.Message}");
+            }
+        }
+
+        public Result RemoveCouponFromTourist(long touristId, long couponId)
+        {
+            try
+            {
+                // Fetch the tourist profile by ID
+                var touristProfile = _touristRepository.Get(touristId);
+                if (touristProfile == null)
+                {
+                    return Result.Fail($"Tourist with ID {touristId} not found.");
+                }
+
+                // Check if the coupon exists in the tourist's list
+                if (!touristProfile.CouponIds.Contains(couponId))
+                {
+                    return Result.Fail($"Coupon with ID {couponId} not found for the tourist.");
+                }
+
+                // Remove the coupon ID from the list
+                touristProfile.CouponIds.Remove(couponId);
+
+                // Update the tourist profile in the repository
+                _touristRepository.Update(touristProfile);
+
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail($"An error occurred while removing the coupon: {ex.Message}");
+            }
+        }
     }
 }

@@ -25,6 +25,7 @@ namespace Explorer.Games.Infrastructure
         private static void SetupInfrastructure(IServiceCollection services)
         {
             services.AddScoped<IGamesRepository, GamesDatabaseRepository>();
+            services.AddScoped<IGameScoreRepository, GameScoreDatabaseRepository>();
 
             // Registracija DbContext-a za GamesContext
             services.AddDbContext<GamesContext>(opt =>

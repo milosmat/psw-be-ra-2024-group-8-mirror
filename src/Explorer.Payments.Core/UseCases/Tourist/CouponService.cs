@@ -104,5 +104,20 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             cartItem.TourPrice -= discountAmount;
         }
 
+        public List<CouponDTO> GetCouponsByIds(List<long> couponIds)
+        {
+            if (couponIds == null || !couponIds.Any())
+            {
+                return new List<CouponDTO>();
+            }
+
+            var coupons = _couponRepository
+                .GetAll()
+                .Where(c => couponIds.Contains(c.Id))
+                .ToList();
+
+            return _mapper.Map<List<CouponDTO>>(coupons);
+        }
+
     }
 }

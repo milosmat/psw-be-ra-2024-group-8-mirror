@@ -14,4 +14,6 @@ public class ClubDto
     public string Photo { get; set; }
     public int OwnerId { get; set; }
     public List<MembershipRequestDto> MembershipRequest { get; set; } = new List<MembershipRequestDto>();
+    public List<MessageDto> Messages { get; set; } = new List<MessageDto>();
+
 }

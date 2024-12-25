@@ -1,15 +1,21 @@
-﻿using Explorer.Blog.API.Dtos;
+﻿using Azure.Core;
+using Explorer.Blog.API.Dtos;
 using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
+using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.Clubs;
 using Explorer.Stakeholders.Core.UseCases;
+using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResourceType = Explorer.Stakeholders.API.Dtos.ResourceType;
 
 namespace Explorer.API.Controllers.Tourist
 {
     [Authorize(Policy = "touristPolicy")]
-    [Route("api/message")]
+    [Route("api/tourist/club/{clubId}/message")]
+
     public class MessageController : BaseApiController
     {
         private readonly IMessageService _messageService;
@@ -20,32 +26,33 @@ namespace Explorer.API.Controllers.Tourist
         }
 
         [HttpGet]
-        public ActionResult<PagedResult<MessageDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
+        public ActionResult<PagedResult<MessageDto>> GetAll([FromRoute] long clubId, [FromQuery] int page, [FromQuery] int pageSize)
         {
             try
             {
-                var result = _messageService.GetPaged(page, pageSize);
+                var result = _messageService.GetPagedByClub(clubId, page, pageSize);
 
-                if (result == null || result.Results.Count == 0)
+                if (result == null || !result.Results.Any())
                 {
-                    return NotFound("No message found for the specified page.");
+                     return Ok(new { results = new List<Message>() });
                 }
-
                 return Ok(result);
+
+
             }
             catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while fetching data: {ex.Message}");
-            }
+                    {
+                        return StatusCode(500, $"An error occurred while fetching data: {ex.Message}");
+                    }
         }
 
-        [HttpGet("{ownerId:int}")]
-        public ActionResult<PagedResult<MessageDto>> GetAllByOwnerId([FromRoute] long ownerId)
+        [HttpGet("getAllByOwnerId")]
+        public ActionResult<PagedResult<MessageDto>> GetAllByOwnerId([FromRoute] long clubId)
         {
             try
             {
                 // Dohvatanje svih poruka
-                var result = _messageService.GetPaged(1, 10);
+                var result = _messageService.GetPagedByClub(clubId, 1, 10);
 
                 if (result == null || result.Results.Count == 0)
                 {
@@ -53,7 +60,7 @@ namespace Explorer.API.Controllers.Tourist
                 }
 
                 // Filtriranje poruka prema ownerId i resourceType
-                var filteredResults = result.Results.Where(m => m.OwnerId == ownerId && m.ResourceType == ResourceType.Club).ToList();
+                var filteredResults = result.Results.Where(m => m.OwnerId == clubId && m.ResourceType == ResourceType.Club).ToList();
 
                 if (filteredResults.Count == 0)
                 {
@@ -72,32 +79,43 @@ namespace Explorer.API.Controllers.Tourist
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<BlogsDto> Update([FromBody] MessageDto message)
+        public ActionResult<MessageDto> Update([FromRoute] long clubId, long id, [FromBody] MessageDto message)
         {
             try
             {
-                MessageDto result = _messageService.Update(message);
-                return Ok(result);
 
+                var existingMemRequest = _messageService.GetById(clubId,id);
+
+                if (existingMemRequest == null)
+                {
+                    return NotFound($"Membership request with ID {id} not found.");
+                }
+                
+                var result = _messageService.Update(clubId, message);
+                return Ok(result);
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                // Return a 500 error for unexpected issues
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                return NotFound(ex.Message);
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public ActionResult Delete([FromRoute] long clubId, int id)
         {
-            var message = _messageService.Get(id);
+            var message = _messageService.GetById(clubId, id);
 
             if (message == null)
             {
                 return NotFound($"Blog with ID {id} not found.");
             }
 
-            _messageService.Delete(id);
+            _messageService.Delete(clubId, id);
 
             return Ok($"Blog with ID {id} has been successfully deleted.");
         }

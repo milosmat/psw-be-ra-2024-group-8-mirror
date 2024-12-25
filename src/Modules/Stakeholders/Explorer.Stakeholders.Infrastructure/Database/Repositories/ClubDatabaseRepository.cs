@@ -19,11 +19,15 @@ namespace Explorer.Stakeholders.Infrastructure.Database.Repositories
     {
         public ClubDatabaseRepository(StakeholdersContext dbContex) : base(dbContex) { }
 
-        public new Club? Get(int id)
+        public Club? Get(int id)
         {
-            return DbContext.Clubs.Where(t => t.Id == id)
-                .Include(t => t.MembershipRequests!).FirstOrDefault();
+            return DbContext.Clubs
+                .Where(t => t.Id == id)
+                .Include(t => t.MembershipRequests!) // Uključivanje MembershipRequests
+                .Include(t => t.Messages!)          // Uključivanje Messages
+                .FirstOrDefault();
         }
+
 
         public Club Update(Club aggregateRoot)
         {
@@ -37,6 +41,13 @@ namespace Explorer.Stakeholders.Infrastructure.Database.Repositories
         {
             return DbContext.Clubs
                 .Include(c => c.MembershipRequests)  // Eager load membership request
+                .FirstOrDefault(c => c.Id == clubId);
+        }
+
+        public Club GetClubWithMessages(long clubId)
+        {
+            return DbContext.Clubs
+                .Include(c => c.Messages)  // Eager load membership request
                 .FirstOrDefault(c => c.Id == clubId);
         }
     }

@@ -11,7 +11,7 @@ namespace Explorer.Games.API.Dtos
         public long Id { get; set; }
         public double Highscore { get; set; } = 0.0;
         public List<GameScoreDTO> Scores { get; set; }
-
+        public DateTime? LastCheckedDate { get; set; }
         public GameDTO()
         {
             Scores = new List<GameScoreDTO>();

@@ -12,13 +12,21 @@ namespace Explorer.Games.Core.Domain
     {
         public long PlayerId { get; set; }
         public double Score { get; set; }
-
+        public DateTime AchievedAt { get; set; }
         public GameScore() { }
             
         public GameScore(long playerId, double score)
         {
             PlayerId = playerId;
             Score = score;
+            AchievedAt = DateTime.UtcNow;
+        }
+
+        public GameScore(long playerId, double score, DateTime achievedAt)
+        {
+            PlayerId = playerId;
+            Score = score;
+            AchievedAt = achievedAt;
         }
     }
 }

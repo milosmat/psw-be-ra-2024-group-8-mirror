@@ -4,10 +4,13 @@ using Explorer.Games.API.Dtos;
 using Explorer.Games.Core.Domain.RepositoryInterfaces;
 using Explorer.Games.Core.Domain;
 using FluentResults;
+using Explorer.Payments.Core.UseCases;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Explorer.Games.API.Public.Tourist;
+using Explorer.Payments.API.Public.Tourist;
+using Explorer.Payments.API.Dtos;
 
 namespace Explorer.Games.Core.UseCases.Tourist
 {
@@ -15,11 +18,12 @@ namespace Explorer.Games.Core.UseCases.Tourist
     {
         private readonly IGamesRepository _gameRepository;
         private readonly IMapper _mapper;
-
-        public GameService(IGamesRepository gameRepository, IMapper mapper)
+        private readonly ICouponService _couponService;
+        public GameService(IGamesRepository gameRepository, IMapper mapper, ICouponService couponService)
         {
             _gameRepository = gameRepository;
             _mapper = mapper;
+            _couponService = couponService;
         }
 
         public Result<GameDTO> Create(GameDTO gameDto)
@@ -164,6 +168,76 @@ namespace Explorer.Games.Core.UseCases.Tourist
             {
                 return Result.Fail(e.Message);
             }
+        }
+        public Result<string> AwardTopScorerCoupon()
+        {
+            try
+            {
+                // Fetch all games
+                var games = _gameRepository.GetAll();
+
+                // Define the date range for the last 7 days
+                var endDate = DateTime.UtcNow;
+                var startDate = endDate.AddDays(-7);
+
+                var awardedPlayers = new List<string>(); // Keep track of players who received a coupon
+
+                foreach (var game in games)
+                {
+                    // Skip games that have been checked recently
+                    if (game.LastCheckedDate != null && (DateTime.UtcNow - game.LastCheckedDate.Value).TotalDays < 7)
+                    {
+                        continue;
+                    }
+
+                    // Find the top scorer for this game in the last 7 days
+                    var topScore = game.Scores
+                        .Where(score => score.AchievedAt >= startDate && score.AchievedAt <= endDate)
+                        .OrderByDescending(score => score.Score)
+                        .FirstOrDefault();
+
+                    if (topScore == null)
+                    {
+                        continue; // No scores found for this game in the last 7 days
+                    }
+
+                    // Create a coupon for the top scorer
+                    var coupon = new CouponDTO
+                    {
+                        Code = GenerateCouponCode(),
+                        DiscountPercentage = 10, // Example: 10% discount
+                        ExpiryDate = endDate.AddDays(30), // Valid for 30 days
+                        TourId = null, // Applicable for all tours
+                        AuthorId = topScore.PlayerId
+                    };
+
+                    _couponService.Create(coupon);
+
+                    // Update the LastCheckedDate for the game
+                    game.LastCheckedDate = DateTime.UtcNow;
+                    _gameRepository.Update(game);
+
+                    awardedPlayers.Add($"Player {topScore.PlayerId} for Game {game.Id}");
+                }
+
+                if (awardedPlayers.Count == 0)
+                {
+                    return Result.Fail("No scores found or all games have been recently checked.");
+                }
+
+                return Result.Ok($"Coupons awarded to: {string.Join(", ", awardedPlayers)}.");
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail($"An error occurred while awarding the coupons: {ex.Message}");
+            }
+        }
+
+        private string GenerateCouponCode()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 8).Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }

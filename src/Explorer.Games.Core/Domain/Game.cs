@@ -11,15 +11,16 @@ namespace Explorer.Games.Core.Domain
     {
         public double Highscore { get; set; } = 0.0;
         public List<GameScore> Scores { get; set; } = new List<GameScore>();
-
+        public DateTime? LastCheckedDate { get; set; }
         public Game()
         {
         }
 
-        public Game(double highscore, List<GameScore> scores)
+        public Game(double highscore, List<GameScore> scores, DateTime? lastCheckedDate = null)
         {
             Highscore = highscore;
             Scores = scores;
+            LastCheckedDate = lastCheckedDate;
         }
     }
 }

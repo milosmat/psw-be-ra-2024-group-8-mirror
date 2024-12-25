@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Explorer.Games.API\Explorer.Games.API.csproj" />
+    <ProjectReference Include="..\Explorer.Payments.Core\Explorer.Payments.Core.csproj" />
   </ItemGroup>
 
 </Project>

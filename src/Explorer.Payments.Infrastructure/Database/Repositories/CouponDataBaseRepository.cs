@@ -34,5 +34,9 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
             return DbContext.Coupons.Where(c => c.Code == code).ToList();
         }
 
+        public IEnumerable<Coupon> GetAll()
+        {
+            return DbContext.Coupons.ToList();
+        }
     }
 }

@@ -13,5 +13,12 @@ namespace Explorer.Encounters.API.Dtos
         public int XP { get; set; }
         public int Level { get; set; }
         public List<long> CompletedEncountersIds { get; set; }
+        public List<long> CouponIds { get; set; } // Added to store coupon IDs
+
+        public TouristProfileDTO()
+        {
+            CompletedEncountersIds = new List<long>();
+            CouponIds = new List<long>();
+        }
     }
 }

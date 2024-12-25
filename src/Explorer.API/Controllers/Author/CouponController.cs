@@ -96,5 +96,30 @@ namespace Explorer.API.Controllers.Author
 
             return Ok($"Blog with ID {id} has been successfully deleted.");
         }
+
+        [HttpPost("get-by-ids")]
+        public ActionResult<IEnumerable<CouponDTO>> GetCouponsByIds([FromBody] List<long> couponIds)
+        {
+            try
+            {
+                if (couponIds == null || !couponIds.Any())
+                {
+                    return BadRequest("Coupon IDs cannot be null or empty.");
+                }
+
+                var coupons = _couponService.GetCouponsByIds(couponIds);
+
+                if (coupons == null || !coupons.Any())
+                {
+                    return NotFound("No coupons found for the provided IDs.");
+                }
+
+                return Ok(coupons);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while fetching coupons: {ex.Message}");
+            }
+        }
     }
 }

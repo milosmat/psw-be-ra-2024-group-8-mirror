@@ -28,5 +28,6 @@ namespace Explorer.Games.API.Public.Tourist
         Result Delete(long id);
 
         Result AddNewScore(long gameId, long userId, double score);
+        Result<string> AwardTopScorerCoupon();
     }
 }

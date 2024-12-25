@@ -9,5 +9,6 @@ namespace Explorer.Games.Core.Domain.RepositoryInterfaces
 {
     public interface IGamesRepository : ICrudRepository<Game>
     {
+        IEnumerable<Game> GetAll();
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Explorer.Payments.API.Public.Tourist;
 using Explorer.Payments.API.Dtos;
+using Explorer.Games.API.Public.Tourist;
+using Explorer.Games.Core.UseCases.Tourist;
 
 
 namespace Explorer.API.Controllers.Author
@@ -12,13 +14,10 @@ namespace Explorer.API.Controllers.Author
     public class CouponController : BaseApiController
     {
         private readonly ICouponService _couponService;
-
         public CouponController(ICouponService couponService)
         {
             _couponService = couponService;
         }
-
-
 
         [HttpGet]
         public ActionResult<PagedResult<CouponDTO>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
@@ -97,11 +96,5 @@ namespace Explorer.API.Controllers.Author
 
             return Ok($"Blog with ID {id} has been successfully deleted.");
         }
-
-
-
-
-
-
     }
 }

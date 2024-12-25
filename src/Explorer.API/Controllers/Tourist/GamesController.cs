@@ -107,6 +107,29 @@ namespace Explorer.API.Controllers.Tourist
             return CreateResponse(result);
         }
 
+        // New endpoint for awarding a coupon to the top scorer
+        [HttpPost("award-top-scorer")]
+        public ActionResult AwardTopScorerCoupon()
+        {
+            try
+            {
+                // Call the service to award the coupon
+                var result = _gameService.AwardTopScorerCoupon();
+
+                if (result.IsFailed)
+                {
+                    return BadRequest(result.Errors.FirstOrDefault()?.Message);
+                }
+
+                return Ok(new { message = result.Successes.FirstOrDefault() });
+            }
+            catch (Exception ex)
+            {
+                // Handle unexpected errors
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
         // Helper method for creating ActionResults based on FluentResults
         private ActionResult<T> CreateResponse<T>(Result<T> result)
         {

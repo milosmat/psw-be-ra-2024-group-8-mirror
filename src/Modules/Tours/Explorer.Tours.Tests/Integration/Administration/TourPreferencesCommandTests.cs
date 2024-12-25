@@ -1,4 +1,4 @@
-﻿using Explorer.API.Controllers.Administrator.Administration;
+using Explorer.API.Controllers.Administrator.Administration;
 using Explorer.API.Controllers.Tourist;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Administration;
@@ -28,14 +28,16 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var newEntity = new TourPreferencesDto
             {
+                Id = 1,
                 Difficulty = DifficultyLevel.EASY,
-                WalkRating = 3,
+                WalkRating = 2,
                 BikeRating = 2,
                 CarRating = 0,
                 BoatRating = 1,
                 InterestTags = new List<string>() { "nature" }
 
             };
+
 
             // Act
             var result = ((ObjectResult)controller.Create(newEntity).Result)?.Value as TourPreferencesDto;
@@ -84,13 +86,13 @@ namespace Explorer.Tours.Tests.Integration.Administration
             var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
             var updatedEntity = new TourPreferencesDto
             {
-                Id = -1,
-                Difficulty = DifficultyLevel.EASY,
+                Id = 1,
+                Difficulty = DifficultyLevel.HARD,
                 WalkRating = 0,
                 BikeRating = 2,
                 CarRating = 2,
                 BoatRating = 2,
-                InterestTags = new List<string>() { "rucnoDodat" }
+                InterestTags = new List<string>() { "Update" }
             };
 
             // Act
@@ -98,7 +100,7 @@ namespace Explorer.Tours.Tests.Integration.Administration
 
             // Assert - Response
             result.ShouldNotBeNull();
-            result.Id.ShouldBe(-1);
+            result.Id.ShouldBe(1);
             result.Difficulty.ShouldBe(updatedEntity.Difficulty);
             result.WalkRating.ShouldBe(updatedEntity.WalkRating);   
             result.BikeRating.ShouldBe(updatedEntity.BikeRating);

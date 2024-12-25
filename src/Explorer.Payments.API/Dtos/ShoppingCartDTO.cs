@@ -10,7 +10,7 @@ namespace Explorer.Payments.API.Dtos
     {
         public int Id { get; set; }
         public long TouristId { get; set; }
-        public List<ShoppingCartItemDTO> ShopingItems { get; set; } // Lista stavki u korpi
+        public List<ShoppingCartItemDto> ShopingItems { get; set; } // Lista stavki u korpi
 
         public List<ShoppingBundleDto> ShopingBundles { get; set; } // Lista stavki u korpi
 

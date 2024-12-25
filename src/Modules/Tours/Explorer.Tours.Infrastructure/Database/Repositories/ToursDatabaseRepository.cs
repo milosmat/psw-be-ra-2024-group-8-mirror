@@ -35,11 +35,31 @@ namespace Explorer.Tours.Infrastructure.Database.Repositories
         }
         public new Tour Update(Tour aggregateRoot)
         {
-            DbContext.Entry(aggregateRoot).State = EntityState.Modified;
-            DbContext.SaveChanges();
-            return aggregateRoot;
+           if(aggregateRoot.Id <= 0)
+            {
+                throw new KeyNotFoundException("The provided Tour ID is invalid.");
+            }
+            else
+            {
+                DbContext.Entry(aggregateRoot).State = EntityState.Modified;
+                DbContext.SaveChanges();
+                return aggregateRoot;
+            }
+                
+            
         }
 
+        public List<Tour> GetAllByIds(List<long> tourIds)
+        {
+            if (tourIds == null || !tourIds.Any())
+            {
+                return new List<Tour>();
+            }
+            return DbContext.Tours
+                    .Where(tour => tourIds.Contains(tour.Id)).ToList();
+                 
+
+        }
         
     }
 }

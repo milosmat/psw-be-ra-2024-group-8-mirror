@@ -28,6 +28,7 @@ namespace Explorer.Blog.Tests.Integration
 
         [Theory]
         [InlineData(1, "Create", "Description", new[] { "image.png" }, BlogsStatus.Published)]
+        [InlineData(1, "CreateForUpdate", "DescriptionForUpdate", new[] { "imageForUpdate.png" }, BlogsStatus.Published)]
         public void Creates(int userId, string title, string description, string[] images, BlogsStatus status)
         {
             // Arrange
@@ -93,7 +94,7 @@ namespace Explorer.Blog.Tests.Integration
 
 
         [Theory]
-        [InlineData(1, "UpdateTitle2", "UpdateDescription2")]
+        [InlineData(2, "UpdateTitle2", "UpdateDescription2")]
         public void Updates(int id, string title, string description)
         {
             // Arrange
@@ -124,10 +125,8 @@ namespace Explorer.Blog.Tests.Integration
             storedEntity.Description.ShouldBe(description);
         }
 
-
-
         [Theory]
-        [InlineData(-1000,"Test" ,"Description", 500)]
+        [InlineData(-1000, "Test", "Description", 500)]
         public void Update_fails_invalid_id(int id, string title, string description, int expectedStatusCode)
         {
             // Arrange

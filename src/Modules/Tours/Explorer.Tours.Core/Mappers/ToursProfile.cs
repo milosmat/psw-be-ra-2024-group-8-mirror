@@ -23,7 +23,11 @@ public class ToursProfile : Profile
 
 
 
-        CreateMap<ObjectDTO, Object>().ReverseMap();
+        CreateMap<Object, ObjectDTO>()
+        .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.ToString()));
+        CreateMap<ObjectDTO, Object>()
+        .ForMember(dest => dest.Category, opt => opt.MapFrom(src => Enum.Parse<ObjectCategory>(src.Category, true)));
+
         CreateMap<TourReview, TourReviewDto>()
             .ForMember(dest => dest.Personn, opt => opt.MapFrom(src => src.Personn))
             .ReverseMap();

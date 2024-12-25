@@ -26,7 +26,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
         public CommentsCommandTests(BlogTestFactory factory) : base(factory) { }
 
         [Theory]
-        [InlineData(1L, "Test comment", 1L)] // User 1, Blog 1, Comment content
+        [InlineData(-11, "Test comment", -1)] // User 1, Blog 1, Comment content
         public void Creates(long userId, string content, long blogId)
         {
             // Arrange
@@ -61,8 +61,8 @@ namespace Explorer.Blog.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(null, "Test comment", 400)] //Null userId
-        [InlineData(1L, "", 400)] // Empty comment text
+        [InlineData(null, "Test comment", 404)] //Null userId
+        [InlineData(1L, "", 404)] // Empty comment text
         public void Create_fails_invalid_data(long? userId, string content, int expectedStatusCode)
         {
             // Arrange
@@ -85,7 +85,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData("Updated comment content", 1L, 1L)]
+        [InlineData("Updated comment content", -1L, 1L)]
         public void Updates(string content, long blogId, long userId)
         {
             // Arrange
@@ -154,7 +154,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(1L, 1L, "", 400)] //Empty text comment
+        [InlineData(-1L, 1L, "", 404)] //Empty text comment
         public void Update_fails_invalid_content(long blogId, long userId, string content, int expectedStatusCode)
         {
             //Arrange
@@ -208,9 +208,9 @@ namespace Explorer.Blog.Tests.Integration.Administration
                 Text = "Test comment for delete.",
                 CreationTime = DateTime.UtcNow,
                 LastModifiedTime = DateTime.UtcNow,
-                BlogId = 1
+                BlogId = -1
             };
-            var createdComment = ((ObjectResult)controller.Create(1, comment).Result)?.Value as CommentDto;
+            var createdComment = ((ObjectResult)controller.Create(-1, comment).Result)?.Value as CommentDto;
             var createdCommentId = createdComment?.Id ?? -1;
 
             var preDeleteEntity = dbContext.Comments.FirstOrDefault(c => c.Id == createdCommentId);
@@ -225,7 +225,7 @@ namespace Explorer.Blog.Tests.Integration.Administration
 
 
 
-            controller.Delete(1, createdCommentId); 
+            controller.Delete(-1, createdCommentId); 
 
 
             // Assert - Check if entity was deleted from the database

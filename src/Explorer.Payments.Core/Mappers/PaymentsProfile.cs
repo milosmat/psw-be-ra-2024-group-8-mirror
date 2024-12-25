@@ -24,7 +24,7 @@ public class PaymentsProfile : Profile
       .ForMember(dest => dest.ShopingBundles, opt => opt.MapFrom(src => src.ShopingBundles))
       .ReverseMap();
 
-        CreateMap<ShoppingCartDTO.ShoppingCartItemDTO, ShoppingCartItem>()
+        CreateMap<ShoppingCartItemDto, ShoppingCartItem>()
             .ForMember(dest => dest.TourId, opt => opt.MapFrom(src => src.TourId))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.TourName))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.TourPrice))

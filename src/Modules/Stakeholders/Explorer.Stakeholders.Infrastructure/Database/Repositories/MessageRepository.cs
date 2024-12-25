@@ -14,12 +14,15 @@ namespace Explorer.Stakeholders.Infrastructure.Database.Repositories
     public class MessageRepository : CrudDatabaseRepository<Message, StakeholdersContext>, IMessageRepository
     {
 
-        public MessageRepository(StakeholdersContext dbContext) : base(dbContext)
+        public MessageRepository(StakeholdersContext dbContext) : base(dbContext) { }
+
+        public Message Update(Message aggregateRoot)
         {
+            DbContext.Entry(aggregateRoot).State = EntityState.Modified;
+            DbContext.Messages.Update(aggregateRoot);
+            DbContext.SaveChanges();
+            return aggregateRoot;
         }
-
-
-      
 
 
     }

@@ -9,7 +9,9 @@ namespace Explorer.Stakeholders.Core.Domain.RepositoryInterfaces
 {
     public interface IMessageRepository : ICrudRepository<Message>
     {
-       
+        PagedResult<Message> GetPaged(int page, int pageSize);
+        Message Update(Message updateMessage);
+
     }
-   
+
 }

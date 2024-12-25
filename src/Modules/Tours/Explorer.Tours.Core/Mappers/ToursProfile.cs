@@ -21,6 +21,7 @@ public class ToursProfile : Profile
         CreateMap<VisitedCheckpointDTO, VisitedCheckpoint>().ReverseMap();
         CreateMap<TourSaleDto, TourSale>().ReverseMap();
 
+        CreateMap<ArticleDTO, Article>().ReverseMap();
 
 
         CreateMap<Object, ObjectDTO>()

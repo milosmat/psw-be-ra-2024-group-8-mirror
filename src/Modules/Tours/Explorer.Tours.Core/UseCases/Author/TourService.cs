@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.Stakeholders.Core.Domain;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.Core.Domain;
@@ -14,6 +15,7 @@ namespace Explorer.Tours.Core.UseCases.Author
         private readonly ICrudRepository<TourCheckpoint> _tourCheckpointRepository;
         private readonly ICrudRepository<Equipment> _equipmentRepository;
         private readonly ITourRepository tourRepository;
+        private readonly IArticleService _articleService;
         private readonly IMapper _mapper;
 
         private readonly ICrudRepository<TourReview> _tourReviewRepository;
@@ -21,13 +23,14 @@ namespace Explorer.Tours.Core.UseCases.Author
         public TourService(ICrudRepository<Tour> repository, IMapper mapper,
             ICrudRepository<TourCheckpoint> tourCheckpointRepository,
             ICrudRepository<Equipment> equipmentRepository, ITourRepository tourRepository,
-            ICrudRepository<TourReview> tourReviewRepository) : base(repository, mapper)
+            ICrudRepository<TourReview> tourReviewRepository, IArticleService articleService) : base(repository, mapper)
         {
             _mapper = mapper;
             _tourCheckpointRepository = tourCheckpointRepository;
             _equipmentRepository = equipmentRepository;
             this.tourRepository = tourRepository;
             _tourReviewRepository = tourReviewRepository;
+            _articleService = articleService;
         }
 
         public Result AddEquipment(int tourId, EquipmentDto equipmentDto)
@@ -375,6 +378,28 @@ namespace Explorer.Tours.Core.UseCases.Author
                 Tour tour = tourRepository.Get(tourId);
                 var result = tour.setPublished();
                 CrudRepository.Update(tour);
+
+
+                var articleDto = new ArticleDTO
+                {
+                    TourId = tourId,
+                    AuthorId = tour.AuthorId,
+                    Title = $"Explore {tour.Name}",
+                    Content = tour.Description,
+                    TourDescription = tour.Description,
+                    Weight = tour.Weight,
+                    Tags = tour.Tags,
+                    Price = tour.Price,
+                    LengthInKm = tour.LengthInKm,
+                    Checkpoints = tour.TourCheckpoints.Select(c => c.CheckpointName).ToList(), // Pretpostavljamo da je Name atribut
+                    EquipmentList = tour.Equipments.Select(e => e.Name).ToList() // Pretpostavljamo da je Name atribut
+                };
+
+
+                var articleResult = _articleService.CreateArticle(tourId, tour.AuthorId, articleDto);
+                if (articleResult.IsFailed)
+                    return Result.Fail("Tour published, but failed to create article.");
+
                 return result;
             }
             catch (KeyNotFoundException e)

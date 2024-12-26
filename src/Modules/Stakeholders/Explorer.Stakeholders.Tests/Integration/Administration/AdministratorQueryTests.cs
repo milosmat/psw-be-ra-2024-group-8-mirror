@@ -30,8 +30,8 @@ namespace Explorer.Stakeholders.Tests.Integration.Administration
             var result = ((ObjectResult)controller.GetAll(0, 0).Result)?.Value as PagedResult<AccountInformationDto>;
 
             result.ShouldNotBeNull();
-            result.Results.Count.ShouldBe(7);
-            result.TotalCount.ShouldBe(7);
+            result.Results.Count.ShouldBe(9);
+            result.TotalCount.ShouldBe(9);
         }
 
         private static AccountController CreateController(IServiceScope scope)

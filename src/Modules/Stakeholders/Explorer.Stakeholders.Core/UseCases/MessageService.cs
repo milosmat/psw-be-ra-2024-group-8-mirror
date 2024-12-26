@@ -90,7 +90,7 @@ namespace Explorer.Stakeholders.Core.UseCases;
         var message = club.Messages.FirstOrDefault(mr => mr.Id == messageId);
         if (message == null)
         {
-            throw new KeyNotFoundException($"Membership request with ID {messageId} not found.");
+            throw new KeyNotFoundException($"Message with ID {messageId} not found.");
         }
 
         return _mapper.Map<MessageDto>(message);

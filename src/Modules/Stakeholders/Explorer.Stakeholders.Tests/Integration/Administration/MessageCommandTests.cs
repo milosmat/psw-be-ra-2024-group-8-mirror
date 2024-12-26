@@ -190,7 +190,7 @@ namespace Explorer.Stakeholders.Tests.Integration.Administration
             var exception = Assert.Throws<KeyNotFoundException>(() => controller.Delete(-3, membershipId));
 
             // Optional: Verify the exception message
-            exception.Message.ShouldBe($"Message request with ID {membershipId} not found.");
+            exception.Message.ShouldBe($"Message with ID { membershipId} not found.");
         }
 
 

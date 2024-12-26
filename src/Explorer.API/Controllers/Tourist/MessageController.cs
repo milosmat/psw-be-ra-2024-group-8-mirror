@@ -120,5 +120,29 @@ namespace Explorer.API.Controllers.Tourist
             return Ok($"Blog with ID {id} has been successfully deleted.");
         }
 
+        [HttpPost]
+        public ActionResult<MessageDto> Create([FromRoute] long clubId, [FromBody] MessageDto message)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(message.Content) || message.SenderId == 0)
+                {
+                    return BadRequest("Content cannot be null or empty");
+                }
+
+                var createdMessage = _messageService.Create(clubId, message);
+                return CreatedAtAction(nameof(Create), new { clubId, messageId = createdMessage.Id }, createdMessage);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
     }
 }

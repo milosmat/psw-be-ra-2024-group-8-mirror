@@ -13,6 +13,7 @@ namespace Explorer.Payments.API.Dtos
         public string TourName { get; set; } // Naziv ture
         public decimal TourPrice { get; set; } // Cena ture
         //public long ShoppingCartId { get; set; }
+        public decimal? TourPriceWithDiscount { get; set; }
 
 
     }

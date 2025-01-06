@@ -25,6 +25,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         private readonly IPaymentRecordRepository _paymentRepository;
         // private readonly IBundleService _bundleService;
         private readonly IPaymentBundleService _paymentBundleService;
+       
         public IMapper _mapper { get; set; }
         public ShoppingCartService(
                ICardRepository cardRepository,
@@ -146,7 +147,8 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 return null;
             }
 
-            var shoppingCartDto = new ShoppingCartDTO
+            var shoppingCartDto = _mapper.Map<ShoppingCartDTO>(shoppingCart);
+            /*var shoppingCartDto = new ShoppingCartDTO
             {
                 TouristId = shoppingCart.TouristId,
                 ShopingItems = shoppingCart.ShopingItems.Select(item => new ShoppingCartItemDto
@@ -167,7 +169,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 // Ukupna cena (sabira ture i pakete)
                 TotalPrice = shoppingCart.ShopingItems.Sum(item => item.Price) + shoppingCart.ShopingBundles.Sum(bundle => bundle.Price)
 
-            };
+            };*/
 
             return shoppingCartDto;
         }
@@ -195,7 +197,8 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                     TourId = item.TourId,
                     Status = TourPurchaseTokenDTO.TokenStatus.Active,
                     CreatedDate = DateTime.UtcNow,
-                    ExpiredDate = DateTime.UtcNow.AddYears(1)
+                    ExpiredDate = DateTime.UtcNow.AddYears(1),
+                    TourPrice = item.TourPriceWithDiscount ?? item.TotalPrice 
                 };
 
                 // Generiši JWT token
@@ -271,31 +274,22 @@ namespace Explorer.Payments.Core.UseCases.Tourist
 
         public ShoppingCartDTO Update(ShoppingCartDTO updatedShoppingCart)
         {
-            // Fetch the existing shopping cart
+            
             var shoppingCart = _cardRepository.GetByTouristId(updatedShoppingCart.TouristId);
             if (shoppingCart == null)
             {
                 throw new InvalidOperationException("Shopping cart not found.");
             }
 
-            // Update the shopping cart with values from the updated DTO
-            shoppingCart.ShopingItems = updatedShoppingCart.ShopingItems.Select(itemDto => new ShoppingCartItem(itemDto.TourId, itemDto.TourName, itemDto.TourPrice)).ToList();
-
-            // Save the updated shopping cart back to the repository
+            
+            shoppingCart.ShopingItems = _mapper.Map<List<ShoppingCartItem>>(updatedShoppingCart.ShopingItems);
+            shoppingCart.CalculateTotalPrice();
             _cardRepository.Update(shoppingCart);
 
-            // Return the updated DTO (map back if needed)
-            return new ShoppingCartDTO
-            {
-                TouristId = shoppingCart.TouristId,
-                ShopingItems = shoppingCart.ShopingItems.Select(item => new ShoppingCartItemDto
-                {
-                    TourId = item.TourId,
-                    TourName = item.Name,
-                    TourPrice = item.Price
-                }).ToList(),
-                TotalPrice = shoppingCart.ShopingItems.Sum(item => item.Price)
-            };
+            var result = _mapper.Map<ShoppingCartDTO>(shoppingCart);
+            //result.TotalPrice = result.ShopingItems.Sum(item => item.TourPriceWithDiscount ?? item.TourPrice);
+            return result;
+            
         }
 
 

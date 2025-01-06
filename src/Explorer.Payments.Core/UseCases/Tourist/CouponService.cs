@@ -55,8 +55,9 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             return _mapper.Map<CouponDTO>(_couponRepository.Get(id));
         }
 
-        public List<ShoppingCartItemDto> ApplyCouponOnCartItems(string code, List<ShoppingCartItemDto> cartItems)
+        public bool ApplyCouponOnCartItems(string code, List<ShoppingCartItemDto> cartItems)
         {
+            bool isApplied = false;
             //pronadjemo kupon na osnovu koda
             var coupons = _mapper.Map<List<CouponDTO>>(_couponRepository.GetCouponsByCode(code));
             if (coupons == null || !coupons.Any())
@@ -73,6 +74,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                     throw new ArgumentException("There are not most expensive tour to load.");
                 }
                 ApplyDiscount(mostExpensiveItem, coupons.First().DiscountPercentage);
+                isApplied = true;
 
             }
             else
@@ -83,12 +85,13 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                     {
                         var applicableCoupon = coupons.First(c => c.TourId == cartItem.TourId);
                         ApplyDiscount(cartItem, applicableCoupon.DiscountPercentage);
+                        isApplied = true;
                     }
                 }
             }
 
 
-            return cartItems;
+            return isApplied;
         }
 
         public void ApplyDiscount(ShoppingCartItemDto cartItem, int discountPercentage)
@@ -101,7 +104,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
 
             
             decimal discountAmount = cartItem.TourPrice * discountPercentage / 100;
-            cartItem.TourPrice -= discountAmount;
+            cartItem.TourPriceWithDiscount = cartItem.TourPrice - discountAmount;
         }
 
         public List<CouponDTO> GetCouponsByIds(List<long> couponIds)

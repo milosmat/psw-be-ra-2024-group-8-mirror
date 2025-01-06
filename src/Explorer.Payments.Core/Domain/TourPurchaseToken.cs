@@ -15,8 +15,9 @@ namespace Explorer.Payments.Core.Domain
         public DateTime CreatedDate { get; private set; }
         public DateTime ExpiredDate { get; private set; }
         public String jwtToken { get; private set; }
+        public decimal TourPrice { get; private set; }
 
-        public TourPurchaseToken(long touristId, long tourId, String jwtToken)
+        public TourPurchaseToken(long touristId, long tourId, String jwtToken, decimal tourPrice)
         {
             TouristId = touristId;
             TourId = tourId;
@@ -24,8 +25,9 @@ namespace Explorer.Payments.Core.Domain
             CreatedDate = DateTime.UtcNow;
             ExpiredDate = CreatedDate.AddYears(1);  // Token važi godinu dana od datuma kreiranja
             this.jwtToken = jwtToken;
-
+            TourPrice = tourPrice;
             Validate();
+            
         }
 
         public void UseToken()
@@ -49,6 +51,8 @@ namespace Explorer.Payments.Core.Domain
 
             if (TourId <= 0)
                 throw new ArgumentException("ID ture mora biti validan.");
+            if (TourPrice < 0)
+                throw new ArgumentException("Tour price should not be negative.");
         }
 
         public enum TokenStatus

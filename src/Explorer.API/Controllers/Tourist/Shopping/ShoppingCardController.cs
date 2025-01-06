@@ -149,11 +149,14 @@ namespace Explorer.API.Controllers.Tourist.Shopping
                 return NotFound("Shopping cart not found.");
             }
 
-            var updatedCartItems = _couponService.ApplyCouponOnCartItems(couponCode, shoppingCart.ShopingItems);
-            shoppingCart.ShopingItems = updatedCartItems;
-            _shoppingCartService.Update(shoppingCart);  
+            var isCouponApplied = _couponService.ApplyCouponOnCartItems(couponCode, shoppingCart.ShopingItems);
+            if(isCouponApplied)
+            {
+                var result = _shoppingCartService.Update(shoppingCart);
+                return Ok(result);
+            }
+            return BadRequest("Coupon code does not match any items in the cart.");
 
-            return Ok(shoppingCart);
         }
 
 

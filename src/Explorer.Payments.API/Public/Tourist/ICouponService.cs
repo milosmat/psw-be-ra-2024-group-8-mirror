@@ -16,7 +16,7 @@ namespace Explorer.Payments.API.Public.Tourist
         void Delete(int id);
         CouponDTO Update(CouponDTO updateCoupon);
         CouponDTO Get(int id);
-        List<ShoppingCartItemDto> ApplyCouponOnCartItems(string code, List<ShoppingCartItemDto> cartItems);
+        bool ApplyCouponOnCartItems(string code, List<ShoppingCartItemDto> cartItems);
         List<CouponDTO> GetCouponsByIds(List<long> couponIds);
     }
 }

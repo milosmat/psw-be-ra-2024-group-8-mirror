@@ -64,6 +64,10 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             {
                 throw new ArgumentException("Invalid coupon code.");
             }
+            if(coupons.Any(c => c.ExpiryDate.HasValue && c.ExpiryDate < DateTime.UtcNow))
+            {
+                throw new InvalidOperationException("Coupon has expired.");
+            }
 
             if (coupons.Count == 1 && !coupons.First().TourId.HasValue)
             {
@@ -71,7 +75,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 var mostExpensiveItem = cartItems.OrderByDescending(item => item.TourPrice).FirstOrDefault();
                 if (mostExpensiveItem == null)
                 {
-                    throw new ArgumentException("There are not most expensive tour to load.");
+                    throw new Exception();
                 }
                 ApplyDiscount(mostExpensiveItem, coupons.First().DiscountPercentage);
                 isApplied = true;

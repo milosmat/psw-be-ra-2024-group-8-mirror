@@ -137,26 +137,40 @@ namespace Explorer.API.Controllers.Tourist.Shopping
         [HttpPost("{touristId:int}/apply-coupon")]
         public ActionResult<ShoppingCartDTO> ApplyCoupon(int touristId, [FromQuery] string couponCode)
         {
-            if (string.IsNullOrEmpty(couponCode))
+            try
             {
-                return BadRequest("Coupon code is required.");
+                if (string.IsNullOrEmpty(couponCode))
+                {
+                    return BadRequest("Coupon code is required.");
+                }
+
+
+                var shoppingCart = _shoppingCartService.GetShoppingCart(touristId);
+                if (shoppingCart == null)
+                {
+                    return NotFound("Shopping cart not found.");
+                }
+
+                var isCouponApplied = _couponService.ApplyCouponOnCartItems(couponCode, shoppingCart.ShopingItems);
+                if (isCouponApplied)
+                {
+                    var result = _shoppingCartService.Update(shoppingCart);
+                    return Ok(result);
+                }
+                return BadRequest(new { message = "Coupon code does not match any items in the cart." });
             }
-
-
-            var shoppingCart = _shoppingCartService.GetShoppingCart(touristId);
-            if (shoppingCart == null)
+            catch(InvalidOperationException ex)
             {
-                return NotFound("Shopping cart not found.");
+                return BadRequest(new { message = "Coupon has expired." });
             }
-
-            var isCouponApplied = _couponService.ApplyCouponOnCartItems(couponCode, shoppingCart.ShopingItems);
-            if(isCouponApplied)
+            catch (ArgumentException ex)
             {
-                var result = _shoppingCartService.Update(shoppingCart);
-                return Ok(result);
+                return StatusCode(404, new { message = ex.Message});
+            }catch(Exception)
+            {
+                return StatusCode(400);
             }
-            return BadRequest("Coupon code does not match any items in the cart.");
-
+            
         }
 
 

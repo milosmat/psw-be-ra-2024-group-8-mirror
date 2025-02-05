@@ -40,6 +40,7 @@ public static class PaymentsStartup
         services.AddScoped<ICouponRepository, CouponDataBaseRepository>();
         services.AddScoped<ICouponService, CouponService>();
         services.AddScoped<IPaymentRecordService, PaymentRecordService>();
+        services.AddScoped<ITouristCouponRepository, TouristCouponDatabaseRepository>();
 
     }
 

@@ -14,6 +14,8 @@ namespace Explorer.Payments.API.Dtos
         public decimal TourPrice { get; set; } // Cena ture
         //public long ShoppingCartId { get; set; }
         public decimal? TourPriceWithDiscount { get; set; }
+        public string? UsedCouponCode { get; set; }
+
 
 
     }

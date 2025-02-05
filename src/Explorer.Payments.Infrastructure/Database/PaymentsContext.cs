@@ -25,7 +25,7 @@ public class PaymentsContext : DbContext
     public DbSet<ShoppingCartBundle> ShoppingCartBoundle { get; set; }
     public DbSet<PaymentRecord> PaymentRecord { get; set; }
 
-
+    public DbSet<TouristCoupon> TouristsCoupons { get; set; }
 
     public PaymentsContext(DbContextOptions<PaymentsContext> options) : base(options) { }
 
@@ -43,6 +43,7 @@ public class PaymentsContext : DbContext
         modelBuilder.Entity<ShoppingCartBundle>().ToTable("ShoppingCartBundle");
         modelBuilder.Entity<PaymentRecord>().ToTable("PaymentRecord");
 
+        modelBuilder.Entity<TouristCoupon>().ToTable("TouristsCoupons");
 
 
         modelBuilder.Entity<ShoppingCart>()
@@ -67,6 +68,10 @@ public class PaymentsContext : DbContext
           .WithOne() // Svaka stavka pripada jednom shopping cart-u
           .HasForeignKey("ShoppingCartId")  // Spoljni ključ
           .OnDelete(DeleteBehavior.Cascade);  // Ako se obriše korpa, brišu se i stavke
+
+        modelBuilder.Entity<TouristCoupon>()
+            .HasIndex(tc => new { tc.TouristId, tc.CouponCode }) 
+            .IsUnique(); 
 
     }
 }

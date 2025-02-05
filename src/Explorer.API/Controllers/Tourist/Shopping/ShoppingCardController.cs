@@ -141,17 +141,22 @@ namespace Explorer.API.Controllers.Tourist.Shopping
             {
                 if (string.IsNullOrEmpty(couponCode))
                 {
-                    return BadRequest("Coupon code is required.");
+                    return BadRequest(new {message = "Coupon code is required."});
                 }
 
 
                 var shoppingCart = _shoppingCartService.GetShoppingCart(touristId);
                 if (shoppingCart == null)
                 {
-                    return NotFound("Shopping cart not found.");
+                    return NotFound(new { message = "Shopping cart not found." });
                 }
 
-                var isCouponApplied = _couponService.ApplyCouponOnCartItems(couponCode, shoppingCart.ShopingItems);
+                if(_couponService.ValidateCouponCodeUsage(touristId, couponCode))
+                {
+                    return BadRequest(new { message = "You have already used this coupon."});
+                }
+
+                var isCouponApplied = _couponService.ApplyCouponOnCartItems(touristId, couponCode, shoppingCart.ShopingItems);
                 if (isCouponApplied)
                 {
                     var result = _shoppingCartService.Update(shoppingCart);
@@ -161,7 +166,7 @@ namespace Explorer.API.Controllers.Tourist.Shopping
             }
             catch(InvalidOperationException ex)
             {
-                return BadRequest(new { message = "Coupon has expired." });
+                return BadRequest(new { message = ex.Message});
             }
             catch (ArgumentException ex)
             {

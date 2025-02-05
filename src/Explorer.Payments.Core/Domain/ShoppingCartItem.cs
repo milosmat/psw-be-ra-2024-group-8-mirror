@@ -16,6 +16,8 @@ namespace Explorer.Payments.Core.Domain
         public long ShoppingCartId { get; set; } // Foreign Key
         public decimal? TourPriceWithDiscount { get; set; }
 
+        public string? UsedCouponCode { get; set; }
+
         // Konstruktor sa ShoppingCartId
         public ShoppingCartItem() { }
         public ShoppingCartItem(long tourId, string name, decimal price)
@@ -24,12 +26,13 @@ namespace Explorer.Payments.Core.Domain
             Name = name;
             Price = price; 
         }
-        public ShoppingCartItem(long tourId, string name, decimal price, decimal priceWithDiscount) 
+        public ShoppingCartItem(long tourId, string name, decimal price, decimal priceWithDiscount, string couponCode) 
         {
             TourId = tourId;
             Name = name;
             Price = price;
             TourPriceWithDiscount = priceWithDiscount;
+            UsedCouponCode = couponCode;
         }
 
 
@@ -38,7 +41,6 @@ namespace Explorer.Payments.Core.Domain
             TourPriceWithDiscount = newPrice;
             return TourPriceWithDiscount;
         }
-        public decimal TotalPrice => Price;
     }
 }
 

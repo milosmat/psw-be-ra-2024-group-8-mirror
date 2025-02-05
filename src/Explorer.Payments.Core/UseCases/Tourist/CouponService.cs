@@ -5,9 +5,11 @@ using Explorer.Payments.API.Public.Tourist;
 using Explorer.Payments.Core.Domain;
 using Explorer.Payments.Core.Domain.RepositoryInterfaces;
 using FluentResults;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
@@ -16,12 +18,16 @@ namespace Explorer.Payments.Core.UseCases.Tourist
 {
     public class CouponService : BaseService<CouponDTO, Coupon>, ICouponService
     {
-        public ICouponRepository _couponRepository { get; set; }
+        public readonly ICouponRepository _couponRepository;
+        public readonly ITouristCouponRepository _touristCouponRepository; 
         public IMapper _mapper { get; set; }
 
-        public CouponService(ICouponRepository couponRepository, IMapper mapper) : base(mapper)
+        public CouponService(ICouponRepository couponRepository,
+                             ITouristCouponRepository touristCouponRepository,
+                             IMapper mapper) : base(mapper)
         {
             _couponRepository = couponRepository;
+            _touristCouponRepository = touristCouponRepository;
             _mapper = mapper;
         }
 
@@ -55,16 +61,23 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             return _mapper.Map<CouponDTO>(_couponRepository.Get(id));
         }
 
-        public bool ApplyCouponOnCartItems(string code, List<ShoppingCartItemDto> cartItems)
+        public bool ValidateCouponCodeUsage(long touristId, string code)
+        {
+            return _touristCouponRepository.IsCouponAlreadyUsed(touristId, code);
+        }
+
+        public bool ApplyCouponOnCartItems(long touristId, string code, List<ShoppingCartItemDto> cartItems)
         {
             bool isApplied = false;
-            //pronadjemo kupon na osnovu koda
+
             var coupons = _mapper.Map<List<CouponDTO>>(_couponRepository.GetCouponsByCode(code));
+
+
             if (coupons == null || !coupons.Any())
             {
-                throw new ArgumentException("Invalid coupon code.");
+                throw new InvalidOperationException("No available coupons found.");
             }
-            if(coupons.Any(c => c.ExpiryDate.HasValue && c.ExpiryDate < DateTime.UtcNow))
+            if (coupons.Any(c => c.ExpiryDate.HasValue && c.ExpiryDate < DateTime.UtcNow))
             {
                 throw new InvalidOperationException("Coupon has expired.");
             }
@@ -83,22 +96,29 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             }
             else
             {
-                foreach (var cartItem in cartItems)
+                var cartItemsWithCoupons = cartItems.Where
+                                           (cartItem => coupons.Any(c => c.TourId == cartItem.TourId)).ToList();
+
+                if (cartItemsWithCoupons != null)
                 {
-                    if (coupons.Any(c => c.TourId == cartItem.TourId))
+                    foreach(var cartItem in cartItemsWithCoupons)
                     {
                         var applicableCoupon = coupons.First(c => c.TourId == cartItem.TourId);
+                        if (applicableCoupon == null)
+                        {
+                            throw new Exception();
+                        }
                         ApplyDiscount(cartItem, applicableCoupon.DiscountPercentage);
+                        cartItem.UsedCouponCode = applicableCoupon.Code;
                         isApplied = true;
                     }
                 }
+                
             }
-
-
             return isApplied;
         }
 
-        public void ApplyDiscount(ShoppingCartItemDto cartItem, int discountPercentage)
+        private void ApplyDiscount(ShoppingCartItemDto cartItem, int discountPercentage)
         {
 
             if (discountPercentage < 0 || discountPercentage > 100)

@@ -16,6 +16,9 @@ namespace Explorer.Payments.API.Dtos
         public DateTime ExpiredDate { get; set; }
         public String jwtToken { get; set; }
         public decimal TourPrice { get; set; }
+        
+        public decimal FinalTourPrice { get; set; }
+        public int DiscountPercentage { get; set; }
 
 
         public enum TokenStatus

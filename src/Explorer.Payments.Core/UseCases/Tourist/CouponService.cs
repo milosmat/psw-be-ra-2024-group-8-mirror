@@ -181,7 +181,8 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                     Code = couponCode,
                     DiscountPercentage = 5,
                     ExpiryDate = DateTime.UtcNow.AddDays(30),
-                    RecipientId = userId
+                    RecipientId = userId,
+                    IsPublic = true,
                 };
                 var createdCoupon = Create(newCoupon);
                 if (createdCoupon == null)

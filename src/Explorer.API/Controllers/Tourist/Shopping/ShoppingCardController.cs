@@ -18,12 +18,10 @@ namespace Explorer.API.Controllers.Tourist.Shopping
     public class ShoppingCardController : BaseApiController
     {
         private readonly IShoppingCartService _shoppingCartService;
-        private readonly ICouponService _couponService;
 
-        public ShoppingCardController(IShoppingCartService shoppingCartService, ICouponService couponService)
+        public ShoppingCardController(IShoppingCartService shoppingCartService)
         {
             _shoppingCartService = shoppingCartService;
-            _couponService = couponService;
         }
 
         [HttpGet("{touristId}")]
@@ -135,25 +133,43 @@ namespace Explorer.API.Controllers.Tourist.Shopping
         }
 
         [HttpPost("{touristId:int}/apply-coupon")]
-        public ActionResult<ShoppingCartDTO> ApplyCoupon(int touristId, [FromQuery] string couponCode)
+        public ActionResult<ShoppingCartDTO> ApplyCouponToCart(int touristId, [FromQuery] string couponCode)
         {
-            if (string.IsNullOrEmpty(couponCode))
+            var result = _shoppingCartService.ApplyCouponToCart(touristId, couponCode);
+            if(result.IsFailed)
             {
-                return BadRequest("Coupon code is required.");
+                var reason = result.Reasons.FirstOrDefault(r => r.Metadata.ContainsKey("code"));
+
+                if(reason != null)
+                {
+                    var statusCode = Convert.ToInt32(reason.Metadata["code"]);
+                    var error = result.Errors.Last();
+                    return StatusCode(statusCode, new { message = error.Message });
+
+                }
+
+                return StatusCode(500, new { message = "An unexpected error occurred while processing the request."});
+                
             }
+            return Ok(result.Value);
+        }
 
-
-            var shoppingCart = _shoppingCartService.GetShoppingCart(touristId);
-            if (shoppingCart == null)
+        [HttpPost("{touristId:int}/cancel-coupon")]
+        public ActionResult<ShoppingCartDTO> CancelCoupon(int touristId, [FromQuery] string couponCode)
+        {
+            var result = _shoppingCartService.CancelUsedCoupon(touristId, couponCode);
+            if(result.IsFailed)
             {
-                return NotFound("Shopping cart not found.");
+                var reason = result.Reasons.FirstOrDefault(r => r.Metadata.ContainsKey("code"));
+                if( reason != null)
+                {
+                    var statusCode = Convert.ToInt32(reason.Metadata["code"]);
+                    var error = result.Errors.Last();
+                    return StatusCode(statusCode, new {message = error.Message });
+                }
+                return StatusCode(500, new { message = "An unexpected error occurred while processing the request." });
             }
-
-            var updatedCartItems = _couponService.ApplyCouponOnCartItems(couponCode, shoppingCart.ShopingItems);
-            shoppingCart.ShopingItems = updatedCartItems;
-            _shoppingCartService.Update(shoppingCart);  
-
-            return Ok(shoppingCart);
+            return Ok(result.Value);
         }
 
 

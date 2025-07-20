@@ -12,10 +12,10 @@ namespace Explorer.Encounters.Core.Domain
     {
         public TouristProfile(
             string username,
-            string password,
+            string passwordHash,
             UserRole role,
             bool isActive
-        ) : base(username, password, role, isActive)
+        ) : base(username, passwordHash, role, isActive)
         {
             XP = 0;
             CompletedEncountersIds = new List<long>();

@@ -70,7 +70,7 @@ namespace Explorer.Encounters.Infrastructure.Database
             var existingTouristUsernames = TouristProfiles.Select(tp => tp.Username).ToHashSet();
             var newTourists = tourists
                 .Where(t => !existingTouristUsernames.Contains(t.Username))
-                .Select(u => new TouristProfile(u.Username, u.Password, u.Role, u.IsActive))
+                .Select(u => new TouristProfile(u.Username, u.PasswordHash, u.Role, u.IsActive))
                 .ToList();
 
             if (newTourists.Any())

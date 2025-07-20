@@ -15,7 +15,7 @@ namespace Explorer.Payments.Core.Domain
         public List<ShoppingCartItem> ShopingItems { get;  set; }
 
 
-        private decimal TotalPrice;
+        public decimal TotalPrice { get; private set; }
 
         public int? ShopItemsCapacity { get; set; }
         public int? ShopBundlesCapacity { get; set; }
@@ -71,7 +71,7 @@ namespace Explorer.Payments.Core.Domain
 
         public decimal CalculateTotalPrice()
         {
-            TotalPrice = ShopingItems.Sum(item => item.Price) + ShopingBundles.Sum(bundle => bundle.Price);
+            TotalPrice = ShopingItems.Sum(item => item.TourPriceWithDiscount ?? item.Price) + ShopingBundles.Sum(bundle => bundle.Price);
             return TotalPrice;
         }
 

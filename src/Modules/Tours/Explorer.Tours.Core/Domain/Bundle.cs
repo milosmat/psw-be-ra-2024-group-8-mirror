@@ -34,7 +34,6 @@ public class Bundle : Entity
         Tours = new List<BundleTour>();
         Status = BundleStatus.DRAFT;
         TotalToursPrice = 0;
-        CustomPrice = 0;
     }
 
     public Result AddTour(BundleTour tour)
@@ -79,6 +78,7 @@ public class Bundle : Entity
     private void UpdateTotalToursPrice()
     {
         TotalToursPrice = Tours.Sum(item => item.Price);
+        SetCustomPrice(TotalToursPrice);
     }
 
     public void UpdateStatus(BundleStatus newStatus)

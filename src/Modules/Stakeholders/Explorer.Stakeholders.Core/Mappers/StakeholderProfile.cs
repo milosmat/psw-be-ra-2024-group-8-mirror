@@ -38,7 +38,8 @@ public class StakeholderProfile : Profile
             .ForMember(dest => dest.CommentedAt, opt => opt.MapFrom(src => src.CommentedAt))
             .ReverseMap();
 
-        CreateMap<UserDto, User>().ReverseMap();
+        CreateMap<User, UserDto>();
+            //.ReverseMap();
 
 
         CreateMap<FollowersDto, Followers>().ReverseMap();

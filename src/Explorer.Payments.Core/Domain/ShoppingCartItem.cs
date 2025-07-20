@@ -14,16 +14,33 @@ namespace Explorer.Payments.Core.Domain
         public string Name { get; set; }
         public decimal Price { get; set; }
         public long ShoppingCartId { get; set; } // Foreign Key
+        public decimal? TourPriceWithDiscount { get; set; }
+
+        public string? UsedCouponCode { get; set; }
 
         // Konstruktor sa ShoppingCartId
+        public ShoppingCartItem() { }
         public ShoppingCartItem(long tourId, string name, decimal price)
         {
             TourId = tourId;
             Name = name;
+            Price = price; 
+        }
+        public ShoppingCartItem(long tourId, string name, decimal price, decimal priceWithDiscount, string couponCode) 
+        {
+            TourId = tourId;
+            Name = name;
             Price = price;
+            TourPriceWithDiscount = priceWithDiscount;
+            UsedCouponCode = couponCode;
         }
 
-        public decimal TotalPrice => Price;
+
+        public decimal? UpdateTourPrice(decimal newPrice)
+        {
+            TourPriceWithDiscount = newPrice;
+            return TourPriceWithDiscount;
+        }
     }
 }
 

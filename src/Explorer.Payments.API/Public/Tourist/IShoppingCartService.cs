@@ -20,12 +20,10 @@ namespace Explorer.Payments.API.Public.Tourist
         void RemoveBundleFromCart(long touristId, long bundleId);
         Result<List<BuildingBlocks.Core.Dtos.BundleDTO>> GetBundlesForTourist(long touristId);
 
-
-
-
         ShoppingCartDTO Update(ShoppingCartDTO updatedShoppingCart);
 
-
+        Result<ShoppingCartDTO> ApplyCouponToCart(long touristId, string couponCode);
+        Result<ShoppingCartDTO> CancelUsedCoupon(long touristId, string couponCode);
 
     }
 }

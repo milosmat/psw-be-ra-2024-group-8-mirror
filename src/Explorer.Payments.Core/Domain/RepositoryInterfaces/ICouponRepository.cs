@@ -16,5 +16,8 @@ namespace Explorer.Payments.Core.Domain.RepositoryInterfaces
         Coupon Get(int id);
         List<Coupon> GetCouponsByCode(string code);
         IEnumerable<Coupon> GetAll();
+        bool IsCouponCodeUnique(string code);
+
+        Coupon UpdateCouponPublished(long id, bool isPublic);
     }
 }

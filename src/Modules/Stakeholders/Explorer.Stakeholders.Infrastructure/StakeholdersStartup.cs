@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
 using Explorer.Stakeholders.Core.Domain.Clubs;
+using Explorer.Stakeholders.Core.Security;
 
 namespace Explorer.Stakeholders.Infrastructure;
 
@@ -47,14 +48,16 @@ public static class StakeholdersStartup
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<IMessageService, MessageService>();
+        services.AddTransient<IEmailService, EmailService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
     }
 
     private static void SetupInfrastructure(IServiceCollection services)
     {
         services.AddScoped(typeof(ICrudRepository<User>), typeof(CrudDatabaseRepository<User, StakeholdersContext>));
-        services.AddScoped(typeof(ICrudRepository<Person>), typeof(CrudDatabaseRepository<Person, StakeholdersContext>));
         services.AddScoped(typeof(ICrudRepository<Problem>), typeof(CrudDatabaseRepository<Problem, StakeholdersContext>));
         services.AddScoped<IUserRepository, UserDatabaseRepository>();
+        services.AddScoped<IPersonRepository, PersonDatabaseRepository>();
         services.AddScoped<ITourProblemRepository, TourProblemDatabaseRepository>();
         services.AddScoped(typeof(ICrudRepository<Account>),typeof(CrudDatabaseRepository<Account,StakeholdersContext>));
 

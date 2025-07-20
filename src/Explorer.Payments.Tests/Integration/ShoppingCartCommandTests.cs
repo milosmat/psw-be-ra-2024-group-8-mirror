@@ -176,8 +176,7 @@ namespace Explorer.Payments.Tests.Integration
         private static ShoppingCardController CreateController(IServiceScope scope)
         {
             return new ShoppingCardController(
-                scope.ServiceProvider.GetRequiredService<IShoppingCartService>(),
-                scope.ServiceProvider.GetRequiredService<ICouponService>())
+                scope.ServiceProvider.GetRequiredService<IShoppingCartService>())
             {
                 ControllerContext = BuildContext("-1")
             };

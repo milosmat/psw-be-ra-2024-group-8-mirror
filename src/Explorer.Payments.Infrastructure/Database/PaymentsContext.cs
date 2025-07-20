@@ -73,5 +73,6 @@ public class PaymentsContext : DbContext
             .HasIndex(tc => new { tc.TouristId, tc.CouponCode }) 
             .IsUnique(); 
 
+
     }
 }

@@ -26,7 +26,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
         private readonly IPaymentRecordRepository _paymentRepository;
         // private readonly IBundleService _bundleService;
         private readonly IPaymentBundleService _paymentBundleService;
-        private readonly ICouponRepository _couponRepository;
+        private readonly ICouponService _couponService;
         private readonly ITouristCouponRepository _touristCouponRepository;
         public IMapper _mapper { get; set; }
         public ShoppingCartService(
@@ -36,7 +36,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                IPaymentRecordRepository paymentRepository,
                //IBundleService bundleService,
                IPaymentBundleService paymentBundleService,
-               ICouponRepository couponRepository,
+               ICouponService couponService,
                ITouristCouponRepository touristCouponRepository,
                IMapper mapper
             )
@@ -47,7 +47,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
             //_bundleService = bundleService;
             _paymentBundleService = paymentBundleService;
-            _couponRepository = couponRepository;
+            _couponService = couponService;
             _touristCouponRepository = touristCouponRepository;
             _mapper = mapper;
         }
@@ -75,7 +75,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             _cardRepository.Update(shoppingCart);
 
             return _mapper.Map<List<ShoppingCartItemDto>>(shoppingCart.ShopingItems);
-            
+
         }
 
         public void AddBoundleToCart(long touristId, ShoppingBundleDto shoppingBoundleDto)
@@ -124,7 +124,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             {
                 return false;
             }
-            
+
         }
 
         public void RemoveBundleFromCart(long touristId, long bundleId)
@@ -196,11 +196,11 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             foreach (var item in shoppingCart.ShopingItems)
             {
                 int discountPercentage = 0;
-                if(item.Price>0 && item.TourPriceWithDiscount.HasValue)
+                if (item.Price > 0 && item.TourPriceWithDiscount.HasValue)
                 {
                     discountPercentage = (int)(100 * (item.Price - item.TourPriceWithDiscount.Value) / item.Price);
                 }
-                
+
                 // Kreiraj TourPurchaseTokenDTO
                 var tokenDto = new TourPurchaseTokenDTO
                 {
@@ -212,7 +212,7 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                     TourPrice = item.Price,
                     FinalTourPrice = item.TourPriceWithDiscount ?? item.Price,
                     DiscountPercentage = discountPercentage
-   
+
                 };
 
                 // Generiši JWT token
@@ -293,14 +293,14 @@ namespace Explorer.Payments.Core.UseCases.Tourist
 
         public ShoppingCartDTO Update(ShoppingCartDTO updatedShoppingCart)
         {
-            
+
             var shoppingCart = _cardRepository.GetByTouristId(updatedShoppingCart.TouristId);
             if (shoppingCart == null)
             {
                 throw new InvalidOperationException("Shopping cart not found.");
             }
 
-            
+
             shoppingCart.ShopingItems = _mapper.Map<List<ShoppingCartItem>>(updatedShoppingCart.ShopingItems);
             shoppingCart.CalculateTotalPrice();
             _cardRepository.Update(shoppingCart);
@@ -317,19 +317,98 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             var toursWithCoupons = purchasedTours.Where(tour => !string.IsNullOrEmpty(tour.UsedCouponCode))
                                     .DistinctBy(tour => tour.TourId)
                                     .ToList();
-            
+
             if (toursWithCoupons.Any())
             {
-               
+
                 foreach (var tour in toursWithCoupons)
                 {
-                    if(!_touristCouponRepository.IsCouponAlreadyUsed(touristId, tour.UsedCouponCode))
+                    if (!_touristCouponRepository.IsCouponAlreadyUsed(touristId, tour.UsedCouponCode))
                     {
                         _touristCouponRepository.Create(new TouristCoupon(touristId, tour.UsedCouponCode));
                     }
 
                 }
 
+            }
+        }
+
+        public Result<ShoppingCartDTO> ApplyCouponToCart(long touristId, string couponCode)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(couponCode))
+                {
+                    return Result.Fail(FailureCode.InvalidArgument).WithError("Coupon code is required.");
+                }
+
+                var shoppingCart = GetShoppingCart(touristId);
+                if (shoppingCart == null)
+                {
+                    return Result.Fail(FailureCode.NotFound).WithError("Shopping cart is not found.");
+                }
+
+                if (_couponService.ValidateCouponCodeUsage(touristId, couponCode))
+                {
+                    return Result.Fail(FailureCode.BadRequest).WithError("You have already used this coupon.");
+                }
+
+                var applyingResult = _couponService.ApplyCouponOnCartItems(touristId, couponCode, shoppingCart.ShopingItems);
+                if (applyingResult.IsFailed)
+                {
+                    return Result.Fail(applyingResult.Errors.Last());
+                }
+
+                return Result.Ok(Update(shoppingCart));
+            }
+            catch (Exception e)
+            {
+                return Result.Fail("An internal error occurred while processing the request.");
+            }
+
+        }
+
+        public Result<ShoppingCartDTO> CancelUsedCoupon(long touristId, string couponCode)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(couponCode))
+                {
+                    return Result.Fail(FailureCode.InvalidArgument).WithError("Coupon code is required.");
+                }
+
+                var shoppingCart = GetShoppingCart(touristId);
+                if (shoppingCart == null)
+                {
+                    return Result.Fail(FailureCode.NotFound).WithError("Shopping cart is not found.");
+                }
+
+                var shoppingCartItems = shoppingCart.ShopingItems;
+
+                if (shoppingCartItems == null || !shoppingCartItems.Any())
+                {
+                    return Result.Fail(FailureCode.NotFound).WithError("No shopping items found in the cart.");
+                }
+
+                var discountedCartItems = shoppingCartItems.
+                                            Where(item => item.UsedCouponCode?.Equals(couponCode) == true)
+                                            .ToList();
+                if(!discountedCartItems.Any())
+                {
+                    return Result.Fail(FailureCode.CouponNotFound);
+                }
+
+                foreach (var item in discountedCartItems)
+                {
+                    item.UsedCouponCode = null;
+                    item.TourPriceWithDiscount = null;
+                }
+
+                return Result.Ok(Update(shoppingCart));
+            }
+            catch (Exception e)
+            {
+                return Result.Fail("An internal error occurred while processing the request.");
             }
         }
     }

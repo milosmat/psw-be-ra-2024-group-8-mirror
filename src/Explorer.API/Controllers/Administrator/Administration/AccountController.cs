@@ -1,7 +1,6 @@
 ﻿using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public.Administration;
-using Explorer.Stakeholders.Core.Domain;
 using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,40 +12,42 @@ namespace Explorer.API.Controllers.Administrator.Administration
     public class AccountController : BaseApiController
     {
         private readonly IAdministratorService _administratorService;
-        private readonly ICrudRepository<Person> _personRepository;
 
-        public AccountController(IAdministratorService administratorService, ICrudRepository<Person> personRepository)
+        public AccountController(IAdministratorService administratorService)
         {
             _administratorService = administratorService;
-            _personRepository = personRepository;
         }
 
         [HttpGet]
         public ActionResult<PagedResult<AccountInformationDto>> GetAll([FromQuery] int page, [FromQuery] int pageSize)
         {
             var result = _administratorService.GetPaged(page, pageSize);
-            for(int i = 0; i < result.Value.Results.Count; i++)
+            if (result.IsFailed)
             {
-                try
-                {
-                    var person = _personRepository.Get(result.Value.Results[i].Id);
-                    result.Value.Results[i].Email = person.Email; 
-                }
-                catch (KeyNotFoundException)
-                {
-                    result.Value.Results[i].Email = "None";
-                }
-
+                return StatusCode(500, "Unexpected error occurred while collecting accounts data.");
             }
-            return CreateResponse(result);
+
+            return Ok(result.Value);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<AccountInformationDto> Update([FromBody] AccountInformationDto newInfo)
+        public ActionResult<AccountInformationDto> Update([FromBody] AccountInformationDto info)
         {
-            var result = _administratorService.Update(newInfo);
-            return CreateResponse(result);
+
+            var result = _administratorService.UpdateUserStatus(info.Id, info.IsActive);
+
+            if(result.IsFailed)
+            {
+                return BadRequest(result.Errors.Last());
+            }
+
+            if(info.IsActive)
+            {
+                return Ok("Account is unblocked.");
+            }
+            return Ok("Account is blocked");
+            
         }
-      
+
     }
 }

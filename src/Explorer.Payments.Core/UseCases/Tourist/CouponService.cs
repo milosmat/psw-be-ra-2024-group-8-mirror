@@ -5,21 +5,13 @@ using Explorer.Payments.API.Public.Tourist;
 using Explorer.Payments.Core.Domain;
 using Explorer.Payments.Core.Domain.RepositoryInterfaces;
 using FluentResults;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
 
 namespace Explorer.Payments.Core.UseCases.Tourist
 {
-    public class CouponService : BaseService<CouponDTO, Coupon>, ICouponService
+    public class CouponService : BaseService<CouponDTO, Coupon>, ICouponService, ICouponSenderService
     {
         public readonly ICouponRepository _couponRepository;
-        public readonly ITouristCouponRepository _touristCouponRepository; 
+        public readonly ITouristCouponRepository _touristCouponRepository;
         public IMapper _mapper { get; set; }
 
         public CouponService(ICouponRepository couponRepository,
@@ -66,67 +58,100 @@ namespace Explorer.Payments.Core.UseCases.Tourist
             return _touristCouponRepository.IsCouponAlreadyUsed(touristId, code);
         }
 
-        public bool ApplyCouponOnCartItems(long touristId, string code, List<ShoppingCartItemDto> cartItems)
+        private Result<bool> ValidateCoupon(List<Coupon> coupons)
         {
-            bool isApplied = false;
-
-            var coupons = _mapper.Map<List<CouponDTO>>(_couponRepository.GetCouponsByCode(code));
-
 
             if (coupons == null || !coupons.Any())
             {
-                throw new InvalidOperationException("No available coupons found.");
+                return Result.Fail(FailureCode.CouponNotFound);
             }
             if (coupons.Any(c => c.ExpiryDate.HasValue && c.ExpiryDate < DateTime.UtcNow))
             {
-                throw new InvalidOperationException("Coupon has expired.");
+                Result.Fail(FailureCode.CouponExpired);
             }
+            return Result.Ok(true);
+        }
 
-            if (coupons.Count == 1 && !coupons.First().TourId.HasValue)
+        public Result<bool> ApplyCouponOnCartItems(long touristId, string code, List<ShoppingCartItemDto> cartItems)
+        {
+            var coupons = _couponRepository.GetCouponsByCode(code);
+            var availableCoupons = coupons.Where(c => c.IsPublic).ToList();
+            var validationResult = ValidateCoupon(availableCoupons);
+            if (validationResult.IsFailed)
             {
-                // Prvo nalazimo najskuplju stavku u korpi
-                var mostExpensiveItem = cartItems.OrderByDescending(item => item.TourPrice).FirstOrDefault();
-                if (mostExpensiveItem == null)
+                return Result.Fail(validationResult.Errors); 
+            }
+
+            bool isApplied = false;
+
+            if (availableCoupons.Count == 1 && !availableCoupons.First().TourId.HasValue)
+            {
+                var coupon = availableCoupons.First();
+
+                bool isWelcomeGift = !coupon.AuthorId.HasValue && coupon.RecipientId.HasValue;
+
+                bool isRecipientValid = (isWelcomeGift && coupon.RecipientId == touristId) /*|| coupon.AuthorId.HasValue*/;
+
+                if (isRecipientValid) //primjenjuje se na ukupnu cijenu 
                 {
-                    throw new Exception();
+                    foreach (var item in cartItems)
+                    {
+                        ApplyDiscount(item, coupon.DiscountPercentage);
+                        item.UsedCouponCode = coupon.Code;
+                    }
+                    isApplied = true;
                 }
-                ApplyDiscount(mostExpensiveItem, coupons.First().DiscountPercentage);
-                isApplied = true;
+
+                else if(coupon.AuthorId.HasValue)
+                {
+                    var itemSortedByPrice = cartItems.OrderByDescending(item => item.TourPrice).ToList();
+
+                    var mostExpensiveItem = itemSortedByPrice.FirstOrDefault();
+                    if (mostExpensiveItem == null)
+                    {
+                        return Result.Fail(FailureCode.CouponNotApplicable);
+                    }
+
+                    var mostExpensiveItems = itemSortedByPrice
+                                               .Where(item => item.TourPrice == mostExpensiveItem.TourPrice)
+                                               .ToList();
+
+
+                    foreach (var item in mostExpensiveItems)
+                    {
+                        ApplyDiscount(item, coupon.DiscountPercentage);
+                        item.UsedCouponCode = code;
+                    }
+                    isApplied = true;
+                }
 
             }
-            else
+            else /* if(!coupons.Any(c => c.RecipientId.HasValue)) */
             {
                 var cartItemsWithCoupons = cartItems.Where
-                                           (cartItem => coupons.Any(c => c.TourId == cartItem.TourId)).ToList();
+                                           (cartItem => availableCoupons.Any(c => c.TourId == cartItem.TourId)).ToList();
 
-                if (cartItemsWithCoupons != null)
+                if (cartItemsWithCoupons.Any())
                 {
-                    foreach(var cartItem in cartItemsWithCoupons)
+                    foreach (var cartItem in cartItemsWithCoupons)
                     {
-                        var applicableCoupon = coupons.First(c => c.TourId == cartItem.TourId);
-                        if (applicableCoupon == null)
+                        var applicableCoupon = availableCoupons.First(c => c.TourId == cartItem.TourId);
+                        if(applicableCoupon != null)
                         {
-                            throw new Exception();
+                            ApplyDiscount(cartItem, applicableCoupon.DiscountPercentage);
+                            cartItem.UsedCouponCode = applicableCoupon.Code;
+                            isApplied = true;
                         }
-                        ApplyDiscount(cartItem, applicableCoupon.DiscountPercentage);
-                        cartItem.UsedCouponCode = applicableCoupon.Code;
-                        isApplied = true;
                     }
                 }
-                
+
             }
-            return isApplied;
+
+            return isApplied ? Result.Ok(true) : Result.Fail(FailureCode.CouponNotApplicable);
         }
 
         private void ApplyDiscount(ShoppingCartItemDto cartItem, int discountPercentage)
         {
-
-            if (discountPercentage < 0 || discountPercentage > 100)
-            {
-                throw new ArgumentOutOfRangeException(nameof(discountPercentage), "Discount percentage must be between 0 and 100.");
-            }
-
-            
             decimal discountAmount = cartItem.TourPrice * discountPercentage / 100;
             cartItem.TourPriceWithDiscount = cartItem.TourPrice - discountAmount;
         }
@@ -144,6 +169,57 @@ namespace Explorer.Payments.Core.UseCases.Tourist
                 .ToList();
 
             return _mapper.Map<List<CouponDTO>>(coupons);
+        }
+
+        public Result<string> GenerateCouponToNewUser(long userId)
+        {
+            try
+            {
+                var couponCode = GenerateRandomCouponCode();
+                CouponDTO newCoupon = new CouponDTO
+                {
+                    Code = couponCode,
+                    DiscountPercentage = 5,
+                    ExpiryDate = DateTime.UtcNow.AddDays(30),
+                    RecipientId = userId
+                };
+                var createdCoupon = Create(newCoupon);
+                if (createdCoupon == null)
+                {
+                    return Result.Fail("Fail to create coupon.");
+                }
+                return Result.Ok(createdCoupon.Code);
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail($"An error occurred, {ex.Message}");
+            }
+
+        }
+        private string GenerateRandomCouponCode()
+        {
+            string couponCode;
+            do
+            {
+                couponCode = Guid.NewGuid().ToString("N").Substring(0, 8);
+            }
+            while (!_couponRepository.IsCouponCodeUnique(couponCode));
+
+            return couponCode;
+
+        }
+
+        public Result<CouponDTO> MakeCouponPublic(long id)
+        {
+            try
+            {
+                var result = _couponRepository.UpdateCouponPublished(id, true);
+                return Result.Ok(_mapper.Map<CouponDTO>(result));
+            }
+            catch(Exception ex) 
+            {
+                return Result.Fail($"Error: {ex.Message}");
+            }
         }
 
     }

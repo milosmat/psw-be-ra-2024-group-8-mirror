@@ -1,5 +1,6 @@
 ﻿using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Payments.API.Dtos;
+using FluentResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,9 @@ namespace Explorer.Payments.API.Public.Tourist
         CouponDTO Update(CouponDTO updateCoupon);
         CouponDTO Get(int id);
         bool ValidateCouponCodeUsage(long touristId, string code);
-        bool ApplyCouponOnCartItems(long touristId, string code, List<ShoppingCartItemDto> cartItems);
+        Result<bool> ApplyCouponOnCartItems(long touristId, string code, List<ShoppingCartItemDto> cartItems);
         List<CouponDTO> GetCouponsByIds(List<long> couponIds);
+
+        Result<CouponDTO> MakeCouponPublic(long id);
     }
 }

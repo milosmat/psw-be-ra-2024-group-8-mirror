@@ -1,12 +1,15 @@
 ﻿using Explorer.API.Controllers.Author;
 using Explorer.Blog.API.Dtos;
 using Explorer.Blog.API.Public;
+using Explorer.BuildingBlocks.Core.UseCases;
 using Explorer.Payments.API.Dtos;
 using Explorer.Payments.API.Public.Tourist;
+using Explorer.Payments.Core.Domain;
 using Explorer.Payments.Infrastructure.Database;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using System;
@@ -87,7 +90,7 @@ namespace Explorer.Payments.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(-2, "UpdatedCode", 25, -13)]
+        [InlineData(-1, "UpdatedCode", 25, -13)]
         public void Updates(int id, string code, int percent, int authorId)
         {
             // Arrange
@@ -95,13 +98,23 @@ namespace Explorer.Payments.Tests.Integration.Administration
             var controller = CreateController(scope);
             var dbContext = scope.ServiceProvider.GetRequiredService<PaymentsContext>();
 
+            var coupon = new Coupon(id, "CreatedCoupon", 5, true, DateTime.UtcNow.AddDays(30), null, authorId, null); 
+
+            dbContext.Coupons.Add(coupon);
+            dbContext.SaveChanges();
+
+            dbContext.Entry(coupon).State = EntityState.Detached;
+
             var updatedCoupon = new CouponDTO
             {
                 Id = id,
                 Code = code,
                 DiscountPercentage = percent,
                 ExpiryDate = DateTime.UtcNow.AddYears(2), // Expiry date one year from now
+                AuthorId= authorId
             };
+
+
 
             // Act
             var result = ((ObjectResult)controller.Update(updatedCoupon).Result)?.Value as CouponDTO;
@@ -202,7 +215,8 @@ namespace Explorer.Payments.Tests.Integration.Administration
 
         private static CouponController CreateController(IServiceScope scope)
         {
-            return new CouponController(scope.ServiceProvider.GetRequiredService<ICouponService>())
+            return new CouponController(scope.ServiceProvider.GetRequiredService<ICouponService>(),
+                                        scope.ServiceProvider.GetRequiredService<IEmailService>())
             {
                 ControllerContext = BuildContext("-1")
             };

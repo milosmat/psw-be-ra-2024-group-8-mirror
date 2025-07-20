@@ -37,11 +37,9 @@ public static class PaymentsStartup
         services.AddScoped<ITourPurchaseTokenService, TourPurchaseTokenService>();
 
         services.AddScoped<IWalletService, WalletService>();
-        services.AddScoped<ICouponRepository, CouponDataBaseRepository>();
         services.AddScoped<ICouponService, CouponService>();
         services.AddScoped<IPaymentRecordService, PaymentRecordService>();
-        services.AddScoped<ITouristCouponRepository, TouristCouponDatabaseRepository>();
-
+        services.AddScoped<ICouponSenderService, CouponService>();
     }
 
     private static void SetupInfrastructure(IServiceCollection services)
@@ -64,6 +62,8 @@ public static class PaymentsStartup
         services.AddScoped<IWalletRepository, WalletDataBaseRepository>();
         services.AddScoped<ITransactionRepository, TransactionDataBaseRepository>();
         services.AddScoped<IPaymentRecordRepository, PaymentRecordRepository>();
+        services.AddScoped<ICouponRepository, CouponDataBaseRepository>();
+        services.AddScoped<ITouristCouponRepository, TouristCouponDatabaseRepository>();
 
         services.AddDbContext<PaymentsContext>(opt =>
             opt.UseNpgsql(DbConnectionStringBuilder.Build("payments"),

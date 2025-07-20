@@ -38,5 +38,21 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
         {
             return DbContext.Coupons.ToList();
         }
+        public bool IsCouponCodeUnique(string code)
+        {
+            return !DbContext.Coupons.Any(c => c.Code.Equals(code));
+        }
+        public Coupon UpdateCouponPublished(long id, bool isPublic)
+        {
+            var coupon = Get((int)id);
+
+            if (coupon == null) throw new KeyNotFoundException("Coupon is not found.");
+
+            coupon.IsPublic = isPublic;
+            DbContext.Entry(coupon).Property(c => c.IsPublic).IsModified = true;
+            DbContext.SaveChanges();
+
+            return coupon;
+        }
     }
 }

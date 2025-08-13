@@ -18,6 +18,7 @@ public class ToursContext : DbContext
     public DbSet<TourReview> TourReviews { get; set; }
 
     public DbSet<Object> Objects { get; set; }
+    public DbSet<Accomodation> Accomodations { get; set; }
     public DbSet<TourSale> TourSales { get; set; }
     public DbSet<Bundle> Bundles { get; set; }
     public DbSet<BundleTour> BundleTours { get; set; }
@@ -38,8 +39,13 @@ public class ToursContext : DbContext
         v => v.ToString(),
         v => (ObjectCategory)Enum.Parse(typeof(ObjectCategory), v)
     );
+        modelBuilder.Entity<Accomodation>().ToTable("Accomodations")
+        .Property(o => o.Category)
+        .HasConversion(
+        v => v.ToString(),
+        v => (AccomodationCategory)Enum.Parse(typeof(AccomodationCategory), v)
+    );
 
-        
         modelBuilder.Entity<Equipment>().ToTable("Equipment");
         modelBuilder.Entity<Tour>().ToTable("Tours")
             .HasMany(t => t.TourReviews)
@@ -79,6 +85,9 @@ public class ToursContext : DbContext
         .WithOne()                           // Navodi se da TourCheckpoint ima referencu na Tour (bez navigacione property)
         .HasForeignKey(tc => tc.TourId);    // TourId se koristi kao spoljni ključ u TourCheckpoint
 
-
-    }
+        modelBuilder.Entity<Tour>()
+        .HasMany(t => t.Accomodations)
+        .WithMany(t => t.Tours);
+        
+    }   
 }

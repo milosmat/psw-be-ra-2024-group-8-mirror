@@ -12,10 +12,14 @@ namespace Explorer.Tours.API.Public.Author
     public interface ITourService
     {
         Result<PagedResult<TourDTO>> GetPaged(int page, int pageSize);
+        
+
         Result<TourDTO> Get(int id);
         Result<TourDTO> Create(TourDTO tourDto);
         Result<TourDTO> Update(TourDTO tourDto);
         Result Delete(int id);
+        Result AddAccomodation(int tourId, AccomodationDTO[] accomodationsDTO);
+        Result RemoveAccomodation(int tourId, AccomodationDTO accomodationDTO);
 
         // Metode za dobijanje ID-ova povezane opreme i tačaka
         //Result<List<long>> GetEquipmentIds(int tourId);

@@ -30,7 +30,7 @@ namespace Explorer.Encounters.Core.Domain
         public int? Radius { get; private set; } = 0;
 
 
-        //public Encounter() { }
+        public Encounter() { }
 
             // Original constructor for feat/encounters
     public Encounter(string name, string description, MapLocation location, int xp, EncounterType type, List<long>? users, long authorId, string? image = null, int? requiredParticipants = null, int? radius = null)

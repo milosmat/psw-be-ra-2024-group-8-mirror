@@ -17,6 +17,7 @@ namespace Explorer.Tours.API.Dtos
         public List<TourCheckpointDto>? TourCheckpoints { get; set; }
         public List<TravelTimeDTO>? TravelTimes { get; set; }
         public List<DailyAgendaDTO>? DailyAgendas {  get; set; }
+        public List<AccomodationDTO>? Accomodations { get; set; }
         public long AuthorId { get;  set; }
     }
 }

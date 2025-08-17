@@ -147,6 +147,7 @@ namespace Explorer.Tours.Tests.Integration.Author
             storedTourSale.Active.ShouldBe(updatedTourSaleDto.Active);
         }
 
+
         [Fact]
         public void Update_Fails_Invalid_Id()
         {
@@ -165,6 +166,52 @@ namespace Explorer.Tours.Tests.Integration.Author
             };
 
             var result = (ObjectResult)controller.Update(invalidTourSaleDto).Result;
+
+            result.StatusCode.ShouldBe(404);
+        }
+
+        [Fact]
+        public void Gets_TourSale_ById()
+        {
+            using var scope = Factory.Services.CreateScope();
+            var controller = CreateController(scope);
+            var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
+
+            // Arrange - dodajemo jedan TourSale u bazu ako ne postoji
+            var existingTourSale = dbContext.TourSales.FirstOrDefault(ts => ts.Id == 1);
+            if (existingTourSale == null)
+            {
+                existingTourSale = new TourSale(
+                    new List<int> { 1, 2, 3 },
+                    DateTime.Now.ToUniversalTime(),
+                    DateTime.Now.AddDays(7).ToUniversalTime(),
+                    10.0,
+                    true,
+                    123
+                );
+                dbContext.TourSales.Add(existingTourSale);
+                dbContext.SaveChanges();
+            }
+
+            // Act
+            var result = ((ObjectResult)controller.GetById((int)existingTourSale.Id).Result)?.Value as TourSaleDto;
+
+            // Assert
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe((int)existingTourSale.Id);
+            result.Tours.ShouldBeEquivalentTo(existingTourSale.Tours);
+            result.Discount.ShouldBe(existingTourSale.Discount);
+            result.Active.ShouldBe(existingTourSale.Active);
+            result.AuthorId.ShouldBe(existingTourSale.AuthorId);
+        }
+
+        [Fact]
+        public void GetById_Fails_Invalid_Id()
+        {
+            using var scope = Factory.Services.CreateScope();
+            var controller = CreateController(scope);
+
+            var result = (ObjectResult)controller.GetById(-1).Result;
 
             result.StatusCode.ShouldBe(404);
         }

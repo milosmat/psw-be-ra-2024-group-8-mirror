@@ -41,12 +41,11 @@ public class TourProblemDatabaseRepository : ITourProblemRepository
             .FirstOrDefault();
     }
 
-    /*public List<TourProblem> GetAll()
+    public List<TourProblem> GetAll()
     {
-        return DbContext.TourProblems
-            .Include(t => t.ProblemComments)
+        return _context.TourProblems
             .ToList();
-    }*/
+    }
 
     /*public List<TourProblem> GetAllForAuthor(long authorId)
     {

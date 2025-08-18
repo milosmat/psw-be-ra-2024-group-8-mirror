@@ -19,6 +19,13 @@ namespace Explorer.API.Controllers
             _tourService = tourService;
         }
 
+        [HttpGet("author-stats")]
+        public ActionResult<List<AuthorStatsDto>> GetAuthorStatistics()
+        {
+            var result = _tourProblemService.GetAuthorStatistics();
+            return CreateResponse(result);
+        }
+
         [HttpGet("tourForTourProblem/{id:int}")]
         public ActionResult<TourDTO> GetById(int id)
         {

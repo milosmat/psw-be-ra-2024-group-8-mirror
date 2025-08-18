@@ -86,7 +86,7 @@ namespace Explorer.Stakeholders.Tests.Integration.Administration
                 );
                 dbContext.TourProblems.Add(existingTourProblem);
                 dbContext.SaveChanges();
-                id = existingTourProblem.Id; // 🔑 OVDE uzmeš pravi ID iz baze
+                id = existingTourProblem.Id; 
             }
 
             var updatedTourProblem = new TourProblemDto
@@ -149,7 +149,7 @@ namespace Explorer.Stakeholders.Tests.Integration.Administration
             {
                 Text = commentText,
                 UserId = 1,
-                TourProblemId = problem.Id, // 🔑 pravi ID
+                TourProblemId = problem.Id, 
                 CommentedAt = DateTime.Now.ToUniversalTime()
             };
 

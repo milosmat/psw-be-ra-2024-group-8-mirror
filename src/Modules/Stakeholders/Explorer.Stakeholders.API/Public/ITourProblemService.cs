@@ -16,5 +16,6 @@ namespace Explorer.Stakeholders.API.Public
         Result<TourProblemDto> Update(TourProblemDto touristEquipmentDto);
         Result<TourProblemDto> Create(TourProblemDto touristEquipmentDto);
         Result<UserDto> GetUser(int userId);
+        Result<List<AuthorStatsDto>> GetAuthorStatistics();
     }
 }

@@ -5,14 +5,16 @@ namespace Explorer.Stakeholders.Core.Domain;
 public class User : Entity
 {
     public string Username { get; private set; }
-    public string Password { get; private set; }
+    public string PasswordHash { get; private set; }
     public UserRole Role { get; private set; }
     public bool IsActive { get; set; }
 
-    public User(string username, string password, UserRole role, bool isActive)
+    public User() { }
+
+    public User(string username, string passwordHash, UserRole role, bool isActive)
     {
         Username = username;
-        Password = password;
+        PasswordHash = passwordHash;
         Role = role;
         IsActive = isActive;
         Validate();
@@ -21,7 +23,7 @@ public class User : Entity
     private void Validate()
     {
         if (string.IsNullOrWhiteSpace(Username)) throw new ArgumentException("Invalid Name");
-        if (string.IsNullOrWhiteSpace(Password)) throw new ArgumentException("Invalid Surname");
+        if (string.IsNullOrWhiteSpace(PasswordHash)) throw new ArgumentException("Invalid Surname");
     }
 
     public string GetPrimaryRoleName()
@@ -32,7 +34,7 @@ public class User : Entity
 
 public enum UserRole
 {
-    Administrator,
-    Author,
-    Tourist
+    Administrator = 0,
+    Author = 1,
+    Tourist = 2
 }

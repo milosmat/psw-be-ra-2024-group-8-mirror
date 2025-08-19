@@ -18,5 +18,6 @@ namespace Explorer.Stakeholders.Core.Domain.RepositoryInterfaces
         Club Update(Club updatedClub);
         Club Get(int id);
         Club GetClubWithMembershipRequests(long clubId);
+        Club GetClubWithMessages(long clubId);
     }
 }

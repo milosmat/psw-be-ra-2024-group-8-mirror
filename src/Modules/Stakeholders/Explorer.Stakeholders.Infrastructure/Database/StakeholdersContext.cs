@@ -44,7 +44,7 @@ public class StakeholdersContext : DbContext
        modelBuilder.Entity<MembershipRequest>()
            .HasOne<Club>() //svaki Memship request pripada jednom klubu
            .WithMany(c => c.MembershipRequests) //Club moze imati vise memship request-ova
-           .HasForeignKey(mr => mr.ClubId) //povezani preko stranog kljuca ClubId u tabeli MembershipRequests
+           .HasForeignKey(mr => mr.ClubId) //povezani preko stranog kljuca OwnerId u tabeli MembershipRequests
            .OnDelete(DeleteBehavior.Cascade); //pravilo kaskadnog brisanja
 
        modelBuilder.Entity<MembershipRequest>()

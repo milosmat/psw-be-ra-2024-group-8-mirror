@@ -28,6 +28,41 @@ namespace Explorer.Stakeholders.Core.UseCases
             _mapper = mapper;
         }
 
+        public Result<List<AuthorStatsDto>> GetAuthorStatistics()
+        {
+            try
+            {
+                var allProblems = _tourProblemRepository.GetAll();
+                if (allProblems.Any())
+                {
+                    var grouped = allProblems
+                        .GroupBy(p => p.AuthorId)
+                        .Select(g =>
+                        {
+                            var total = g.Count();
+                            var resolved = g.Count(p => p.Resolved);
+                            var closed = g.Count(p => p.Closed);
+                            var unresolved = total - resolved - closed;
+
+                            return new AuthorStatsDto
+                            {
+                                AuthorId = g.Key,
+                                ResolvedPercentage = total > 0 ? (resolved * 100.0) / total : 0,
+                                ClosedPercentage = total > 0 ? (closed * 100.0) / total : 0,
+                                UnresolvedPercentage = total > 0 ? (unresolved * 100.0) / total : 0
+                            };
+                        })
+                        .ToList();
+
+                    return Result.Ok(grouped);
+                }else { return Result.Ok(new List<AuthorStatsDto>()); }
+            }
+            catch (Exception e)
+            {
+                return Result.Fail("Not found.");
+            }
+        }
+
         public Result<UserDto> GetUser(int userId)
         {
             var user = _userRepository.GetUser(userId);

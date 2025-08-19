@@ -12,7 +12,9 @@ namespace Explorer.Stakeholders.API.Public.Administration
     public interface IAdministratorService
     {
         Result<PagedResult<AccountInformationDto>> GetPaged(int page, int pageSize);
-        Result<AccountInformationDto> Update(AccountInformationDto accountInformation);
+        //Result<AccountInformationDto> Update(AccountInformationDto accountInformation);
+
+        Result UpdateUserStatus(long userId, bool isActive);
     }
 
 }

@@ -2,6 +2,7 @@
 using Explorer.Blog.API.Dtos;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
+using Explorer.Stakeholders.Core.Domain;
 using Explorer.Stakeholders.Core.Domain.Clubs;
 using Explorer.Stakeholders.Infrastructure.Database;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace Explorer.Stakeholders.Tests.Integration.Administration
         public MembershipRequestCommandTests(StakeholdersTestFactory factory) : base(factory) { }
 
         [Theory]
-        [InlineData(-11, -23, MemRequestStatus.Pending, -1)] // SenderId, OwnerId, Status, ClubId
+        [InlineData(-11, -23, MemRequestStatus.Pending, -1)] // SenderId, OwnerId, Status, OwnerId
         public void CreatesMembershipRequest(int senderId, int ownerId, MemRequestStatus status, long clubId)
         {
             // Arrange
@@ -63,7 +64,7 @@ namespace Explorer.Stakeholders.Tests.Integration.Administration
         }
 
         [Theory]
-        [InlineData(-12, -23, MemRequestStatus.Pending, null, 404)] // ClubId null
+        [InlineData(-12, -23, MemRequestStatus.Pending, null, 404)] // OwnerId null
         [InlineData(-13, -21, MemRequestStatus.Pending, -10, 404)] // Club does not exist
         public void CreateMembershipRequest_Fails_InvalidData(int senderId, int ownerId, MemRequestStatus status, int clubId, int expectedStatusCode)
         {
@@ -355,7 +356,7 @@ namespace Explorer.Stakeholders.Tests.Integration.Administration
 
         private Club GetTestClub(long id, int ownerId)
         {
-            return new Club(id, "Test Name", "Test Description", "Test Photo", ownerId, new List<MembershipRequest>());
+            return new Club(id, "Test Name", "Test Description", "Test Photo", ownerId, new List<MembershipRequest>(), new List<Message>());
         }
 
         private static MembershipRequestContoller CreateController(IServiceScope scope)

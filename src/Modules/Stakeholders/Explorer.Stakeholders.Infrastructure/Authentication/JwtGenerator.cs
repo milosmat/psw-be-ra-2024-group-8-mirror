@@ -33,7 +33,7 @@ public class JwtGenerator : ITokenGenerator
         authenticationResponse.Id = user.Id;
         authenticationResponse.AccessToken = jwt;
 
-        return authenticationResponse;
+        return Result.Ok(authenticationResponse);
     }
 
     private string CreateToken(IEnumerable<Claim> claims, double expirationTimeInMinutes)

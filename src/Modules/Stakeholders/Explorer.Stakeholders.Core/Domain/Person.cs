@@ -26,4 +26,6 @@ public class Person : Entity
         if (string.IsNullOrWhiteSpace(Surname)) throw new ArgumentException("Invalid Surname");
         if (!MailAddress.TryCreate(Email, out _)) throw new ArgumentException("Invalid Email");
     }
+
+   
 }

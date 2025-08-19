@@ -22,6 +22,9 @@ public class ToursContext : DbContext
     public DbSet<Bundle> Bundles { get; set; }
     public DbSet<BundleTour> BundleTours { get; set; }
 
+    public DbSet<Article> Article { get; set; }
+
+
     public DbSet<TouristPosition> TouristPositions { get; set; }
     public DbSet<VisitedCheckpoint> VisitedCheckpoints { get; set; }
 
@@ -60,6 +63,10 @@ public class ToursContext : DbContext
         modelBuilder.Entity<TouristEquipment>().ToTable("TouristEquipments");
         modelBuilder.Entity<TourExecution>().ToTable("TourExecution");
         modelBuilder.Entity<TourSale>().ToTable("TourSales");
+
+        modelBuilder.Entity<Article>().ToTable("Article");
+
+
         modelBuilder.Entity<TouristPosition>().ToTable("TouristPositions");
         modelBuilder.Entity<VisitedCheckpoint>().ToTable("VisitedCheckpoints");
 

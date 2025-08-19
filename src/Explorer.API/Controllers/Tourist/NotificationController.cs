@@ -1,25 +1,57 @@
-﻿using Explorer.Stakeholders.API.Dtos;
+﻿using Explorer.Blog.API.Dtos;
+using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.Stakeholders.API.Dtos;
 using Explorer.Stakeholders.API.Public;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Explorer.API.Controllers.Tourist;
 
-[Authorize(Policy = "touristPolicy")]
+//[Authorize(Policy = "touristPolicy")]
 [Route("api/notifications")]
 public class NotificationController : BaseApiController
 {
     private readonly INotificationService _notificationService;
+    private readonly IMessageService _messageService;
 
-    public NotificationController(INotificationService notificationService)
+    public NotificationController(INotificationService notificationService, IMessageService messageService)
     {
         _notificationService = notificationService;
+        _messageService = messageService;
     }
 
 
     [HttpPost("send")]
     public async Task<IActionResult> SendMessageToFollower([FromBody] SendMessageRequest request)
     {
+        if (request.ResourceType == ResourceType.Club)
+        {
+            // Kreiranje MessageDto objekta
+            MessageDto newMessage = new MessageDto
+            {
+                ResourceType = request.ResourceType,
+                SenderId = request.SenderId,
+                OwnerId = request.FollowerId,
+                Content = request.Content,
+                ResourceUrl = request.ResourceUrl
+            };
+
+            // Poziv metode za kreiranje poruke specifične za Club
+            try
+            {
+                MessageDto messageResult = _messageService.Create(request.FollowerId, newMessage);
+
+                // Ako je poruka uspešno kreirana, vraćamo uspešan odgovor
+                return Ok(new { Message = "Message created successfully for Club.", Data = messageResult });
+            }
+            catch (Exception ex)
+            {
+                // Ako se dogodi greška prilikom kreiranja poruke
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        // Nastavak za ostale ResourceType vrednosti (asinhrono)
         var result = await _notificationService.SendMessageAndNotificationToFollowerAsync(
             request.SenderId,
             request.FollowerId,
@@ -36,6 +68,8 @@ public class NotificationController : BaseApiController
     }
 
 
+
+
     [HttpPut("mark-as-read/{notificationId}")]
     public async Task<IActionResult> MarkAsRead(int notificationId)
     {
@@ -48,7 +82,6 @@ public class NotificationController : BaseApiController
 
         return BadRequest(result.Errors);
     }
-
 
 
     [HttpGet("{userId}")]

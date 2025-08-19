@@ -32,9 +32,9 @@ namespace Explorer.Encounters.Tests.Integration.Tourist
             string sqlScript = @"
                 DELETE FROM encounters.tourist_profiles;
                 INSERT INTO encounters.tourist_profiles
-                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"")
+                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"", ""CouponIds"")
                 VALUES
-                (1, 'testuser', 'password123', 2, true, 100, '[1, 2]'); -- testuser je završio encountere 1 i 2
+                (1, 'testuser', 'password123', 2, true, 100, '[1, 2]', '{{1, 2}}'); -- testuser je završio encountere 1 i 2
             ";
 
             // Execute SQL script
@@ -85,9 +85,9 @@ namespace Explorer.Encounters.Tests.Integration.Tourist
             string sqlScript = @"
                 DELETE FROM encounters.tourist_profiles;
                 INSERT INTO encounters.tourist_profiles
-                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"")
+                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"", ""CouponIds"")
                 VALUES
-                (1, 'testuser', 'password123', 2, true, 100, '[1, 2]'); -- testuser je završio encountere 1 i 2
+                (1, 'testuser', 'password123', 2, true, 100, '[1, 2]', '{{1, 2}}'); -- testuser je završio encountere 1 i 2
             ";
 
             // Execute SQL script
@@ -146,11 +146,11 @@ namespace Explorer.Encounters.Tests.Integration.Tourist
                 (15, 'Old Encounter', 'Old Description', 50, 'ACTIVE', 'SOCIAL', 1, 45.1234, 19.5678, false, NOW(), NOW());
 
                 INSERT INTO encounters.tourist_profiles
-                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"")
+                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"", ""CouponIds"")
                 VALUES
-                (-1, 'testUser', 'password123', 2, true, 100, '[1, 2]'), -- testuser je završio encountere 1 i 2
-                (-2, 'adventurer', 'adventure', 2, true, 150, '[3, 4, 5]'), -- adventurer je završio encountere 3, 4, 5
-                (-3, 'explorer', 'exploremore', 2, true, 200, '[6]'); -- explorer je završio encounter 6
+                (-1, 'testUser', 'password123', 2, true, 100, '[1, 2]', '{{1, 2}}'), -- testuser je završio encountere 1 i 2
+                (-2, 'adventurer', 'adventure', 2, true, 150, '[3, 4, 5]', '{{1, 2}}'), -- adventurer je završio encountere 3, 4, 5
+                (-3, 'explorer', 'exploremore', 2, true, 200, '[6]', '{{1, 2}}'); -- explorer je završio encounter 6
             ";
 
             // Izvršavamo SQL upite
@@ -227,9 +227,9 @@ namespace Explorer.Encounters.Tests.Integration.Tourist
             string sqlScript = @"
                 DELETE FROM encounters.tourist_profiles;
                 INSERT INTO encounters.tourist_profiles
-                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"")
+                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"", ""CouponIds"")
                 VALUES
-                (1, 'testuser', 'password123', 2, true, 10, '[1, 2]'); -- testuser je završio encountere 1 i 2
+                (1, 'testuser', 'password123', 2, true, 10, '[1, 2]' , '{{1, 2}}'); -- testuser je završio encountere 1 i 2
             ";
 
             // Execute SQL script
@@ -263,9 +263,9 @@ namespace Explorer.Encounters.Tests.Integration.Tourist
             string sqlScript = @"
                 DELETE FROM encounters.tourist_profiles;
                 INSERT INTO encounters.tourist_profiles
-                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"")
+                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"", ""CouponIds"")
                 VALUES
-                (1, 'testuser', 'password123', 2, true, 100, '[1, 2]'); -- testuser je završio encountere 1 i 2
+                (1, 'testuser', 'password123', 2, true, 100, '[1, 2]', '{{1, 2}}'); -- testuser je završio encountere 1 i 2
             ";
 
             // Execute SQL script
@@ -306,9 +306,9 @@ namespace Explorer.Encounters.Tests.Integration.Tourist
             string sqlScript = @"
                 DELETE FROM encounters.tourist_profiles;
                 INSERT INTO encounters.tourist_profiles
-                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"")
+                (""Id"", ""Username"", ""Password"", ""Role"", ""IsActive"", ""XP"", ""CompletedEncountersIds"", ""CouponIds"")
                 VALUES
-                (-1, 'testuser2', 'password123', 2, true, 100, '[1, 2]'); -- testuser je završio encountere 1 i 2
+                (-1, 'testuser2', 'password123', 2, true, 100, '[1, 2]', '{{1, 2}}'); -- testuser je završio encountere 1 i 2
             ";
 
             // Execute SQL script

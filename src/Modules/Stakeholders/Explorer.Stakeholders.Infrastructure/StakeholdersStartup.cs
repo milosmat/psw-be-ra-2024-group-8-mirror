@@ -50,6 +50,9 @@ public static class StakeholdersStartup
         services.AddScoped<IMessageService, MessageService>();
         services.AddTransient<IEmailService, EmailService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddHttpClient<IExchangeRateService, ExchangeRateService>();
+
+
     }
 
     private static void SetupInfrastructure(IServiceCollection services)

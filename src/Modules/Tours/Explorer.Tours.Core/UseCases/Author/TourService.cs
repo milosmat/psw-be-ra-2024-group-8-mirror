@@ -471,7 +471,7 @@ namespace Explorer.Tours.Core.UseCases.Author
         {
             Tour tour = tourRepository.Get(tourId);
             TourCheckpoint checkpoint = new TourCheckpoint(tourCheckpoint.Latitude, tourCheckpoint.Longitude, tourCheckpoint.CheckpointName,
-                tourCheckpoint.CheckpointDescription, tourCheckpoint.Image);
+                tourCheckpoint.CheckpointDescription, tourCheckpoint.Image, tourCheckpoint.Secret);
             tour.AddNewCheckpoint(checkpoint);
             CrudRepository.Update(tour);
             return tourCheckpoint;

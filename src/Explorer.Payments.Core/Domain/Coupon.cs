@@ -13,18 +13,39 @@ namespace Explorer.Payments.Core.Domain
         public int DiscountPercentage { get; private set; } // Procenat popusta
         public DateTime? ExpiryDate { get; private set; } // Datum do kada važi (opciono)
         public long? TourId { get; private set; } // ID ture, null ako važi za sve ture autora
-        public long AuthorId { get; private set; } // Autor kupona
+        public long?AuthorId { get; private set; } // Autor kupona
+        public long? RecipientId { get; private set;}
+        public bool IsPublic { get; set; } = false;
+
 
         public Coupon() { }
 
-        public Coupon(int id,string code, int discountPercentage, DateTime? expiryDate, long? tourId, long authorId)
-        {
+        public Coupon(int id,string code, int discountPercentage, bool isPublic, DateTime? expiryDate, long? tourId, long? authorId, long? recipientId)
+        { 
+            if (discountPercentage <= 0) throw new ArgumentException("Discount Percentage must be positive.", nameof(discountPercentage));
+
             Id = id;
             Code = code;
             DiscountPercentage = discountPercentage;
             ExpiryDate = expiryDate;
             TourId = tourId;
             AuthorId = authorId;
+            RecipientId = recipientId;
+            IsPublic = isPublic;
         }
+
+        public Coupon(string code, int discountPercentage, bool isPublic, DateTime? expiryDate, long? tourId, long? authorId, long? recipientId)
+        {
+            if (discountPercentage <= 0) throw new ArgumentException("Discount Percentage must be positive.", nameof(discountPercentage));
+
+            Code = code;
+            DiscountPercentage = discountPercentage;
+            ExpiryDate = expiryDate;
+            TourId = tourId;
+            AuthorId = authorId;
+            RecipientId = recipientId;
+            IsPublic = isPublic;
+        }
+       
     }
 }

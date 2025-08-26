@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
 using Explorer.BuildingBlocks.Core.UseCases;
+using Explorer.Stakeholders.API.Public;
+using Explorer.Stakeholders.Core.Domain;
+using Explorer.Stakeholders.Core.Domain.RepositoryInterfaces;
+using Explorer.Stakeholders.Core.UseCases;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.Core.Domain;
@@ -14,20 +18,26 @@ namespace Explorer.Tours.Core.UseCases.Author
         private readonly ICrudRepository<TourCheckpoint> _tourCheckpointRepository;
         private readonly ICrudRepository<Equipment> _equipmentRepository;
         private readonly ITourRepository tourRepository;
+        private readonly IArticleService _articleService;
         private readonly IMapper _mapper;
-
+        private readonly INotificationService notificationService;
+        private readonly IUserRepository userRepository;
         private readonly ICrudRepository<TourReview> _tourReviewRepository;
 
         public TourService(ICrudRepository<Tour> repository, IMapper mapper,
             ICrudRepository<TourCheckpoint> tourCheckpointRepository,
             ICrudRepository<Equipment> equipmentRepository, ITourRepository tourRepository,
-            ICrudRepository<TourReview> tourReviewRepository) : base(repository, mapper)
+            ICrudRepository<TourReview> tourReviewRepository, IArticleService articleService, 
+            INotificationService notificationService, IUserRepository userRepository) : base(repository, mapper)
         {
             _mapper = mapper;
             _tourCheckpointRepository = tourCheckpointRepository;
             _equipmentRepository = equipmentRepository;
             this.tourRepository = tourRepository;
             _tourReviewRepository = tourReviewRepository;
+            _articleService = articleService;
+            this.userRepository = userRepository;
+            this.notificationService = notificationService;
         }
 
         public Result AddEquipment(int tourId, EquipmentDto equipmentDto)
@@ -405,13 +415,46 @@ namespace Explorer.Tours.Core.UseCases.Author
         }
 
 
-        public Result PublishTour(int tourId)
+        public async Task<Result> PublishTour(int tourId)
         {
             try
             {
                 Tour tour = tourRepository.Get(tourId);
                 var result = tour.setPublished();
                 CrudRepository.Update(tour);
+
+                var articleDto = new ArticleDTO
+                {
+                    TourId = tourId,
+                    AuthorId = tour.AuthorId,
+                    Title = $"Explore {tour.Name}",
+                    Content = tour.Description,
+                    TourDescription = tour.Description,
+                    Weight = tour.Weight,
+                    Tags = tour.Tags,
+                    Price = tour.Price,
+                    LengthInKm = tour.LengthInKm,
+                    Checkpoints = tour.TourCheckpoints.Select(c => c.CheckpointName).ToList(),
+                    EquipmentList = tour.Equipments.Select(e => e.Name).ToList()
+                };
+
+                var articleResult = _articleService.CreateArticle(tourId, tour.AuthorId, articleDto);
+                if (articleResult.IsFailed)
+                    return Result.Fail("Tour published, but failed to create article.");
+
+                List<User> tourists = userRepository.GetUsersByRole(UserRole.Tourist);
+
+                foreach (User tourist in tourists)
+                {
+                    await notificationService.SendMessageAndNotificationToFollowerAsync(
+                        (int)tour.AuthorId,
+                        (int)tourist.Id,
+                        "New tour announced",
+                        "market",
+                        Explorer.Stakeholders.API.Dtos.ResourceType.Tour
+                    );
+                }
+
                 return result;
             }
             catch (KeyNotFoundException e)
@@ -586,6 +629,24 @@ namespace Explorer.Tours.Core.UseCases.Author
             }
         }
 
+        public Result<List<TourDTO>> GetPurchasedTourForTourist(List<long> tourIds)
+        {
+            try
+            {
+                var results = tourRepository.GetAllByIds(tourIds);
+                if (!results.Any())
+                {
+                    return Result.Fail("No tours purchased for tourist.");
+                }
+
+                var purchasedTours = _mapper.Map<List<TourDTO>>(results);
+                return Result.Ok(purchasedTours);
+            }
+            catch(Exception e)
+            {
+                return Result.Fail($"An error occurred while collecting the tours: {e.Message}");
+            }
+        }
 
 
     }

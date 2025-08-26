@@ -58,7 +58,7 @@ namespace Explorer.Tours.API.Public.Author
         Result<TourCheckpointDto> AddNewCheckpoint(long tourId, TourCheckpointDto tourCheckpoint);
         Result<TravelTimeDTO> AddNewTravelTime(long tourId, TravelTimeDTO travelTime);
         Result<DailyAgendaDTO> AddNewDailyAgenda(long tourId, DailyAgendaDTO dailyAgenda);
-        Result PublishTour(int tourId);
+        Task<Result> PublishTour(int tourId);
         Result<List<TourDTO>> GetAllTours();
 
         Result<List<long>> GetCheckpointIds(int tourId);
@@ -67,5 +67,6 @@ namespace Explorer.Tours.API.Public.Author
         //Result UpdateCheckpointIds(int id, long checkpointIds);
 
         Result<List<TourDTO>> GetToursByAuthorId(int authorId);
+        Result<List<TourDTO>> GetPurchasedTourForTourist(List<long> tourIds);
     }
 }

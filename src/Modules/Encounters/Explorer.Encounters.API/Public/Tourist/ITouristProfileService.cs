@@ -25,5 +25,10 @@ namespace Explorer.Encounters.API.Public.Tourist
         Result<IEnumerable<TouristProfileDTO>> GetAll();
 
         Result SyncCompletedEncounters(string username);
+        // Dodaje ID kupona turističkom profilu
+        Result AddCouponToTourist(long touristId, long couponId);
+
+        // Briše ID kupona iz turističkog profila
+        Result RemoveCouponFromTourist(long touristId, long couponId);
     }
 }

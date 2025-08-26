@@ -24,6 +24,7 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
         var newEntity = new EquipmentDto
         {
+            Id = 5,
             Name = "Obuća za grub teren",
             Description = "Patike sa tvrdim đonom i kramponima koje daju stabilnost na neravnom i rastresitom terenu."
         };
@@ -35,7 +36,7 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         result.ShouldNotBeNull();
         result.Id.ShouldNotBe(0);
         result.Name.ShouldBe(newEntity.Name);
-        
+
         // Assert - Database
         var storedEntity = dbContext.Equipment.FirstOrDefault(i => i.Name == newEntity.Name);
         storedEntity.ShouldNotBeNull();
@@ -70,6 +71,7 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
         var newEntity = new EquipmentDto
         {
+            Id = 10,
             Name = "Obuća za grub teren",
             Description = "Patike sa tvrdim đonom i kramponima koje daju stabilnost na neravnom i rastresitom terenu."
         };
@@ -136,6 +138,7 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         var dbContext = scope.ServiceProvider.GetRequiredService<ToursContext>();
         var newEntity = new EquipmentDto
         {
+            Id = 1000,
             Name = "Obuća za grub teren",
             Description = "Patike sa tvrdim đonom i kramponima koje daju stabilnost na neravnom i rastresitom terenu."
         };
@@ -151,10 +154,10 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         result.StatusCode.ShouldBe(200);
 
         // Assert - Database
-        var storedCourse = dbContext.Equipment.FirstOrDefault(i => i.Id == -3);
+        var storedCourse = dbContext.Equipment.FirstOrDefault(i => i.Id == 1000);
         storedCourse.ShouldBeNull();
     }
-    
+
     [Fact]
     public void Delete_fails_invalid_id()
     {
@@ -169,7 +172,7 @@ public class EquipmentCommandTests : BaseToursIntegrationTest
         result.ShouldNotBeNull();
         result.StatusCode.ShouldBe(404);
     }
-    
+
     private static EquipmentController CreateController(IServiceScope scope)
     {
         return new EquipmentController(scope.ServiceProvider.GetRequiredService<IEquipmentService>())

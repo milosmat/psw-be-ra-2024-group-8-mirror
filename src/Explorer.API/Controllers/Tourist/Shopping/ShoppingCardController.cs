@@ -4,7 +4,9 @@ using Explorer.Payments.API.Public.Tourist;
 using Explorer.Stakeholders.API.Dtos;
 using Explorer.Tours.API.Dtos;
 using Explorer.Tours.API.Public.Tourist;
+using FluentResults;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using static Explorer.Payments.API.Dtos.ShoppingCartDTO;
@@ -16,12 +18,10 @@ namespace Explorer.API.Controllers.Tourist.Shopping
     public class ShoppingCardController : BaseApiController
     {
         private readonly IShoppingCartService _shoppingCartService;
-        private readonly ICouponService _couponService;
 
-        public ShoppingCardController(IShoppingCartService shoppingCartService, ICouponService couponService)
+        public ShoppingCardController(IShoppingCartService shoppingCartService)
         {
             _shoppingCartService = shoppingCartService;
-            _couponService = couponService;
         }
 
         [HttpGet("{touristId}")]
@@ -36,20 +36,60 @@ namespace Explorer.API.Controllers.Tourist.Shopping
         }
 
         [HttpPost("add/{touristId}")]
-        public ActionResult AddTourToCart(long touristId, [FromBody] ShoppingCartItemDTO shoppingCartItemDto)
+        public ActionResult<ShoppingCartItemDto> AddTourToCart(long touristId, [FromBody] ShoppingCartItemDto shoppingCartItemDto)
         {
-            // Pozivate servis sa pravim turističkim ID i DTO podacima
-            _shoppingCartService.AddTourToCart(touristId, shoppingCartItemDto);
+            try
+            {
+                List<ShoppingCartItemDto> results = _shoppingCartService.AddTourToCart(touristId, shoppingCartItemDto);
 
-            return Ok(new { message = "Tour added to cart successfully" });
+                var addedItem = results.FirstOrDefault(item => item.TourId == shoppingCartItemDto.TourId);
+                if(addedItem == null)
+                {
+                    return BadRequest(new { message = "Faild to add new tour to the cart." });
+                }
+               
+                return CreatedAtAction(nameof(AddTourToCart), new { id = addedItem.Id }, addedItem);
+                
+            }
+            catch(InvalidOperationException ex)
+            {
+                return BadRequest("Failed to update the database.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while adding the tour to the cart.", error = ex.Message });
+            }
         }
 
 
         [HttpDelete("remove/{touristId}/{tourId}")]
         public ActionResult RemoveTourFromCart(long touristId, long tourId)
         {
-            _shoppingCartService.RemoveTourFromCart(touristId, tourId);
-            return Ok(new { message = "Tour removed from cart successfully" });
+            try
+            {
+                var success = _shoppingCartService.RemoveTourFromCart(touristId, tourId);
+
+                if (!success)
+                {
+                    var shoppingCart = _shoppingCartService.GetShoppingCart(touristId);
+                    if (shoppingCart == null)
+                    {
+                        return NotFound(new { message = $"Shopping cart not found." });
+                    }
+
+                    var itemToRemove = shoppingCart.ShopingItems.FirstOrDefault(item => item.TourId == tourId);
+                    if (itemToRemove == null)
+                    {
+                        return NotFound(new { message = $"The order item you want to remove from cart not found." });
+                    }
+                    return BadRequest(new { message = "Failed to remove the order item from the cart due to an issue while updating the database." });
+                }
+                return Ok(new { message = "Order item removed from cart successfully" });
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
         }
 
         [HttpPost("checkout/{touristId}")]
@@ -93,25 +133,43 @@ namespace Explorer.API.Controllers.Tourist.Shopping
         }
 
         [HttpPost("{touristId:int}/apply-coupon")]
-        public ActionResult<ShoppingCartDTO> ApplyCoupon(int touristId, [FromQuery] string couponCode)
+        public ActionResult<ShoppingCartDTO> ApplyCouponToCart(int touristId, [FromQuery] string couponCode)
         {
-            if (string.IsNullOrEmpty(couponCode))
+            var result = _shoppingCartService.ApplyCouponToCart(touristId, couponCode);
+            if(result.IsFailed)
             {
-                return BadRequest("Coupon code is required.");
+                var reason = result.Reasons.FirstOrDefault(r => r.Metadata.ContainsKey("code"));
+
+                if(reason != null)
+                {
+                    var statusCode = Convert.ToInt32(reason.Metadata["code"]);
+                    var error = result.Errors.Last();
+                    return StatusCode(statusCode, new { message = error.Message });
+
+                }
+
+                return StatusCode(500, new { message = "An unexpected error occurred while processing the request."});
+                
             }
+            return Ok(result.Value);
+        }
 
-
-            var shoppingCart = _shoppingCartService.GetShoppingCart(touristId);
-            if (shoppingCart == null)
+        [HttpPost("{touristId:int}/cancel-coupon")]
+        public ActionResult<ShoppingCartDTO> CancelCoupon(int touristId, [FromQuery] string couponCode)
+        {
+            var result = _shoppingCartService.CancelUsedCoupon(touristId, couponCode);
+            if(result.IsFailed)
             {
-                return NotFound("Shopping cart not found.");
+                var reason = result.Reasons.FirstOrDefault(r => r.Metadata.ContainsKey("code"));
+                if( reason != null)
+                {
+                    var statusCode = Convert.ToInt32(reason.Metadata["code"]);
+                    var error = result.Errors.Last();
+                    return StatusCode(statusCode, new {message = error.Message });
+                }
+                return StatusCode(500, new { message = "An unexpected error occurred while processing the request." });
             }
-
-            var updatedCartItems = _couponService.ApplyCouponOnCartItems(couponCode, shoppingCart.ShopingItems);
-            shoppingCart.ShopingItems = updatedCartItems;
-            _shoppingCartService.Update(shoppingCart);  // Pretpostavljam da imate metodu za ažuriranje korpe u bazi
-
-            return Ok(shoppingCart);
+            return Ok(result.Value);
         }
 
 

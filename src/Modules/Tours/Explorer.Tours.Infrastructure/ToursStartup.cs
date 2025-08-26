@@ -44,6 +44,8 @@ public static class ToursStartup
         services.AddScoped<ITouristPositionService, TouristPositionService>();
         services.AddScoped<ITourExecutionService, TourExecutionService>();
         services.AddScoped<IBundleService, BundleService>();
+        services.AddScoped<IPaymentBundleService, PaymentBundleService>();
+        services.AddScoped<IArticleService, ArticleService>();
 
     }
 
@@ -62,6 +64,8 @@ public static class ToursStartup
         services.AddScoped(typeof(ICrudRepository<TouristPosition>), typeof(CrudDatabaseRepository<TouristPosition, ToursContext>));
         services.AddScoped(typeof(ICrudRepository<VisitedCheckpoint>), typeof(CrudDatabaseRepository<VisitedCheckpoint, ToursContext>));
 
+        services.AddScoped(typeof(ICrudRepository<Article>), typeof(CrudDatabaseRepository<Article, ToursContext>));
+
 
         services.AddScoped(typeof(ITourRepository), typeof(ToursDatabaseRepository));
 
@@ -69,8 +73,7 @@ public static class ToursStartup
         services.AddScoped(typeof(ICrudRepository<BundleTour>), typeof(CrudDatabaseRepository<BundleTour, ToursContext>));
         services.AddScoped<IBundleRepository, BundlesDatabaseRepository>();
 
-
-
+        services.AddScoped<IArticleRepository, ArticleDataBaseRepository>();
 
 
         services.AddDbContext<ToursContext>(opt =>

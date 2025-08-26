@@ -20,10 +20,15 @@ public class ToursProfile : Profile
         CreateMap<TouristEquipmentDTO, TouristEquipment>().ReverseMap();
         CreateMap<VisitedCheckpointDTO, VisitedCheckpoint>().ReverseMap();
         CreateMap<TourSaleDto, TourSale>().ReverseMap();
+
         CreateMap<Accomodation, AccomodationDTO>()
             .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.ToString()));
         CreateMap<AccomodationDTO, Accomodation>()
             .ForMember(dest => dest.Category, opt => opt.MapFrom(src => Enum.Parse<AccomodationCategory>(src.Category, true)));
+
+
+        CreateMap<ArticleDTO, Article>().ReverseMap();
+
 
 
         CreateMap<Object, ObjectDTO>()

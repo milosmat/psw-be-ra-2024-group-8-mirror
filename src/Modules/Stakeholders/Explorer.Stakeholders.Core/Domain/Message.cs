@@ -11,6 +11,8 @@ public class Message : Entity
 {
     public int SenderId { get; set; } // ID korisnika koji je poslao poruku
     public string Content { get; set; } // Sadržaj poruke
+    public int? OwnerId { get; set; }
+
     public string? ResourceUrl { get; set; } // Opcioni ID resursa (tura ili blog)
     public ResourceType? ResourceType { get; set; } // Tip resursa, može biti Tura ili Blog
 
@@ -21,11 +23,21 @@ public class Message : Entity
         ResourceUrl = resourceUrl;
         ResourceType = resourceType;
     }
+
+    public Message(int senderId, string content, string? resourceUrl, ResourceType? resourceType, int? ownerId)
+    {
+        SenderId = senderId;
+        Content = content;
+        ResourceUrl = resourceUrl;
+        ResourceType = resourceType;
+        OwnerId = ownerId;
+    }
 }
 
 public enum ResourceType
 {
     Tour,
-    Blog
+    Blog,
+    Club
 }
 

@@ -24,9 +24,16 @@ namespace Explorer.Payments.Infrastructure.Database.Repositories
 
         public ShoppingCart Update(ShoppingCart aggregateRoot)
         {
-            DbContext.Entry(aggregateRoot).State = EntityState.Modified;
-            DbContext.SaveChanges();
-            return aggregateRoot;
+            try
+            {
+                DbContext.Entry(aggregateRoot).State = EntityState.Modified;
+                DbContext.SaveChanges();
+                return aggregateRoot;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                throw new InvalidOperationException("An error occurred while updating the shopping cart.", dbEx);
+            }
         }
 
 

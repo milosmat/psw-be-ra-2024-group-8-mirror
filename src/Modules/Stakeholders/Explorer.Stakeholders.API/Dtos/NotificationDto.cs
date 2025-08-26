@@ -28,6 +28,7 @@ public class MessageDto
 {
     public int Id { get; set; }
     public int SenderId { get; set; }
+    public int? OwnerId { get; set; }
     public string Content { get; set; }
     public string? ResourceUrl { get; set; }
     public ResourceType? ResourceType { get; set; }
@@ -36,6 +37,7 @@ public class MessageDto
 public enum ResourceType
 {
     Tour,
-    BlogPost
+    Blog, 
+    Club
 }
 

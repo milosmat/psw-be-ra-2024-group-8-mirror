@@ -18,6 +18,11 @@ public class TourSale : Entity
 
     public TourSale(List<int> tours, DateTime startDate, DateTime endDate, double discount, bool active, long authorId)
     {
+        if (discount <= 0) throw new ArgumentException("Invalid discount.");
+        if (authorId <= 0) throw new ArgumentException("Invalid authorId.");
+        if (endDate <= startDate) throw new ArgumentException("End date must be after start date.");
+        if (tours == null || !tours.Any()) throw new ArgumentException("At least one tour must be specified.");
+
         Tours = tours;
         StartDate = startDate;
         EndDate = endDate;

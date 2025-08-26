@@ -13,5 +13,6 @@ namespace Explorer.Stakeholders.Core.Domain.RepositoryInterfaces
         TourProblem Create(TourProblem tourProblem);
         TourProblem Update(TourProblem tourProblem);
         List<TourProblem> GetAllForUser(long userId);
+        List<TourProblem> GetAll();
     }
 }

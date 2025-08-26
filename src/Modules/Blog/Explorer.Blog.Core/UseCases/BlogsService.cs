@@ -24,10 +24,6 @@ namespace Explorer.Blog.Core.UseCases
             _blogRepository = blogRepository;
             _mapper = mapper;
         }
-        public Result Vote(int id, Vote voteDto)
-        {
-            throw new NotImplementedException();
-        }
 
         public PagedResult<BlogsDto> GetPaged(int page, int pageSize)
         {

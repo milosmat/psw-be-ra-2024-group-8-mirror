@@ -2,6 +2,7 @@
 using Explorer.Payments.API.Dtos;
 using Explorer.Payments.API.Public.Tourist;
 using Explorer.Tours.API.Dtos;
+using Explorer.Tours.API.Public.Author;
 using Explorer.Tours.API.Public.Tourist;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace Explorer.API.Controllers.Tourist.Shopping
     public class TourPurchaseTokenController : BaseApiController
     {
         private readonly ITourPurchaseTokenService _tokenService;
+        private readonly ITourService _tourService;
 
-        public TourPurchaseTokenController(ITourPurchaseTokenService tokenService)
+        public TourPurchaseTokenController(ITourPurchaseTokenService tokenService, ITourService tourService)
         {
             _tokenService = tokenService;
+            _tourService = tourService;
         }
 
         [HttpGet]
@@ -91,14 +94,22 @@ namespace Explorer.API.Controllers.Tourist.Shopping
         public ActionResult<List<TourDTO>> GetPurchasedTours()
         {
             var currentUserId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
-            var result = _tokenService.GetPurchasedToursByTouristId(currentUserId);
 
-            if (result.IsFailed)
+            var results = _tokenService.GetToursIdsFromToken(currentUserId);
+            if (results.IsFailed)
             {
-                return NotFound(result.Errors?.FirstOrDefault()?.Message);
+                return BadRequest("No tours purchased.");
             }
 
-            return Ok(result.Value);
+
+            var toursResult = _tourService.GetPurchasedTourForTourist(results.Value);
+
+            if (toursResult.IsFailed)
+            {
+                return BadRequest("No tours purchased.");
+            }
+
+            return Ok(toursResult.Value);
         }
     }
 }

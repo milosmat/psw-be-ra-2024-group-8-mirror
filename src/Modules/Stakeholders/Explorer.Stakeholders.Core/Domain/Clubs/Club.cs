@@ -14,9 +14,10 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
         public string Photo { get; private set; }
         public int OwnerId { get; private set; }
         public List<MembershipRequest> MembershipRequests { get; private set; }
+        public List<Message> Messages { get; private set; }
 
         public Club() { }
-        public Club(long id, string name, string description, string photo, int ownerId, List<MembershipRequest> requests)
+        public Club(long id, string name, string description, string photo, int ownerId, List<MembershipRequest> requests, List<Message> messages)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Invalid Name.");
             if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Invalid Description.");
@@ -28,6 +29,7 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
             Photo = photo;
             OwnerId = ownerId;
             MembershipRequests = requests ?? new List<MembershipRequest>();
+            Messages = messages;
         }
 
         public void AddMembershipRequest(MembershipRequest newMembershipRequest)
@@ -46,7 +48,7 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
             var request = MembershipRequests.FirstOrDefault(mr => mr.Id == membershipRequestId);
             if (request == null)
             {
-                throw new KeyNotFoundException($"Membership request with ID {membershipRequestId} not found.");
+                throw new KeyNotFoundException($"Membership message with ID {membershipRequestId} not found.");
             }
 
             MembershipRequests.RemoveAll(mr => mr.Id == membershipRequestId);
@@ -57,11 +59,45 @@ namespace Explorer.Stakeholders.Core.Domain.Clubs
             var requestToUpdate = MembershipRequests.FirstOrDefault(mr => mr.Id == updatedMembershipRequest.Id);
             if (requestToUpdate == null)
             {
-                throw new KeyNotFoundException("Membership request to update not found.");
+                throw new KeyNotFoundException("Membership message to update not found.");
             }
 
             requestToUpdate.Status = updatedMembershipRequest.Status;
             return requestToUpdate;
+        }
+
+        public void AddMessage(Message newMessage)
+        {
+            if (newMessage == null)
+            {
+                throw new ArgumentNullException(nameof(newMessage));
+            }
+
+            //newMessage.SetClubId(this.Id);
+            Messages.Add(newMessage);
+        }
+
+        public void DeleteMessage(long messageId)
+        {
+            var message = Messages.FirstOrDefault(mr => mr.Id == messageId);
+            if (message == null)
+            {
+                throw new KeyNotFoundException($"Membership message with ID {messageId} not found.");
+            }
+
+            Messages.RemoveAll(mr => mr.Id == messageId);
+        }
+
+        public Message UpdateMesagge(Message updateMessage)
+        {
+            var messageToUpdate = Messages.FirstOrDefault(mr => mr.Id == updateMessage.Id);
+            if (messageToUpdate == null)
+            {
+                throw new KeyNotFoundException("Membership message to update not found.");
+            }
+
+            messageToUpdate.Content = updateMessage.Content;
+            return updateMessage;
         }
     }
 }

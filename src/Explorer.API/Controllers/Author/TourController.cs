@@ -256,9 +256,9 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
         [HttpPost("{id:int}/publish")]
-        public ActionResult PublishTour(int id)
+        public async Task<ActionResult> PublishTour(int id)
         {
-            var result = _tourService.PublishTour(id);
+            var result = await _tourService.PublishTour(id);   // sad ide await
             var res = CreateResponse(result);
             return res;
         }

@@ -450,7 +450,7 @@ namespace Explorer.Tours.Core.UseCases.Author
                         (int)tour.AuthorId,
                         (int)tourist.Id,
                         "New tour announced",
-                        "market",
+                        $"tours/{tourId}",
                         Explorer.Stakeholders.API.Dtos.ResourceType.Tour
                     );
                 }

@@ -45,6 +45,7 @@ namespace Explorer.API.Controllers.Author
             var result = _equipmentService.GetPaged(page, pageSize);
             return CreateResponse(result);
         }
+        
 
         [HttpGet("{id:int}")]
         public ActionResult<TourDTO> GetById(int id)
@@ -119,6 +120,19 @@ namespace Explorer.API.Controllers.Author
             return CreateResponse(result);
         }
 
+        [HttpPost("{id:int}/addAccomodation")]
+        public ActionResult AddAccomodation(int id, [FromBody] AccomodationDTO[] accomodationsDto)
+        {
+            var result = _tourService.AddAccomodation(id, accomodationsDto);
+            return CreateResponse(result);
+        }
+
+        [HttpPut("{id:int}/removeAccomodation")]
+        public ActionResult RemoveAccomodation(int id, [FromBody] AccomodationDTO accomodationDto)
+        {
+            var result = _tourService.RemoveAccomodation(id, accomodationDto);
+            return CreateResponse(result);
+        }
         // Route to get all equipment
         /*[HttpGet("equipment")]
         public ActionResult<PagedResult<EquipmentDto>> GetAllEquipment([FromQuery] int page, [FromQuery] int pageSize)

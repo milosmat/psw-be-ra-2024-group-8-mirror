@@ -68,6 +68,42 @@ namespace Explorer.Tours.Core.UseCases.Author
             return result;
         }
 
+        public Result AddAccomodation(int tourId, AccomodationDTO[] accomodationsDTO)
+        {
+
+            
+            var tour = tourRepository.Get(tourId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+            Result res = Result.Ok();
+            foreach(AccomodationDTO accomodationDTO in accomodationsDTO)
+            {
+                var accomodation = _mapper.Map<Accomodation>(accomodationDTO);
+                var result = tour.AddAccomodation(accomodation);
+                if (result.IsSuccess)
+                    CrudRepository.Update(tour);
+                else
+                    res = Result.Fail("Adding accomodation failed");
+            }
+
+
+            return res;
+        }
+
+        public Result RemoveAccomodation(int tourId, AccomodationDTO accomodationDTO)
+        {
+            var accomodation = _mapper.Map<Accomodation>(accomodationDTO);
+            var tour = tourRepository.Get(tourId);
+            if (tour == null)
+                return Result.Fail("Tour not found.");
+
+            var result = tour.RemoveAccomodation(accomodation);
+            if (result.IsSuccess)
+                CrudRepository.Update(tour);
+
+            return result;
+        }
+
         public Result AddCheckpoint(int tourId, TourCheckpointDto checkpointDto)
         {
             var checkpoint = _mapper.Map<TourCheckpoint>(checkpointDto);
@@ -114,6 +150,7 @@ namespace Explorer.Tours.Core.UseCases.Author
 
             return MapToDto(result);
         }
+        
         public new Result<TourDTO> Update(TourDTO entity)
         {
             try

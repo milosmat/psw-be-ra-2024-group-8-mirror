@@ -24,9 +24,11 @@ namespace Explorer.Encounters.Core.Domain
         public bool IsReviewed { get; private set; }
         public bool? IsRequired { get; private set; }
 
+
         // Dodata polja za Social Encounter
         public int? RequiredParticipants { get; private set; } = 0;
         public int? Radius { get; private set; } = 0;
+
 
         public Encounter() { }
 

@@ -23,6 +23,7 @@ public class Tour : Entity
     public List<DailyAgenda> DailyAgendas { get; init; }
     public List<Equipment> Equipments { get; init; }
     public List<TourCheckpoint> TourCheckpoints { get; init; }
+    public List<Accomodation>? Accomodations { get; init; }
     public long AuthorId { get; private set; }
 
 
@@ -47,6 +48,7 @@ public class Tour : Entity
             DailyAgendas = new List<DailyAgenda>();
             Equipments = new List<Equipment>();
             TourCheckpoints = new List<TourCheckpoint>();
+            Accomodations = new List<Accomodation>();
             AuthorId = authorId;
     }
 
@@ -59,8 +61,27 @@ public class Tour : Entity
             Equipments.Add(equipment);
             return Result.Ok();
         }
+        public Result AddAccomodation(Accomodation accomodation)
+        {
+            if (Accomodations.Contains(accomodation))
+            {
+                return Result.Fail("Accomodation already added.");
+            }
+            else
+            {
+                Accomodations.Add(accomodation);
+                return Result.Ok();
+            }
+        }
+        public Result RemoveAccomodation(Accomodation accomodation)
+        {
+            if (!Accomodations.Contains(accomodation))
+                 return Result.Fail("Accomodation not found.");
 
-        public Result RemoveEquipment(Equipment equipment)
+            Accomodations.Remove(accomodation);
+            return Result.Ok();
+        }
+    public Result RemoveEquipment(Equipment equipment)
         {
             if (!Equipments.Contains(equipment))
                 return Result.Fail("Equipment not found.");

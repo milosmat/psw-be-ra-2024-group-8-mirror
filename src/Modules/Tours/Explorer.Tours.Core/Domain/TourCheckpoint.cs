@@ -17,7 +17,9 @@ public class TourCheckpoint : Entity
     public string Image { get; private set; }
     public long TourId { get; set; }
 
-    public TourCheckpoint(double latitude, double longitude, string checkpointName, string checkpointDescription, string image)
+    public string Secret {  get; set; }
+
+    public TourCheckpoint(double latitude, double longitude, string checkpointName, string checkpointDescription, string image, string secret)
     {
         if (string.IsNullOrEmpty(checkpointName)) throw new ArgumentException("Name cannot be null or empty");
         if (string.IsNullOrEmpty(checkpointDescription)) throw new ArgumentException("Description cannot be null or empty");
@@ -28,6 +30,7 @@ public class TourCheckpoint : Entity
         CheckpointName = checkpointName;
         CheckpointDescription = checkpointDescription;
         Image = image;
+        Secret = secret;
     }
 }
 

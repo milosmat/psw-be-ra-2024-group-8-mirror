@@ -74,4 +74,3 @@ Program exposes a partial Program class to support integration tests.
 
 ---
 
-- 40f450658703 — feat: Implemented TourCheckpoint service and Dto — https://github.com/milosmat/psw-be-ra-2024-group-8-mirror/commit/40f450658703865e672e5d4977bf5a3af129c56a

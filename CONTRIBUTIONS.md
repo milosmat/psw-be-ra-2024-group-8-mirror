@@ -4,7 +4,7 @@ Upstream PRs: kzi-nastava/psw-be-ra-2024-group-8
 Total authored backend commits in mirror: 37  
 Total authored upstream PRs: 13  
 
-This document enumerates and explains ONLY the work personally contributed by @milosmat (based strictly on commit messages and merged pull requests). No speculative future work and no generic project description—just what was actually done.
+This document enumerates and explains ONLY the work personally contributed by @milosmat (based strictly on commit messages and merged pull requests).
 
 ---
 
@@ -107,4 +107,3 @@ This document enumerates and explains ONLY the work personally contributed by @m
 - Extended functionality to include tracking time-based achievement results and coupon awarding.
 
 ---
-Let me know if you want this committed as CONTRIBUTIONS.md or merged into your existing README. I can prepare a PR in the mirror repo if you’d like—just say the word.
